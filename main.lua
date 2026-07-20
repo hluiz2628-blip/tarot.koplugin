@@ -1,12 +1,14 @@
 --[[
-    tarot.koplugin — Leitura de Tarot / Tarot Reading
+    tarot.koplugin — Leitura de Tarot / Baralho Cigano / Tarot & Lenormand Reading
     ==================================================
-    Exibe cartas de tarot aleatórias com significados.
-    Displays random tarot cards with meanings.
-
+    Exibe cartas aleatórias com significados.
+    Displays random cards with meanings.
+    
     Compatível com Kindle/e-ink.
     Significados em Português e Inglês.
     Tiragem de 3 cartas com navegação < > entre elas.
+    Suporta Tarot (Maiores/Menores) e Baralho Cigano (Lenormand).
+    Funcionalidade de salvar tiragens em arquivos .txt.
 
     Instalação:
       Copie a pasta tarot.koplugin/ para:
@@ -18,13 +20,18 @@
 -- ── dependências ──────────────────────────────────────────────────────────────
 local Blitbuffer       = require("ffi/blitbuffer")
 local Button           = require("ui/widget/button")
+local ButtonDialog     = require("ui/widget/buttondialog")
 local CenterContainer  = require("ui/widget/container/centercontainer")
+local Event            = require("ui/event")
 local Font             = require("ui/font")
 local FrameContainer   = require("ui/widget/container/framecontainer")
 local HorizontalGroup  = require("ui/widget/horizontalgroup")
 local HorizontalSpan   = require("ui/widget/horizontalspan")
 local InfoMessage      = require("ui/widget/infomessage")
 local InputContainer   = require("ui/widget/container/inputcontainer")
+local InputDialog      = require("ui/widget/inputdialog")
+local Menu             = require("ui/widget/menu")
+local ReaderUI         = require("apps/reader/readerui")
 local Screen           = require("device").screen
 local Size             = require("ui/size")
 local TextBoxWidget    = require("ui/widget/textboxwidget")
@@ -32,7 +39,10 @@ local TextWidget       = require("ui/widget/textwidget")
 local UIManager        = require("ui/uimanager")
 local VerticalGroup    = require("ui/widget/verticalgroup")
 local VerticalSpan     = require("ui/widget/verticalspan")
+local WidgetContainer  = require("ui/widget/container/widgetcontainer")
+local ffiutil          = require("ffi/util")
 local logger           = require("logger")
+local lfs              = require("libs/libkoreader-lfs")
 local util             = require("util")
 
 -- ═════════════════════════════════════════════════════════════════════════════
@@ -61,6 +71,30 @@ local translations = {
         major_only_desc = "Sortear apenas os 22 Arcanos Maiores",
         major_arcana = "Arcanos Maiores",
         minor_arcana = "Arcanos Menores",
+        deck_type = "Tipo de Baralho",
+        deck_type_desc = "Escolha entre Tarot e Baralho Cigano",
+        tarot_deck = "Tarot",
+        lenormand_deck = "Baralho Cigano",
+        lenormand_reading = "Leitura do Baralho Cigano",
+        lenormand_title = "Baralho Cigano",
+        save = "Salvar",
+        save_title = "Título da tiragem",
+        save_title_hint = "Ex: Reflexão do dia",
+        save_note = "Nota sobre a leitura",
+        save_note_hint = "Ex: O que senti ao ver estas cartas...",
+        save_success = "Tiragem salva com sucesso!",
+        save_error = "Erro ao salvar a tiragem.",
+        saved_readings = "Tiragens Salvas",
+        no_saved = "Nenhuma tiragem salva encontrada.",
+        open_reading = "Abrir no Leitor",
+        delete_reading = "Excluir",
+        delete_confirm = "Excluir esta tiragem?",
+        delete_success = "Tiragem excluída.",
+        delete_error = "Erro ao excluir arquivo.",
+        saved_on = "Salvo em",
+        title_label = "Título",
+        note_label = "Nota",
+        card_position = "Posição",
     },
     en = {
         title = "Tarot Reading",
@@ -84,6 +118,30 @@ local translations = {
         major_only_desc = "Draw only from the 22 Major Arcana",
         major_arcana = "Major Arcana",
         minor_arcana = "Minor Arcana",
+        deck_type = "Deck Type",
+        deck_type_desc = "Choose between Tarot and Lenormand",
+        tarot_deck = "Tarot",
+        lenormand_deck = "Lenormand",
+        lenormand_reading = "Lenormand Reading",
+        lenormand_title = "Lenormand Deck",
+        save = "Save",
+        save_title = "Spread title",
+        save_title_hint = "Ex: Daily reflection",
+        save_note = "Note about the reading",
+        save_note_hint = "Ex: What I felt seeing these cards...",
+        save_success = "Spread saved successfully!",
+        save_error = "Error saving the spread.",
+        saved_readings = "Saved Spreads",
+        no_saved = "No saved spreads found.",
+        open_reading = "Open in Reader",
+        delete_reading = "Delete",
+        delete_confirm = "Delete this spread?",
+        delete_success = "Spread deleted.",
+        delete_error = "Error deleting file.",
+        saved_on = "Saved on",
+        title_label = "Title",
+        note_label = "Note",
+        card_position = "Position",
     }
 }
 
@@ -482,6 +540,336 @@ for _, card in ipairs(MINOR_ARCANA) do
 end
 
 -- ═════════════════════════════════════════════════════════════════════════════
+-- Baralho Cigano / Lenormand (36 cartas)
+-- ═════════════════════════════════════════════════════════════════════════════
+local LENORMAND_DECK = {
+    {
+        id = 1, number = 1,
+        name = { pt = "O Cavaleiro", en = "The Rider" },
+        symbol = "♞",
+        meaning = {
+            pt = "Notícias chegando. Um visitante ou mensagem importante. Movimento rápido e boas novas no horizonte.",
+            en = "News arriving. A visitor or important message. Swift movement and good tidings on the horizon."
+        }
+    },
+    {
+        id = 2, number = 2,
+        name = { pt = "O Trevo", en = "The Clover" },
+        symbol = "♣",
+        meaning = {
+            pt = "Sorte passageira. Oportunidade efêmera. Alegria simples. Aproveite o momento presente com leveza.",
+            en = "Passing luck. Fleeting opportunity. Simple joy. Enjoy the present moment with lightness."
+        }
+    },
+    {
+        id = 3, number = 3,
+        name = { pt = "O Navio", en = "The Ship" },
+        symbol = "⛵",
+        meaning = {
+            pt = "Viagem. Mudança de cenário. Novos horizontes. Aventure-se, o mundo espera por você.",
+            en = "Travel. Change of scenery. New horizons. Venture forth, the world awaits you."
+        }
+    },
+    {
+        id = 4, number = 4,
+        name = { pt = "A Casa", en = "The House" },
+        symbol = "⌂",
+        meaning = {
+            pt = "Lar. Segurança familiar. Raízes firmes. Cuide do seu espaço sagrado com amor e dedicação.",
+            en = "Home. Family security. Firm roots. Care for your sacred space with love and dedication."
+        }
+    },
+    {
+        id = 5, number = 5,
+        name = { pt = "A Árvore", en = "The Tree" },
+        symbol = "♧",
+        meaning = {
+            pt = "Saúde. Crescimento pessoal. Conexão com a natureza. Suas raízes são profundas, seus frutos virão.",
+            en = "Health. Personal growth. Connection with nature. Your roots are deep, your fruits will come."
+        }
+    },
+    {
+        id = 6, number = 6,
+        name = { pt = "As Nuvens", en = "The Clouds" },
+        symbol = "☁",
+        meaning = {
+            pt = "Confusão. Incerteza temporária. Dúvidas pairando. A clareza virá após a tempestade passar.",
+            en = "Confusion. Temporary uncertainty. Lingering doubts. Clarity will come after the storm passes."
+        }
+    },
+    {
+        id = 7, number = 7,
+        name = { pt = "A Cobra", en = "The Snake" },
+        symbol = "≈",
+        meaning = {
+            pt = "Sedução. Traição ou manipulação. Cuidado com falsas promessas. A sabedoria está em ver além das aparências.",
+            en = "Seduction. Betrayal or manipulation. Beware of false promises. Wisdom lies in seeing beyond appearances."
+        }
+    },
+    {
+        id = 8, number = 8,
+        name = { pt = "O Caixão", en = "The Coffin" },
+        symbol = "⚰",
+        meaning = {
+            pt = "Fim de um ciclo. Transformação profunda. Deixe o passado descansar. O novo nasce do que se foi.",
+            en = "End of a cycle. Deep transformation. Let the past rest. The new is born from what has gone."
+        }
+    },
+    {
+        id = 9, number = 9,
+        name = { pt = "O Buquê", en = "The Bouquet" },
+        symbol = "⚘",
+        meaning = {
+            pt = "Presente. Elogio. Reconhecimento. A beleza da vida se revela nas pequenas gentilezas.",
+            en = "Gift. Compliment. Recognition. The beauty of life reveals itself in small kindnesses."
+        }
+    },
+    {
+        id = 10, number = 10,
+        name = { pt = "A Foice", en = "The Scythe" },
+        symbol = "⚔",
+        meaning = {
+            pt = "Corte necessário. Decisão drástica. Ruptura iminente. Às vezes é preciso cortar para curar.",
+            en = "Necessary cut. Drastic decision. Imminent rupture. Sometimes you must cut to heal."
+        }
+    },
+    {
+        id = 11, number = 11,
+        name = { pt = "O Chicote", en = "The Whip" },
+        symbol = "≈≈",
+        meaning = {
+            pt = "Conflito. Discussões acaloradas. Paixão intensa. Canalize a energia para ações produtivas.",
+            en = "Conflict. Heated discussions. Intense passion. Channel energy into productive actions."
+        }
+    },
+    {
+        id = 12, number = 12,
+        name = { pt = "Os Pássaros", en = "The Birds" },
+        symbol = "♫",
+        meaning = {
+            pt = "Conversas importantes. Fofocas ou notícias. Comunicação em foco. Escolha bem suas palavras.",
+            en = "Important conversations. Gossip or news. Communication in focus. Choose your words wisely."
+        }
+    },
+    {
+        id = 13, number = 13,
+        name = { pt = "A Criança", en = "The Child" },
+        symbol = "☺",
+        meaning = {
+            pt = "Inocência. Novo começo. Pureza de intenção. Abrace sua criança interior com ternura.",
+            en = "Innocence. New beginning. Purity of intention. Embrace your inner child with tenderness."
+        }
+    },
+    {
+        id = 14, number = 14,
+        name = { pt = "A Raposa", en = "The Fox" },
+        symbol = "≈≈",
+        meaning = {
+            pt = "Astúcia. Esperteza. Cuidado com enganos. Use sua inteligência para o bem, não para manipular.",
+            en = "Cunning. Cleverness. Beware of deception. Use your intelligence for good, not manipulation."
+        }
+    },
+    {
+        id = 15, number = 15,
+        name = { pt = "O Urso", en = "The Bear" },
+        symbol = "♚",
+        meaning = {
+            pt = "Força protetora. Poder financeiro. Autoridade natural. Liderança com generosidade traz prosperidade.",
+            en = "Protective strength. Financial power. Natural authority. Leadership with generosity brings prosperity."
+        }
+    },
+    {
+        id = 16, number = 16,
+        name = { pt = "A Estrela", en = "The Star" },
+        symbol = "★",
+        meaning = {
+            pt = "Esperança. Clareza de propósito. Siga sua luz interior. O universo conspira a seu favor.",
+            en = "Hope. Clarity of purpose. Follow your inner light. The universe conspires in your favor."
+        }
+    },
+    {
+        id = 17, number = 17,
+        name = { pt = "A Cegonha", en = "The Stork" },
+        symbol = "♆",
+        meaning = {
+            pt = "Mudança positiva. Renovação. Transição abençoada. Novas energias chegam para transformar sua vida.",
+            en = "Positive change. Renewal. Blessed transition. New energies arrive to transform your life."
+        }
+    },
+    {
+        id = 18, number = 18,
+        name = { pt = "O Cachorro", en = "The Dog" },
+        symbol = "♉",
+        meaning = {
+            pt = "Amizade leal. Fidelidade. Companheirismo sincero. Valorize quem caminha ao seu lado.",
+            en = "Loyal friendship. Fidelity. Sincere companionship. Value those who walk beside you."
+        }
+    },
+    {
+        id = 19, number = 19,
+        name = { pt = "A Torre", en = "The Tower" },
+        symbol = "♜",
+        meaning = {
+            pt = "Autoridade institucional. Proteção. Estrutura sólida. Construa bases firmes para o futuro.",
+            en = "Institutional authority. Protection. Solid structure. Build firm foundations for the future."
+        }
+    },
+    {
+        id = 20, number = 20,
+        name = { pt = "O Jardim", en = "The Garden" },
+        symbol = "❦",
+        meaning = {
+            pt = "Vida social. Comunidade. Encontros públicos. Abra-se para novas conexões e ambientes.",
+            en = "Social life. Community. Public encounters. Open yourself to new connections and environments."
+        }
+    },
+    {
+        id = 21, number = 21,
+        name = { pt = "A Montanha", en = "The Mountain" },
+        symbol = "▲",
+        meaning = {
+            pt = "Obstáculo. Desafio a superar. Bloqueio temporário. A vista do topo justifica a escalada.",
+            en = "Obstacle. Challenge to overcome. Temporary blockage. The view from the top justifies the climb."
+        }
+    },
+    {
+        id = 22, number = 22,
+        name = { pt = "O Caminho", en = "The Crossroads" },
+        symbol = "⛗",
+        meaning = {
+            pt = "Escolha importante. Decisão crucial. Múltiplos caminhos. Siga sua intuição na encruzilhada.",
+            en = "Important choice. Crucial decision. Multiple paths. Follow your intuition at the crossroads."
+        }
+    },
+    {
+        id = 23, number = 23,
+        name = { pt = "Os Ratos", en = "The Mice" },
+        symbol = "🐭",
+        meaning = {
+            pt = "Perda gradual. Desgaste. Preocupações corroendo. Atenção aos detalhes que passam despercebidos.",
+            en = "Gradual loss. Wear and tear. Corroding worries. Attention to details that go unnoticed."
+        }
+    },
+    {
+        id = 24, number = 24,
+        name = { pt = "O Coração", en = "The Heart" },
+        symbol = "♥",
+        meaning = {
+            pt = "Amor verdadeiro. Paixão. Afeto profundo. Abra seu coração sem medo de ser feliz.",
+            en = "True love. Passion. Deep affection. Open your heart without fear of being happy."
+        }
+    },
+    {
+        id = 25, number = 25,
+        name = { pt = "O Anel", en = "The Ring" },
+        symbol = "◎",
+        meaning = {
+            pt = "Compromisso. Aliança. Ciclo completado. Honre seus pactos e promessas com integridade.",
+            en = "Commitment. Alliance. Completed cycle. Honor your pacts and promises with integrity."
+        }
+    },
+    {
+        id = 26, number = 26,
+        name = { pt = "O Livro", en = "The Book" },
+        symbol = "▣",
+        meaning = {
+            pt = "Segredo. Conhecimento oculto. Mistério a ser revelado. A resposta está nas entrelinhas.",
+            en = "Secret. Hidden knowledge. Mystery to be revealed. The answer lies between the lines."
+        }
+    },
+    {
+        id = 27, number = 27,
+        name = { pt = "A Carta", en = "The Letter" },
+        symbol = "✉",
+        meaning = {
+            pt = "Mensagem escrita. Documento importante. Comunicação formal. Notícias que chegam pelo papel.",
+            en = "Written message. Important document. Formal communication. News arriving on paper."
+        }
+    },
+    {
+        id = 28, number = 28,
+        name = { pt = "O Homem", en = "The Gentleman" },
+        symbol = "♂",
+        meaning = {
+            pt = "Figura masculina influente. Parceiro ou consulente. Força yang. Ação e iniciativa.",
+            en = "Influential male figure. Partner or seeker. Yang force. Action and initiative."
+        }
+    },
+    {
+        id = 29, number = 29,
+        name = { pt = "A Mulher", en = "The Lady" },
+        symbol = "♀",
+        meaning = {
+            pt = "Figura feminina influente. Parceira ou consulente. Força yin. Intuição e acolhimento.",
+            en = "Influential female figure. Partner or seeker. Yin force. Intuition and nurturing."
+        }
+    },
+    {
+        id = 30, number = 30,
+        name = { pt = "Os Lírios", en = "The Lilies" },
+        symbol = "⚜",
+        meaning = {
+            pt = "Paz. Harmonia. Sabedoria madura. A virtude da paciência floresce em seu jardim.",
+            en = "Peace. Harmony. Mature wisdom. The virtue of patience blooms in your garden."
+        }
+    },
+    {
+        id = 31, number = 31,
+        name = { pt = "O Sol", en = "The Sun" },
+        symbol = "☼",
+        meaning = {
+            pt = "Sucesso. Vitória. Energia vital plena. Tudo está iluminado, aproveite este momento.",
+            en = "Success. Victory. Full vital energy. Everything is illuminated, enjoy this moment."
+        }
+    },
+    {
+        id = 32, number = 32,
+        name = { pt = "A Lua", en = "The Moon" },
+        symbol = "☽",
+        meaning = {
+            pt = "Intuição. Reconhecimento. Fama e criatividade. Seus talentos são reconhecidos sob a luz lunar.",
+            en = "Intuition. Recognition. Fame and creativity. Your talents are recognized under moonlight."
+        }
+    },
+    {
+        id = 33, number = 33,
+        name = { pt = "A Chave", en = "The Key" },
+        symbol = "⚷",
+        meaning = {
+            pt = "Solução. Abertura de portas. Oportunidade decisiva. A resposta que você busca está ao seu alcance.",
+            en = "Solution. Opening doors. Decisive opportunity. The answer you seek is within reach."
+        }
+    },
+    {
+        id = 34, number = 34,
+        name = { pt = "Os Peixes", en = "The Fish" },
+        symbol = "♓",
+        meaning = {
+            pt = "Abundância financeira. Prosperidade. Fluxo de recursos. A riqueza flui como água limpa.",
+            en = "Financial abundance. Prosperity. Flow of resources. Wealth flows like clean water."
+        }
+    },
+    {
+        id = 35, number = 35,
+        name = { pt = "A Âncora", en = "The Anchor" },
+        symbol = "⚓",
+        meaning = {
+            pt = "Estabilidade. Segurança duradoura. Trabalho firme. Construa bases sólidas para o amanhã.",
+            en = "Stability. Lasting security. Steady work. Build solid foundations for tomorrow."
+        }
+    },
+    {
+        id = 36, number = 36,
+        name = { pt = "A Cruz", en = "The Cross" },
+        symbol = "✚",
+        meaning = {
+            pt = "Destino. Provação necessária. Fardo sagrado. O sofrimento traz sabedoria e transcendência.",
+            en = "Destiny. Necessary trial. Sacred burden. Suffering brings wisdom and transcendence."
+        }
+    },
+}
+
+-- ═════════════════════════════════════════════════════════════════════════════
 -- Plugin principal
 -- ═════════════════════════════════════════════════════════════════════════════
 local TarotPlugin = InputContainer:extend{
@@ -491,9 +879,16 @@ local TarotPlugin = InputContainer:extend{
 }
 
 function TarotPlugin:init()
-    math.randomseed(os.time() + math.random(10000))
+    -- Correção da Semente Aleatória
+    math.randomseed(os.time())
+    -- "Pops" necessários em versões antigas de Lua para espalhar a entropia inicial
+    math.random()
+    math.random()
+    math.random()
+
     self.ui.menu:registerToMainMenu(self)
     self.plugin_dir = self:getPluginDirectory()
+    self.saves_dir = self.plugin_dir .. "/tiragens_salvas"
     self.language = G_reader_settings:readSetting("tarot_language") or "pt"
     self.allow_reversed = G_reader_settings:readSetting("tarot_allow_reversed")
     if self.allow_reversed == nil then
@@ -503,6 +898,13 @@ function TarotPlugin:init()
     if self.major_only == nil then
         self.major_only = false
     end
+    self.use_lenormand = G_reader_settings:readSetting("tarot_use_lenormand")
+    if self.use_lenormand == nil then
+        self.use_lenormand = false 
+    end
+    
+    -- Criar diretório de tiragens salvas se não existir
+    self:ensureSavesDir()
 end
 
 function TarotPlugin:getTranslation(key)
@@ -531,8 +933,23 @@ function TarotPlugin:getPluginDirectory()
     return "./plugins/tarot.koplugin"
 end
 
+function TarotPlugin:ensureSavesDir()
+    local attr = lfs.attributes(self.saves_dir)
+    if not attr then
+        local success = lfs.mkdir(self.saves_dir)
+        if not success then
+            logger.warn("tarot.koplugin: Não foi possível criar o diretório de tiragens salvas:", self.saves_dir)
+        end
+    end
+end
+
 function TarotPlugin:getActiveDeck()
-    if self.major_only then return MAJOR_ARCANA end
+    if self.use_lenormand then
+        return LENORMAND_DECK
+    end
+    if self.major_only then 
+        return MAJOR_ARCANA 
+    end
     return FULL_DECK
 end
 
@@ -540,10 +957,35 @@ function TarotPlugin:drawCard()
     local deck = self:getActiveDeck()
     local card = deck[math.random(1, #deck)]
     local is_reversed = false
-    if self.allow_reversed then
+    if self.allow_reversed and not self.use_lenormand then  
         is_reversed = math.random(2) == 1
     end
     return card, is_reversed
+end
+
+-- Função Adicionada: Tirar múltiplas cartas garantindo que sejam únicas
+function TarotPlugin:drawUniqueCards(count)
+    local deck = self:getActiveDeck()
+    local selected_cards = {}
+    local drawn_indices = {}
+    
+    -- Ajuste de segurança caso o deck seja menor que a quantidade pedida
+    if count > #deck then count = #deck end
+
+    while #selected_cards < count do
+        local index = math.random(1, #deck)
+        if not drawn_indices[index] then
+            drawn_indices[index] = true
+            local card = deck[index]
+            local is_reversed = false
+            if self.allow_reversed and not self.use_lenormand then
+                is_reversed = math.random(2) == 1
+            end
+            table.insert(selected_cards, { card = card, is_reversed = is_reversed })
+        end
+    end
+    
+    return selected_cards
 end
 
 function TarotPlugin:toggleReversed()
@@ -555,6 +997,256 @@ end
 function TarotPlugin:toggleMajorOnly()
     self.major_only = not self.major_only
     G_reader_settings:saveSetting("tarot_major_only", self.major_only)
+    UIManager:setDirty(nil, "full")
+end
+
+function TarotPlugin:toggleLenormand()
+    self.use_lenormand = not self.use_lenormand
+    G_reader_settings:saveSetting("tarot_use_lenormand", self.use_lenormand)
+    UIManager:setDirty(nil, "full")
+end
+
+-- ═════════════════════════════════════════════════════════════════════════════
+-- Funções de salvar tiragem
+-- ═════════════════════════════════════════════════════════════════════════════
+function TarotPlugin:saveReading(cards, title, note)
+    self:ensureSavesDir()
+    
+    local timestamp = os.date("%Y-%m-%d_%H-%M-%S")
+    local filename_base
+    if title and title ~= "" then
+        -- Sanitiza o título para nome de arquivo
+        filename_base = title:gsub("[^%w%d%p ]", ""):gsub(" ", "_"):sub(1, 50)
+    else
+        filename_base = "tiragem"
+    end
+    
+    -- Verifica se já existe arquivo com o mesmo nome e adiciona numeral se necessário
+    local counter = 1
+    local filename = timestamp .. "_" .. filename_base .. ".txt"
+    local filepath = self.saves_dir .. "/" .. filename
+    
+    while lfs.attributes(filepath) do
+        counter = counter + 1
+        filename = timestamp .. "_" .. filename_base .. "_" .. counter .. ".txt"
+        filepath = self.saves_dir .. "/" .. filename
+    end
+    
+    -- Monta conteúdo do arquivo
+    local lang = self.language
+    local lines = {}
+    
+    -- Título
+    if title and title ~= "" then
+        table.insert(lines, title)
+        table.insert(lines, "")
+    end
+    
+    -- Nota
+    if note and note ~= "" then
+        table.insert(lines, note)
+        table.insert(lines, "")
+    end
+    
+    -- Cartas
+    for i, card_data in ipairs(cards) do
+        local card = card_data.card
+        local is_reversed = card_data.is_reversed
+        
+        local position_text = is_reversed and self:getTranslation("reversed") or self:getTranslation("upright")
+        local name_text = card.name[lang] or card.name.pt
+        
+        local meaning
+        if self.use_lenormand then
+            meaning = card.meaning[lang] or card.meaning.pt
+        else
+            meaning = is_reversed and (card.reversed_meaning[lang] or card.reversed_meaning.pt) or (card.meaning[lang] or card.meaning.pt)
+        end
+        
+        table.insert(lines, "Carta " .. i .. " — " .. name_text .. " (" .. position_text .. ")")
+        table.insert(lines, "")
+        table.insert(lines, meaning)
+        table.insert(lines, "")
+    end
+    
+    -- Data/Hora no final
+    table.insert(lines, "—")
+    table.insert(lines, os.date("%d/%m/%Y %H:%M"))
+    
+    local content = table.concat(lines, "\n")
+    
+    -- Salva o arquivo
+    local file, err = io.open(filepath, "w")
+    if not file then
+        logger.warn("tarot.koplugin: Erro ao salvar tiragem:", err)
+        UIManager:show(InfoMessage:new{ text = self:getTranslation("save_error") })
+        return false
+    end
+    
+    file:write(content)
+    file:close()
+    
+    UIManager:show(InfoMessage:new{ text = self:getTranslation("save_success") })
+    return true
+end
+
+-- ═════════════════════════════════════════════════════════════════════════════
+-- Lista de tiragens salvas
+-- ═════════════════════════════════════════════════════════════════════════════
+function TarotPlugin:getSavedReadings()
+    self:ensureSavesDir()
+    local files = {}
+    
+    for file in lfs.dir(self.saves_dir) do
+        if file ~= "." and file ~= ".." and file:match("%.txt$") then
+            local filepath = self.saves_dir .. "/" .. file
+            local attr = lfs.attributes(filepath)
+            if attr and attr.mode == "file" then
+                table.insert(files, {
+                    filename = file,
+                    filepath = filepath,
+                    modification = attr.modification,
+                })
+            end
+        end
+    end
+    
+    -- Ordenar por data de modificação (mais recente primeiro)
+    table.sort(files, function(a, b)
+        return a.modification > b.modification
+    end)
+    
+    return files
+end
+
+function TarotPlugin:showSavedReadingsMenu()
+    local files = self:getSavedReadings()
+    
+    if #files == 0 then
+        UIManager:show(InfoMessage:new{ text = self:getTranslation("no_saved") })
+        return
+    end
+    
+    -- Criar menu com botões para cada arquivo
+    local buttons = {}
+    for _, file in ipairs(files) do
+        -- Extrai título do nome do arquivo
+        local display_name = file.filename:gsub("%.txt$", "")
+        -- Remove timestamp do início para exibição
+        display_name = display_name:gsub("^%d%d%d%d%-%d%d%-%d%d_%d%d%-%d%d%-%d%d_", "")
+        -- Substitui underscores por espaços
+        display_name = display_name:gsub("_", " ")
+        
+        table.insert(buttons, {
+            {
+                text = display_name,
+                callback = function()
+                    UIManager:close(self.saved_menu_dialog)
+                    self:showFileOptions(file)
+                end,
+            },
+        })
+    end
+    
+    -- Botão de fechar
+    table.insert(buttons, {
+        {
+            text = self:getTranslation("close"),
+            is_enter_default = true,
+            callback = function()
+                UIManager:close(self.saved_menu_dialog)
+            end,
+        },
+    })
+    
+    self.saved_menu_dialog = ButtonDialog:new{
+        title = self:getTranslation("saved_readings"),
+        buttons = buttons,
+    }
+    
+    UIManager:show(self.saved_menu_dialog)
+    UIManager:setDirty(nil, "full")
+end
+
+function TarotPlugin:showFileOptions(file)
+    local buttons = {
+        {
+            {
+                text = self:getTranslation("open_reading"),
+                callback = function()
+                    UIManager:close(self.file_options_dialog)
+                    -- Abrir no leitor nativo do KOReader
+                    ReaderUI:showReader(file.filepath)
+                end,
+            },
+        },
+        {
+            {
+                text = self:getTranslation("delete_reading"),
+                callback = function()
+                    UIManager:close(self.file_options_dialog)
+                    self:confirmDeleteFile(file)
+                end,
+            },
+        },
+        {
+            {
+                text = self:getTranslation("close"),
+                is_enter_default = true,
+                callback = function()
+                    UIManager:close(self.file_options_dialog)
+                end,
+            },
+        },
+    }
+    
+    -- Extrai título para exibição
+    local title_display = file.filename:gsub("%.txt$", "")
+    title_display = title_display:gsub("^%d%d%d%d%-%d%d%-%d%d_%d%d%-%d%d%-%d%d_", "")
+    title_display = title_display:gsub("_", " ")
+    
+    self.file_options_dialog = ButtonDialog:new{
+        title = title_display,
+        buttons = buttons,
+    }
+    
+    UIManager:show(self.file_options_dialog)
+    UIManager:setDirty(nil, "full")
+end
+
+function TarotPlugin:confirmDeleteFile(file)
+    local buttons = {
+        {
+            {
+                text = self:getTranslation("delete_reading"),
+                callback = function()
+                    UIManager:close(self.delete_confirm_dialog)
+                    local success = os.remove(file.filepath)
+                    if success then
+                        UIManager:show(InfoMessage:new{ text = self:getTranslation("delete_success") })
+                    else
+                        UIManager:show(InfoMessage:new{ text = self:getTranslation("delete_error") })
+                    end
+                end,
+            },
+        },
+        {
+            {
+                text = self:getTranslation("close"),
+                is_enter_default = true,
+                callback = function()
+                    UIManager:close(self.delete_confirm_dialog)
+                end,
+            },
+        },
+    }
+    
+    self.delete_confirm_dialog = ButtonDialog:new{
+        title = self:getTranslation("delete_confirm"),
+        buttons = buttons,
+    }
+    
+    UIManager:show(self.delete_confirm_dialog)
     UIManager:setDirty(nil, "full")
 end
 
@@ -582,7 +1274,12 @@ function CardDialog:init()
     local lang = self.plugin.language
     local total_cards = #self.cards
 
-    local title_text = "~ * ~\n" .. (self.title_label or self.plugin:getTranslation("title"))
+    local title_prefix = "~ * ~\n"
+    local title_suffix = self.plugin:getTranslation("title")
+    if self.plugin.use_lenormand then
+        title_suffix = self.plugin:getTranslation("lenormand_title")
+    end
+    local title_text = title_prefix .. title_suffix
 
     local title_w = TextWidget:new{
         text      = title_text,
@@ -600,8 +1297,8 @@ function CardDialog:init()
         alignment = "center",
     }
 
-    local number_text = card.roman or (card.rank and (card.rank[lang] or card.rank.pt)) or ""
-
+    local number_text = card.roman or (card.number and tostring(card.number)) or (card.rank and (card.rank[lang] or card.rank.pt)) or ""
+    
     local number_w = TextWidget:new{
         text      = number_text,
         face      = Font:getFace("tfont"),
@@ -611,7 +1308,15 @@ function CardDialog:init()
     }
 
     local suit_w
-    if card.suit then
+    if card.symbol then
+        suit_w = TextWidget:new{
+            text      = card.symbol .. "  " .. card.symbol .. "  " .. card.symbol,
+            face      = Font:getFace("smalltfont"),
+            fgcolor   = Blitbuffer.gray(0.5),
+            max_width = iw,
+            alignment = "center",
+        }
+    elseif card.suit then
         suit_w = TextWidget:new{
             text      = card.suit.symbol .. "  " .. (card.suit[lang] or card.suit.pt) .. "  " .. card.suit.symbol,
             face      = Font:getFace("smalltfont"),
@@ -622,7 +1327,7 @@ function CardDialog:init()
     end
 
     local name_text = card.name[lang] or card.name.pt
-    if is_reversed then
+    if is_reversed and not self.plugin.use_lenormand then
         name_text = name_text .. " (" .. self.plugin:getTranslation("reversed") .. ")"
     end
     local name_w = TextWidget:new{
@@ -633,15 +1338,28 @@ function CardDialog:init()
         alignment = "center",
     }
 
+    local type_text
+    if self.plugin.use_lenormand then
+        type_text = "Lenormand / " .. self.plugin:getTranslation("lenormand_deck")
+    else
+        type_text = card.roman and self.plugin:getTranslation("major_arcana") or self.plugin:getTranslation("minor_arcana")
+    end
+    
     local type_w = TextWidget:new{
-        text      = card.roman and self.plugin:getTranslation("major_arcana") or self.plugin:getTranslation("minor_arcana"),
+        text      = type_text,
         face      = Font:getFace("x_smallinfofont"),
         fgcolor   = Blitbuffer.gray(0.5),
         max_width = iw,
         alignment = "center",
     }
 
-    local meaning_text = is_reversed and (card.reversed_meaning[lang] or card.reversed_meaning.pt) or (card.meaning[lang] or card.meaning.pt)
+    local meaning_text
+    if self.plugin.use_lenormand then
+        meaning_text = card.meaning[lang] or card.meaning.pt
+    else
+        meaning_text = is_reversed and (card.reversed_meaning[lang] or card.reversed_meaning.pt) or (card.meaning[lang] or card.meaning.pt)
+    end
+    
     local meaning_w = TextBoxWidget:new{
         text      = meaning_text,
         face      = Font:getFace("cfont"),
@@ -712,9 +1430,22 @@ function CardDialog:init()
         }
     end
 
+    local btn_save = Button:new{
+        text     = self.plugin:getTranslation("save"),
+        width    = math.floor(iw * 0.30),
+        radius   = Size.radius.button,
+        callback = function()
+            -- Fechar o diálogo atual
+            UIManager:close(self)
+            UIManager:setDirty(nil, "full")
+            -- Iniciar processo de salvamento com InputDialog para título
+            self.plugin:showSaveTitleInput(self.cards)
+        end,
+    }
+
     local btn_new = Button:new{
         text     = self.plugin:getTranslation("new"),
-        width    = math.floor(iw * 0.35),
+        width    = math.floor(iw * 0.30),
         radius   = Size.radius.button,
         callback = function()
             UIManager:close(self)
@@ -725,7 +1456,7 @@ function CardDialog:init()
 
     local btn_close = Button:new{
         text     = self.plugin:getTranslation("close"),
-        width    = math.floor(iw * 0.35),
+        width    = math.floor(iw * 0.30),
         radius   = Size.radius.button,
         callback = function()
             UIManager:close(self)
@@ -735,8 +1466,10 @@ function CardDialog:init()
 
     local btns_row = HorizontalGroup:new{
         align = "center",
+        btn_save,
+        HorizontalSpan:new{ width = math.floor(iw * 0.03) },
         btn_new,
-        HorizontalSpan:new{ width = math.floor(iw * 0.10) },
+        HorizontalSpan:new{ width = math.floor(iw * 0.03) },
         btn_close,
     }
 
@@ -789,6 +1522,72 @@ function CardDialog:init()
     }
 end
 
+function TarotPlugin:showSaveTitleInput(cards)
+    local title_input
+    title_input = InputDialog:new{
+        title = self:getTranslation("save_title"),
+        input_hint = self:getTranslation("save_title_hint"),
+        input_type = "string",
+        buttons = {
+            {
+                {
+                    text = "OK",
+                    is_enter_default = true,
+                    callback = function()
+                        local title = title_input:getInputText()
+                        UIManager:close(title_input)
+                        -- Após obter o título, mostrar input para nota
+                        self:showSaveNoteInput(cards, title)
+                    end,
+                },
+            },
+            {
+                {
+                    text = self:getTranslation("close"),
+                    callback = function()
+                        UIManager:close(title_input)
+                    end,
+                },
+            },
+        },
+    }
+    UIManager:show(title_input)
+    UIManager:setDirty(nil, "full")
+end
+
+function TarotPlugin:showSaveNoteInput(cards, title)
+    local note_input
+    note_input = InputDialog:new{
+        title = self:getTranslation("save_note"),
+        input_hint = self:getTranslation("save_note_hint"),
+        input_type = "string",
+        buttons = {
+            {
+                {
+                    text = "OK",
+                    is_enter_default = true,
+                    callback = function()
+                        local note = note_input:getInputText()
+                        UIManager:close(note_input)
+                        -- Salvar a tiragem
+                        self:saveReading(cards, title, note)
+                    end,
+                },
+            },
+            {
+                {
+                    text = self:getTranslation("close"),
+                    callback = function()
+                        UIManager:close(note_input)
+                    end,
+                },
+            },
+        },
+    }
+    UIManager:show(note_input)
+    UIManager:setDirty(nil, "full")
+end
+
 -- ═════════════════════════════════════════════════════════════════════════════
 -- Diálogo de Configurações
 -- ═════════════════════════════════════════════════════════════════════════════
@@ -812,37 +1611,85 @@ function SettingsDialog:init()
 
     local rows = VerticalGroup:new{ align = "left" }
 
-    local rev_mark = self.plugin.allow_reversed and "☑" or "☐"
-    local rev_label = "  " .. rev_mark .. "  " .. self.plugin:getTranslation("allow_reversed_desc")
-    local btn_rev = Button:new{
-        text     = rev_label,
-        width    = iw,
-        radius   = Size.radius.button,
-        callback = function()
-            self.plugin:toggleReversed()
-            UIManager:close(self)
-            UIManager:show(SettingsDialog:new{ plugin = self.plugin })
-            UIManager:setDirty(nil, "full")
-        end,
+    local deck_section = TextWidget:new{
+        text      = "— " .. self.plugin:getTranslation("deck_type") .. " —",
+        face      = Font:getFace("smalltfont"),
+        bold      = true,
+        max_width = iw,
+        alignment = "left",
     }
-    table.insert(rows, btn_rev)
+    table.insert(rows, deck_section)
     table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_small })
 
-    local maj_mark = self.plugin.major_only and "☑" or "☐"
-    local maj_label = "  " .. maj_mark .. "  " .. self.plugin:getTranslation("major_only_desc")
-    local btn_maj = Button:new{
-        text     = maj_label,
-        width    = iw,
-        radius   = Size.radius.button,
-        callback = function()
-            self.plugin:toggleMajorOnly()
-            UIManager:close(self)
-            UIManager:show(SettingsDialog:new{ plugin = self.plugin })
-            UIManager:setDirty(nil, "full")
-        end,
+    local tarot_mark = not self.plugin.use_lenormand and "☑" or "☐"
+    local lenormand_mark = self.plugin.use_lenormand and "☑" or "☐"
+
+    local deck_btns = HorizontalGroup:new{
+        align = "center",
+        Button:new{
+            text   = tarot_mark .. " " .. self.plugin:getTranslation("tarot_deck"),
+            width  = math.floor(iw * 0.47),
+            radius = Size.radius.button,
+            callback = function()
+                if self.plugin.use_lenormand then
+                    self.plugin:toggleLenormand()
+                end
+                UIManager:close(self)
+                UIManager:show(SettingsDialog:new{ plugin = self.plugin })
+                UIManager:setDirty(nil, "full")
+            end,
+        },
+        HorizontalSpan:new{ width = math.floor(iw * 0.06) },
+        Button:new{
+            text   = lenormand_mark .. " " .. self.plugin:getTranslation("lenormand_deck"),
+            width  = math.floor(iw * 0.47),
+            radius = Size.radius.button,
+            callback = function()
+                if not self.plugin.use_lenormand then
+                    self.plugin:toggleLenormand()
+                end
+                UIManager:close(self)
+                UIManager:show(SettingsDialog:new{ plugin = self.plugin })
+                UIManager:setDirty(nil, "full")
+            end,
+        },
     }
-    table.insert(rows, btn_maj)
+    table.insert(rows, deck_btns)
     table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_default })
+
+    if not self.plugin.use_lenormand then
+        local rev_mark = self.plugin.allow_reversed and "☑" or "☐"
+        local rev_label = "  " .. rev_mark .. "  " .. self.plugin:getTranslation("allow_reversed_desc")
+        local btn_rev = Button:new{
+            text     = rev_label,
+            width    = iw,
+            radius   = Size.radius.button,
+            callback = function()
+                self.plugin:toggleReversed()
+                UIManager:close(self)
+                UIManager:show(SettingsDialog:new{ plugin = self.plugin })
+                UIManager:setDirty(nil, "full")
+            end,
+        }
+        table.insert(rows, btn_rev)
+        table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_small })
+
+        local maj_mark = self.plugin.major_only and "☑" or "☐"
+        local maj_label = "  " .. maj_mark .. "  " .. self.plugin:getTranslation("major_only_desc")
+        local btn_maj = Button:new{
+            text     = maj_label,
+            width    = iw,
+            radius   = Size.radius.button,
+            callback = function()
+                self.plugin:toggleMajorOnly()
+                UIManager:close(self)
+                UIManager:show(SettingsDialog:new{ plugin = self.plugin })
+                UIManager:setDirty(nil, "full")
+            end,
+        }
+        table.insert(rows, btn_maj)
+        table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_default })
+    end
 
     local lang_label = TextWidget:new{
         text      = "— " .. self.plugin:getTranslation("language") .. " —",
@@ -944,6 +1791,12 @@ function TarotPlugin:addToMainMenu(menu_items)
                 end,
             },
             {
+                text     = self:getTranslation("saved_readings"),
+                callback = function()
+                    self:showSavedReadingsMenu()
+                end,
+            },
+            {
                 text     = self:getTranslation("settings"),
                 callback = function()
                     self:showSettings()
@@ -981,16 +1834,12 @@ function TarotPlugin:showThreeCards()
     UIManager:show(loading)
     UIManager:setDirty(nil, "full")
     UIManager:scheduleIn(0.5, function()
-        local card1, rev1 = self:drawCard()
-        local card2, rev2 = self:drawCard()
-        local card3, rev3 = self:drawCard()
+        -- Usando o novo método para garantir que não existam cartas duplicadas
+        local drawn = self:drawUniqueCards(3)
+        
         UIManager:close(loading)
         local dlg = CardDialog:new{
-            cards = {
-                { card = card1, is_reversed = rev1 },
-                { card = card2, is_reversed = rev2 },
-                { card = card3, is_reversed = rev3 },
-            },
+            cards = drawn,
             current_index = 1,
             card_labels = {
                 string.format(self:getTranslation("card_count"), 1, 3),
