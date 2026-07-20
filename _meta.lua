@@ -4,7 +4,7 @@ return {
     fullname = _("Leitura de Tarot"),
     description = _([[Exibe cartas de tarot aleatórias com significados.]]),
     author = "Comunidade KOReader",
-    version = "2.0.0",
+    version = "2.1.0",
     -- KOReader minimun version
     requires = "2024.01",
 }

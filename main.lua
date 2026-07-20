@@ -78,9 +78,9 @@ local translations = {
         lenormand_reading = "Leitura do Baralho Cigano",
         lenormand_title = "Baralho Cigano",
         save = "Salvar",
-        save_title = "Título da tiragem",
+        save_title = "Título da tiragem (máx. 50 caracteres)",
         save_title_hint = "Ex: Reflexão do dia",
-        save_note = "Nota sobre a leitura",
+        save_note = "Nota sobre a leitura (máx. 500 caracteres)",
         save_note_hint = "Ex: O que senti ao ver estas cartas...",
         save_success = "Tiragem salva com sucesso!",
         save_error = "Erro ao salvar a tiragem.",
@@ -125,9 +125,9 @@ local translations = {
         lenormand_reading = "Lenormand Reading",
         lenormand_title = "Lenormand Deck",
         save = "Save",
-        save_title = "Spread title",
+        save_title = "Spread title (max 50 characters)",
         save_title_hint = "Ex: Daily reflection",
-        save_note = "Note about the reading",
+        save_note = "Note about the reading (max 500 characters)",
         save_note_hint = "Ex: What I felt seeing these cards...",
         save_success = "Spread saved successfully!",
         save_error = "Error saving the spread.",
@@ -1015,8 +1015,8 @@ function TarotPlugin:saveReading(cards, title, note)
     local timestamp = os.date("%Y-%m-%d_%H-%M-%S")
     local filename_base
     if title and title ~= "" then
-        -- Sanitiza o título para nome de arquivo
-        filename_base = title:gsub("[^%w%d%p ]", ""):gsub(" ", "_"):sub(1, 50)
+        -- Sanitiza o título para nome de arquivo (apenas letras, números e espaços)
+        filename_base = title:gsub("[^%w%d%s]", ""):gsub("%s+", "_"):sub(1, 50)
     else
         filename_base = "tiragem"
     end
@@ -1535,6 +1535,10 @@ function TarotPlugin:showSaveTitleInput(cards)
                     is_enter_default = true,
                     callback = function()
                         local title = title_input:getInputText()
+                        -- Limitar título a 50 caracteres
+                        if #title > 50 then
+                            title = title:sub(1, 50)
+                        end
                         UIManager:close(title_input)
                         -- Após obter o título, mostrar input para nota
                         self:showSaveNoteInput(cards, title)
@@ -1568,6 +1572,10 @@ function TarotPlugin:showSaveNoteInput(cards, title)
                     is_enter_default = true,
                     callback = function()
                         local note = note_input:getInputText()
+                        -- Limitar nota a 500 caracteres
+                        if #note > 500 then
+                            note = note:sub(1, 500)
+                        end
                         UIManager:close(note_input)
                         -- Salvar a tiragem
                         self:saveReading(cards, title, note)
