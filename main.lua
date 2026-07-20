@@ -1,22 +1,3 @@
---[[
-    tarot.koplugin — Leitura de Tarot / Baralho Cigano / Tarot & Lenormand Reading
-    ==================================================
-    Exibe cartas aleatórias com significados.
-    Displays random cards with meanings.
-    
-    Compatível com Kindle/e-ink.
-    Significados em Português e Inglês.
-    Tiragem de 3 cartas com navegação < > entre elas.
-    Suporta Tarot (Maiores/Menores) e Baralho Cigano (Lenormand).
-    Funcionalidade de salvar tiragens em arquivos .txt.
-
-    Instalação:
-      Copie a pasta tarot.koplugin/ para:
-        /sdcard/koreader/plugins/   (Android)
-        ~/.config/koreader/plugins/ (Linux/PC)
-      Reinicie o KOReader. O item aparece em Menu → Ferramentas.
---]]
-
 -- ── dependências ──────────────────────────────────────────────────────────────
 local Blitbuffer       = require("ffi/blitbuffer")
 local Button           = require("ui/widget/button")
@@ -45,15 +26,21 @@ local logger           = require("logger")
 local lfs              = require("libs/libkoreader-lfs")
 local util             = require("util")
 
--- ═════════════════════════════════════════════════════════════════════════════
--- Traduções
--- ═════════════════════════════════════════════════════════════════════════════
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║                     SEÇÃO 1: TRADUÇÕES (translations)                       ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
 local translations = {
     pt = {
         title = "Leitura de Tarot",
+        spreads = "Spreads",
+        one_card = "1 Carta",
+        three_cards = "3 Cartas",
+        daily_card = "Carta Diária",
         draw_card = "Tirar uma carta",
         draw_three = "Tiragem de 3 cartas",
+        draw_daily = "Carta do dia",
         settings = "Configurações",
+        configuration = "Configuração",
         new = "Novas cartas",
         close = "Fechar",
         prev = "< Ant",
@@ -95,12 +82,45 @@ local translations = {
         title_label = "Título",
         note_label = "Nota",
         card_position = "Posição",
+        restore = "Restaurar",
+        restore_desc = "Apagar todas as configurações e tiragens salvas",
+        restore_confirm = "Tem certeza? Isso apagará TODAS as configurações e tiragens salvas. Esta ação não pode ser desfeita.",
+        restore_success = "Tudo foi restaurado. O plugin será reiniciado.",
+        restore_error = "Erro ao restaurar. Alguns arquivos não puderam ser removidos.",
+        yes = "Sim",
+        no = "Não",
+        confirm = "Confirmar",
+        cancel = "Cancelar",
+        reset_section = "Redefinir",
+        card_book = "Livro de Cartas",
+        major_arcana_list = "Arcanos Maiores (22)",
+        minor_arcana_list = "Arcanos Menores (56)",
+        lenormand_list = "Baralho Cigano (36)",
+        all_cards = "Ver Todas as Cartas",
+        search_card = "Buscar Carta",
+        meaning_label = "Significado",
+        reversed_meaning_label = "Significado Invertido",
+        number_label = "Número",
+        arcana_label = "Arcano",
+        filter_title = "Filtrar Cartas",
+        no_results = "Nenhuma carta encontrada.",
+        back = "Voltar",
+        suit_wands = "Paus",
+        suit_cups = "Copas",
+        suit_swords = "Espadas",
+        suit_pentacles = "Ouros",
     },
     en = {
         title = "Tarot Reading",
+        spreads = "Spreads",
+        one_card = "1 Card",
+        three_cards = "3 Cards",
+        daily_card = "Daily Card",
         draw_card = "Draw a card",
         draw_three = "3 card spread",
+        draw_daily = "Card of the day",
         settings = "Settings",
+        configuration = "Configuration",
         new = "New cards",
         close = "Close",
         prev = "< Prev",
@@ -142,12 +162,39 @@ local translations = {
         title_label = "Title",
         note_label = "Note",
         card_position = "Position",
+        restore = "Restore",
+        restore_desc = "Delete all settings and saved spreads",
+        restore_confirm = "Are you sure? This will delete ALL settings and saved spreads. This action cannot be undone.",
+        restore_success = "Everything has been restored. The plugin will restart.",
+        restore_error = "Error restoring. Some files could not be removed.",
+        yes = "Yes",
+        no = "No",
+        confirm = "Confirm",
+        cancel = "Cancel",
+        reset_section = "Reset",
+        card_book = "Card Book",
+        major_arcana_list = "Major Arcana (22)",
+        minor_arcana_list = "Minor Arcana (56)",
+        lenormand_list = "Lenormand Deck (36)",
+        all_cards = "View All Cards",
+        search_card = "Search Card",
+        meaning_label = "Meaning",
+        reversed_meaning_label = "Reversed Meaning",
+        number_label = "Number",
+        arcana_label = "Arcana",
+        filter_title = "Filter Cards",
+        no_results = "No cards found.",
+        back = "Back",
+        suit_wands = "Wands",
+        suit_cups = "Cups",
+        suit_swords = "Swords",
+        suit_pentacles = "Pentacles",
     }
 }
 
--- ═════════════════════════════════════════════════════════════════════════════
--- Cartas de Tarot - Arcanos Maiores (22 cartas)
--- ═════════════════════════════════════════════════════════════════════════════
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║                 SEÇÃO 2: CARTAS - ARCANOS MAIORES (22)                      ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
 local MAJOR_ARCANA = {
     {
         id = 0, roman = "0",
@@ -415,9 +462,9 @@ local MAJOR_ARCANA = {
     },
 }
 
--- ═════════════════════════════════════════════════════════════════════════════
--- Arcanos Menores (56 cartas)
--- ═════════════════════════════════════════════════════════════════════════════
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║                 SEÇÃO 3: CARTAS - ARCANOS MENORES (56)                      ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
 local MINOR_ARCANA = {}
 
 local suits = {
@@ -539,9 +586,9 @@ for _, card in ipairs(MINOR_ARCANA) do
     table.insert(FULL_DECK, card)
 end
 
--- ═════════════════════════════════════════════════════════════════════════════
--- Baralho Cigano / Lenormand (36 cartas)
--- ═════════════════════════════════════════════════════════════════════════════
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║                 SEÇÃO 4: CARTAS - LENORMAND (36)                             ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
 local LENORMAND_DECK = {
     {
         id = 1, number = 1,
@@ -869,9 +916,9 @@ local LENORMAND_DECK = {
     },
 }
 
--- ═════════════════════════════════════════════════════════════════════════════
--- Plugin principal
--- ═════════════════════════════════════════════════════════════════════════════
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║                  SEÇÃO 5: PLUGIN PRINCIPAL (TarotPlugin)                     ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
 local TarotPlugin = InputContainer:extend{
     name        = "tarot",
     fullname    = "Leitura de Tarot",
@@ -879,9 +926,7 @@ local TarotPlugin = InputContainer:extend{
 }
 
 function TarotPlugin:init()
-    -- Correção da Semente Aleatória
     math.randomseed(os.time())
-    -- "Pops" necessários em versões antigas de Lua para espalhar a entropia inicial
     math.random()
     math.random()
     math.random()
@@ -903,7 +948,6 @@ function TarotPlugin:init()
         self.use_lenormand = false 
     end
     
-    -- Criar diretório de tiragens salvas se não existir
     self:ensureSavesDir()
 end
 
@@ -963,13 +1007,11 @@ function TarotPlugin:drawCard()
     return card, is_reversed
 end
 
--- Função Adicionada: Tirar múltiplas cartas garantindo que sejam únicas
 function TarotPlugin:drawUniqueCards(count)
     local deck = self:getActiveDeck()
     local selected_cards = {}
     local drawn_indices = {}
     
-    -- Ajuste de segurança caso o deck seja menor que a quantidade pedida
     if count > #deck then count = #deck end
 
     while #selected_cards < count do
@@ -1006,22 +1048,41 @@ function TarotPlugin:toggleLenormand()
     UIManager:setDirty(nil, "full")
 end
 
--- ═════════════════════════════════════════════════════════════════════════════
--- Funções de salvar tiragem
--- ═════════════════════════════════════════════════════════════════════════════
+function TarotPlugin:restoreAll()
+    G_reader_settings:delSetting("tarot_language")
+    G_reader_settings:delSetting("tarot_allow_reversed")
+    G_reader_settings:delSetting("tarot_major_only")
+    G_reader_settings:delSetting("tarot_use_lenormand")
+    
+    if self.saves_dir then
+        for file in lfs.dir(self.saves_dir) do
+            if file ~= "." and file ~= ".." then
+                local filepath = self.saves_dir .. "/" .. file
+                os.remove(filepath)
+            end
+        end
+    end
+    
+    self.language = "pt"
+    self.allow_reversed = true
+    self.major_only = false
+    self.use_lenormand = false
+end
+
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║                  SEÇÃO 6: SALVAMENTO (save/load/delete)                      ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
 function TarotPlugin:saveReading(cards, title, note)
     self:ensureSavesDir()
     
     local timestamp = os.date("%Y-%m-%d_%H-%M-%S")
     local filename_base
     if title and title ~= "" then
-        -- Sanitiza o título para nome de arquivo (apenas letras, números e espaços)
         filename_base = title:gsub("[^%w%d%s]", ""):gsub("%s+", "_"):sub(1, 50)
     else
         filename_base = "tiragem"
     end
     
-    -- Verifica se já existe arquivo com o mesmo nome e adiciona numeral se necessário
     local counter = 1
     local filename = timestamp .. "_" .. filename_base .. ".txt"
     local filepath = self.saves_dir .. "/" .. filename
@@ -1032,23 +1093,19 @@ function TarotPlugin:saveReading(cards, title, note)
         filepath = self.saves_dir .. "/" .. filename
     end
     
-    -- Monta conteúdo do arquivo
     local lang = self.language
     local lines = {}
     
-    -- Título
     if title and title ~= "" then
         table.insert(lines, title)
         table.insert(lines, "")
     end
     
-    -- Nota
     if note and note ~= "" then
         table.insert(lines, note)
         table.insert(lines, "")
     end
     
-    -- Cartas
     for i, card_data in ipairs(cards) do
         local card = card_data.card
         local is_reversed = card_data.is_reversed
@@ -1069,13 +1126,11 @@ function TarotPlugin:saveReading(cards, title, note)
         table.insert(lines, "")
     end
     
-    -- Data/Hora no final
     table.insert(lines, "—")
     table.insert(lines, os.date("%d/%m/%Y %H:%M"))
     
     local content = table.concat(lines, "\n")
     
-    -- Salva o arquivo
     local file, err = io.open(filepath, "w")
     if not file then
         logger.warn("tarot.koplugin: Erro ao salvar tiragem:", err)
@@ -1090,9 +1145,6 @@ function TarotPlugin:saveReading(cards, title, note)
     return true
 end
 
--- ═════════════════════════════════════════════════════════════════════════════
--- Lista de tiragens salvas
--- ═════════════════════════════════════════════════════════════════════════════
 function TarotPlugin:getSavedReadings()
     self:ensureSavesDir()
     local files = {}
@@ -1111,7 +1163,6 @@ function TarotPlugin:getSavedReadings()
         end
     end
     
-    -- Ordenar por data de modificação (mais recente primeiro)
     table.sort(files, function(a, b)
         return a.modification > b.modification
     end)
@@ -1127,14 +1178,10 @@ function TarotPlugin:showSavedReadingsMenu()
         return
     end
     
-    -- Criar menu com botões para cada arquivo
     local buttons = {}
     for _, file in ipairs(files) do
-        -- Extrai título do nome do arquivo
         local display_name = file.filename:gsub("%.txt$", "")
-        -- Remove timestamp do início para exibição
         display_name = display_name:gsub("^%d%d%d%d%-%d%d%-%d%d_%d%d%-%d%d%-%d%d_", "")
-        -- Substitui underscores por espaços
         display_name = display_name:gsub("_", " ")
         
         table.insert(buttons, {
@@ -1148,7 +1195,6 @@ function TarotPlugin:showSavedReadingsMenu()
         })
     end
     
-    -- Botão de fechar
     table.insert(buttons, {
         {
             text = self:getTranslation("close"),
@@ -1175,7 +1221,6 @@ function TarotPlugin:showFileOptions(file)
                 text = self:getTranslation("open_reading"),
                 callback = function()
                     UIManager:close(self.file_options_dialog)
-                    -- Abrir no leitor nativo do KOReader
                     ReaderUI:showReader(file.filepath)
                 end,
             },
@@ -1200,7 +1245,6 @@ function TarotPlugin:showFileOptions(file)
         },
     }
     
-    -- Extrai título para exibição
     local title_display = file.filename:gsub("%.txt$", "")
     title_display = title_display:gsub("^%d%d%d%d%-%d%d%-%d%d_%d%d%-%d%d%-%d%d_", "")
     title_display = title_display:gsub("_", " ")
@@ -1250,9 +1294,79 @@ function TarotPlugin:confirmDeleteFile(file)
     UIManager:setDirty(nil, "full")
 end
 
--- ═════════════════════════════════════════════════════════════════════════════
--- Diálogo da carta
--- ═════════════════════════════════════════════════════════════════════════════
+function TarotPlugin:showSaveTitleInput(cards)
+    local title_input
+    title_input = InputDialog:new{
+        title = self:getTranslation("save_title"),
+        input_hint = self:getTranslation("save_title_hint"),
+        input_type = "string",
+        buttons = {
+            {
+                {
+                    text = "OK",
+                    is_enter_default = true,
+                    callback = function()
+                        local title = title_input:getInputText()
+                        if #title > 50 then
+                            title = title:sub(1, 50)
+                        end
+                        UIManager:close(title_input)
+                        self:showSaveNoteInput(cards, title)
+                    end,
+                },
+            },
+            {
+                {
+                    text = self:getTranslation("close"),
+                    callback = function()
+                        UIManager:close(title_input)
+                    end,
+                },
+            },
+        },
+    }
+    UIManager:show(title_input)
+    UIManager:setDirty(nil, "full")
+end
+
+function TarotPlugin:showSaveNoteInput(cards, title)
+    local note_input
+    note_input = InputDialog:new{
+        title = self:getTranslation("save_note"),
+        input_hint = self:getTranslation("save_note_hint"),
+        input_type = "string",
+        buttons = {
+            {
+                {
+                    text = "OK",
+                    is_enter_default = true,
+                    callback = function()
+                        local note = note_input:getInputText()
+                        if #note > 500 then
+                            note = note:sub(1, 500)
+                        end
+                        UIManager:close(note_input)
+                        self:saveReading(cards, title, note)
+                    end,
+                },
+            },
+            {
+                {
+                    text = self:getTranslation("close"),
+                    callback = function()
+                        UIManager:close(note_input)
+                    end,
+                },
+            },
+        },
+    }
+    UIManager:show(note_input)
+    UIManager:setDirty(nil, "full")
+end
+
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║                  SEÇÃO 7: DIÁLOGO DA CARTA (CardDialog)                      ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
 local CardDialog = InputContainer:extend{
     cards = nil,
     current_index = 1,
@@ -1260,6 +1374,7 @@ local CardDialog = InputContainer:extend{
     on_new = nil,
     plugin = nil,
     title_label = nil,
+    is_daily = false,
 }
 
 function CardDialog:init()
@@ -1396,6 +1511,7 @@ function CardDialog:init()
                         on_new = self.on_new,
                         plugin = self.plugin,
                         title_label = self.title_label,
+                        is_daily = self.is_daily,
                     })
                     UIManager:setDirty(nil, "full")
                 end
@@ -1417,6 +1533,7 @@ function CardDialog:init()
                         on_new = self.on_new,
                         plugin = self.plugin,
                         title_label = self.title_label,
+                        is_daily = self.is_daily,
                     })
                     UIManager:setDirty(nil, "full")
                 end
@@ -1435,22 +1552,9 @@ function CardDialog:init()
         width    = math.floor(iw * 0.30),
         radius   = Size.radius.button,
         callback = function()
-            -- Fechar o diálogo atual
             UIManager:close(self)
             UIManager:setDirty(nil, "full")
-            -- Iniciar processo de salvamento com InputDialog para título
             self.plugin:showSaveTitleInput(self.cards)
-        end,
-    }
-
-    local btn_new = Button:new{
-        text     = self.plugin:getTranslation("new"),
-        width    = math.floor(iw * 0.30),
-        radius   = Size.radius.button,
-        callback = function()
-            UIManager:close(self)
-            UIManager:setDirty(nil, "full")
-            if self.on_new then self.on_new() end
         end,
     }
 
@@ -1464,14 +1568,35 @@ function CardDialog:init()
         end,
     }
 
-    local btns_row = HorizontalGroup:new{
-        align = "center",
-        btn_save,
-        HorizontalSpan:new{ width = math.floor(iw * 0.03) },
-        btn_new,
-        HorizontalSpan:new{ width = math.floor(iw * 0.03) },
-        btn_close,
-    }
+    local btns_row
+    if self.is_daily then
+        btns_row = HorizontalGroup:new{
+            align = "center",
+            btn_save,
+            HorizontalSpan:new{ width = math.floor(iw * 0.06) },
+            btn_close,
+        }
+    else
+        local btn_new = Button:new{
+            text     = self.plugin:getTranslation("new"),
+            width    = math.floor(iw * 0.30),
+            radius   = Size.radius.button,
+            callback = function()
+                UIManager:close(self)
+                UIManager:setDirty(nil, "full")
+                if self.on_new then self.on_new() end
+            end,
+        }
+
+        btns_row = HorizontalGroup:new{
+            align = "center",
+            btn_save,
+            HorizontalSpan:new{ width = math.floor(iw * 0.03) },
+            btn_new,
+            HorizontalSpan:new{ width = math.floor(iw * 0.03) },
+            btn_close,
+        }
+    end
 
     local content = VerticalGroup:new{
         align = "center",
@@ -1522,83 +1647,9 @@ function CardDialog:init()
     }
 end
 
-function TarotPlugin:showSaveTitleInput(cards)
-    local title_input
-    title_input = InputDialog:new{
-        title = self:getTranslation("save_title"),
-        input_hint = self:getTranslation("save_title_hint"),
-        input_type = "string",
-        buttons = {
-            {
-                {
-                    text = "OK",
-                    is_enter_default = true,
-                    callback = function()
-                        local title = title_input:getInputText()
-                        -- Limitar título a 50 caracteres
-                        if #title > 50 then
-                            title = title:sub(1, 50)
-                        end
-                        UIManager:close(title_input)
-                        -- Após obter o título, mostrar input para nota
-                        self:showSaveNoteInput(cards, title)
-                    end,
-                },
-            },
-            {
-                {
-                    text = self:getTranslation("close"),
-                    callback = function()
-                        UIManager:close(title_input)
-                    end,
-                },
-            },
-        },
-    }
-    UIManager:show(title_input)
-    UIManager:setDirty(nil, "full")
-end
-
-function TarotPlugin:showSaveNoteInput(cards, title)
-    local note_input
-    note_input = InputDialog:new{
-        title = self:getTranslation("save_note"),
-        input_hint = self:getTranslation("save_note_hint"),
-        input_type = "string",
-        buttons = {
-            {
-                {
-                    text = "OK",
-                    is_enter_default = true,
-                    callback = function()
-                        local note = note_input:getInputText()
-                        -- Limitar nota a 500 caracteres
-                        if #note > 500 then
-                            note = note:sub(1, 500)
-                        end
-                        UIManager:close(note_input)
-                        -- Salvar a tiragem
-                        self:saveReading(cards, title, note)
-                    end,
-                },
-            },
-            {
-                {
-                    text = self:getTranslation("close"),
-                    callback = function()
-                        UIManager:close(note_input)
-                    end,
-                },
-            },
-        },
-    }
-    UIManager:show(note_input)
-    UIManager:setDirty(nil, "full")
-end
-
--- ═════════════════════════════════════════════════════════════════════════════
--- Diálogo de Configurações
--- ═════════════════════════════════════════════════════════════════════════════
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║          SEÇÃO 8: DIÁLOGO DE CONFIGURAÇÕES (SettingsDialog)                  ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
 local SettingsDialog = InputContainer:extend{
     plugin = nil,
 }
@@ -1619,6 +1670,9 @@ function SettingsDialog:init()
 
     local rows = VerticalGroup:new{ align = "left" }
 
+    -- ═══════════════════════════════════════════════════════
+    -- SUBSEÇÃO: Tipo de Baralho
+    -- ═══════════════════════════════════════════════════════
     local deck_section = TextWidget:new{
         text      = "— " .. self.plugin:getTranslation("deck_type") .. " —",
         face      = Font:getFace("smalltfont"),
@@ -1665,6 +1719,7 @@ function SettingsDialog:init()
     table.insert(rows, deck_btns)
     table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_default })
 
+    -- Opções do Tarot (ocultas no Lenormand)
     if not self.plugin.use_lenormand then
         local rev_mark = self.plugin.allow_reversed and "☑" or "☐"
         local rev_label = "  " .. rev_mark .. "  " .. self.plugin:getTranslation("allow_reversed_desc")
@@ -1699,6 +1754,9 @@ function SettingsDialog:init()
         table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_default })
     end
 
+    -- ═══════════════════════════════════════════════════════
+    -- SUBSEÇÃO: Idioma
+    -- ═══════════════════════════════════════════════════════
     local lang_label = TextWidget:new{
         text      = "— " .. self.plugin:getTranslation("language") .. " —",
         face      = Font:getFace("smalltfont"),
@@ -1744,8 +1802,65 @@ function SettingsDialog:init()
         },
     }
     table.insert(rows, lang_btns)
+    table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_default })
+
+    -- ═══════════════════════════════════════════════════════
+    -- SUBSEÇÃO: Redefinir
+    -- ═══════════════════════════════════════════════════════
+    local reset_section = TextWidget:new{
+        text      = "— " .. self.plugin:getTranslation("reset_section") .. " —",
+        face      = Font:getFace("smalltfont"),
+        bold      = true,
+        max_width = iw,
+        alignment = "left",
+    }
+    table.insert(rows, reset_section)
+    table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_small })
+
+    local restore_label = "  ⚠  " .. self.plugin:getTranslation("restore_desc")
+    local btn_restore = Button:new{
+        text     = restore_label,
+        width    = iw,
+        radius   = Size.radius.button,
+        callback = function()
+            local confirm_buttons = {
+                {
+                    {
+                        text = self.plugin:getTranslation("yes"),
+                        callback = function()
+                            UIManager:close(self.plugin.restore_confirm_dialog)
+                            self.plugin:restoreAll()
+                            UIManager:close(self)
+                            UIManager:show(InfoMessage:new{ text = self.plugin:getTranslation("restore_success") })
+                            self.plugin:refreshMenu()
+                            UIManager:setDirty(nil, "full")
+                        end,
+                    },
+                },
+                {
+                    {
+                        text = self.plugin:getTranslation("no"),
+                        is_enter_default = true,
+                        callback = function()
+                            UIManager:close(self.plugin.restore_confirm_dialog)
+                        end,
+                    },
+                },
+            }
+            
+            self.plugin.restore_confirm_dialog = ButtonDialog:new{
+                title = self.plugin:getTranslation("restore_confirm"),
+                buttons = confirm_buttons,
+            }
+            
+            UIManager:show(self.plugin.restore_confirm_dialog)
+            UIManager:setDirty(nil, "full")
+        end,
+    }
+    table.insert(rows, btn_restore)
     table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_large })
 
+    -- Botão Fechar
     local btn_close = Button:new{
         text     = self.plugin:getTranslation("close"),
         width    = iw,
@@ -1778,25 +1893,538 @@ function SettingsDialog:init()
     }
 end
 
--- ═════════════════════════════════════════════════════════════════════════════
--- Menu e orquestração
--- ═════════════════════════════════════════════════════════════════════════════
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║           SEÇÃO 9: DIÁLOGO DO LIVRO DE CARTAS (CardBookDialog)               ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
+local CardBookDialog = InputContainer:extend{
+    plugin = nil,
+    card_list = nil,
+    current_index = 1,
+    parent_callback = nil,
+}
+
+function CardBookDialog:init()
+    local sw  = Screen:getWidth()
+    local w   = math.floor(sw * 0.84)
+    local pad = Size.padding.large
+    local iw  = w - pad * 2
+    local lang = self.plugin.language
+
+    local card = self.card_list[self.current_index]
+
+    -- Title
+    local book_title = self.plugin:getTranslation("card_book")
+    local title_w = TextWidget:new{
+        text      = "~ * ~\n" .. book_title,
+        face      = Font:getFace("tfont"),
+        bold      = true,
+        max_width = iw,
+        alignment = "center",
+    }
+
+    -- Divider
+    local divider = TextWidget:new{
+        text      = "─ ─ ─ ─ ─ ─ ─ ─",
+        face      = Font:getFace("x_smallinfofont"),
+        fgcolor   = Blitbuffer.gray(0.5),
+        max_width = iw,
+        alignment = "center",
+    }
+
+    -- Number/Arcana
+    local number_text = ""
+    if card.roman then
+        number_text = card.roman .. " - " .. self.plugin:getTranslation("arcana_label") .. " " .. self.plugin:getTranslation("major_arcana")
+    elseif card.number then
+        number_text = tostring(card.number) .. " - Lenormand"
+    elseif card.rank then
+        local rank_text = card.rank[lang] or card.rank.pt
+        local suit_text = card.suit[lang] or card.suit.pt
+        number_text = rank_text .. " - " .. self.plugin:getTranslation("minor_arcana") .. " (" .. suit_text .. ")"
+    end
+    
+    local number_w = TextWidget:new{
+        text      = number_text,
+        face      = Font:getFace("x_smallinfofont"),
+        fgcolor   = Blitbuffer.gray(0.5),
+        max_width = iw,
+        alignment = "center",
+    }
+
+    -- Card name
+    local name_text = card.name[lang] or card.name.pt
+    local name_w = TextWidget:new{
+        text      = name_text,
+        face      = Font:getFace("cfont"),
+        bold      = true,
+        max_width = iw,
+        alignment = "center",
+    }
+
+    -- Symbol/Suit
+    local suit_w
+    if card.symbol then
+        suit_w = TextWidget:new{
+            text      = card.symbol .. "  " .. card.symbol .. "  " .. card.symbol,
+            face      = Font:getFace("smalltfont"),
+            fgcolor   = Blitbuffer.gray(0.5),
+            max_width = iw,
+            alignment = "center",
+        }
+    elseif card.suit then
+        suit_w = TextWidget:new{
+            text      = card.suit.symbol .. "  " .. (card.suit[lang] or card.suit.pt) .. "  " .. card.suit.symbol,
+            face      = Font:getFace("smalltfont"),
+            fgcolor   = Blitbuffer.gray(0.5),
+            max_width = iw,
+            alignment = "center",
+        }
+    end
+
+    -- Upright meaning
+    local meaning_label_w = TextWidget:new{
+        text      = self.plugin:getTranslation("meaning_label") .. ":",
+        face      = Font:getFace("smalltfont"),
+        bold      = true,
+        max_width = iw,
+        alignment = "left",
+    }
+    
+    local upright_meaning = card.meaning[lang] or card.meaning.pt
+    local upright_w = TextBoxWidget:new{
+        text      = upright_meaning,
+        face      = Font:getFace("cfont"),
+        width     = iw,
+        alignment = "left",
+    }
+
+    -- Reversed meaning (only for Tarot, not Lenormand)
+    local reversed_label_w
+    local reversed_w
+    if not self.plugin.use_lenormand and card.reversed_meaning then
+        reversed_label_w = TextWidget:new{
+            text      = self.plugin:getTranslation("reversed_meaning_label") .. ":",
+            face      = Font:getFace("smalltfont"),
+            bold      = true,
+            max_width = iw,
+            alignment = "left",
+        }
+        
+        local reversed_meaning = card.reversed_meaning[lang] or card.reversed_meaning.pt
+        reversed_w = TextBoxWidget:new{
+            text      = reversed_meaning,
+            face      = Font:getFace("cfont"),
+            width     = iw,
+            alignment = "left",
+        }
+    end
+
+    -- Navigation
+    local nav_row
+    if #self.card_list > 1 then
+        local btn_prev = Button:new{
+            text     = self.plugin:getTranslation("prev"),
+            width    = math.floor(iw * 0.30),
+            radius   = Size.radius.button,
+            enabled  = self.current_index > 1,
+            callback = function()
+                if self.current_index > 1 then
+                    UIManager:close(self)
+                    UIManager:show(CardBookDialog:new{
+                        plugin = self.plugin,
+                        card_list = self.card_list,
+                        current_index = self.current_index - 1,
+                        parent_callback = self.parent_callback,
+                    })
+                    UIManager:setDirty(nil, "full")
+                end
+            end,
+        }
+        
+        local counter_w = TextWidget:new{
+            text      = string.format(self.plugin:getTranslation("card_count"), self.current_index, #self.card_list),
+            face      = Font:getFace("x_smallinfofont"),
+            fgcolor   = Blitbuffer.gray(0.5),
+            max_width = math.floor(iw * 0.36),
+            alignment = "center",
+        }
+        
+        local btn_next = Button:new{
+            text     = self.plugin:getTranslation("next"),
+            width    = math.floor(iw * 0.30),
+            radius   = Size.radius.button,
+            enabled  = self.current_index < #self.card_list,
+            callback = function()
+                if self.current_index < #self.card_list then
+                    UIManager:close(self)
+                    UIManager:show(CardBookDialog:new{
+                        plugin = self.plugin,
+                        card_list = self.card_list,
+                        current_index = self.current_index + 1,
+                        parent_callback = self.parent_callback,
+                    })
+                    UIManager:setDirty(nil, "full")
+                end
+            end,
+        }
+        
+        nav_row = HorizontalGroup:new{
+            align = "center",
+            btn_prev,
+            HorizontalSpan:new{ width = math.floor(iw * 0.02) },
+            counter_w,
+            HorizontalSpan:new{ width = math.floor(iw * 0.02) },
+            btn_next,
+        }
+    end
+
+    -- Back button
+    local btn_back = Button:new{
+        text     = self.plugin:getTranslation("back"),
+        width    = iw,
+        radius   = Size.radius.button,
+        callback = function()
+            UIManager:close(self)
+            if self.parent_callback then
+                self.parent_callback()
+            end
+            UIManager:setDirty(nil, "full")
+        end,
+    }
+
+    -- Build content
+    local content = VerticalGroup:new{
+        align = "center",
+        title_w,
+        VerticalSpan:new{ width = Size.span.vertical_small },
+        divider,
+        VerticalSpan:new{ width = Size.span.vertical_default },
+        number_w,
+    }
+    
+    if suit_w then
+        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
+        table.insert(content, suit_w)
+    end
+    
+    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+    table.insert(content, name_w)
+    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+    table.insert(content, divider)
+    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+    table.insert(content, meaning_label_w)
+    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
+    table.insert(content, upright_w)
+    
+    if reversed_label_w and reversed_w then
+        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+        table.insert(content, reversed_label_w)
+        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
+        table.insert(content, reversed_w)
+    end
+    
+    if nav_row then
+        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+        table.insert(content, nav_row)
+    end
+    
+    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_large })
+    table.insert(content, btn_back)
+
+    local dialog_frame = FrameContainer:new{
+        background = Blitbuffer.COLOR_WHITE,
+        bordersize = Size.border.window,
+        radius     = Size.radius.window,
+        padding    = pad,
+        content,
+    }
+
+    self[1] = CenterContainer:new{
+        dimen = Screen:getSize(),
+        dialog_frame,
+    }
+end
+
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║      SEÇÃO 10: MENU DO LIVRO DE CARTAS (CardBookMenu)                        ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
+local CardBookMenu = InputContainer:extend{
+    plugin = nil,
+}
+
+function CardBookMenu:init()
+    local sw  = Screen:getWidth()
+    local w   = math.floor(sw * 0.84)
+    local pad = Size.padding.large
+    local iw  = w - pad * 2
+
+    local title = TextWidget:new{
+        text      = "~ * ~\n" .. self.plugin:getTranslation("card_book"),
+        face      = Font:getFace("tfont"),
+        bold      = true,
+        max_width = iw,
+        alignment = "center",
+    }
+
+    -- Seção Tarot
+    local tarot_section = TextWidget:new{
+        text      = "— " .. self.plugin:getTranslation("tarot_deck") .. " —",
+        face      = Font:getFace("smalltfont"),
+        bold      = true,
+        max_width = iw,
+        alignment = "left",
+    }
+
+    -- Botões do Tarot
+    local btn_major = Button:new{
+        text     = self.plugin:getTranslation("major_arcana_list"),
+        width    = iw,
+        radius   = Size.radius.button,
+        callback = function()
+            UIManager:close(self)
+            self:showCardList(MAJOR_ARCANA)
+        end,
+    }
+    
+    local btn_minor = Button:new{
+        text     = self.plugin:getTranslation("minor_arcana_list"),
+        width    = iw,
+        radius   = Size.radius.button,
+        callback = function()
+            UIManager:close(self)
+            self:showMinorArcanaMenu()
+        end,
+    }
+    
+    local btn_all = Button:new{
+        text     = self.plugin:getTranslation("all_cards"),
+        width    = iw,
+        radius   = Size.radius.button,
+        callback = function()
+            UIManager:close(self)
+            self:showCardList(FULL_DECK)
+        end,
+    }
+
+    -- Seção Baralho Cigano
+    local lenormand_section = TextWidget:new{
+        text      = "— " .. self.plugin:getTranslation("lenormand_deck") .. " —",
+        face      = Font:getFace("smalltfont"),
+        bold      = true,
+        max_width = iw,
+        alignment = "left",
+    }
+    
+    local btn_lenormand = Button:new{
+        text     = self.plugin:getTranslation("lenormand_list"),
+        width    = iw,
+        radius   = Size.radius.button,
+        callback = function()
+            UIManager:close(self)
+            self:showCardList(LENORMAND_DECK)
+        end,
+    }
+    
+    local btn_close = Button:new{
+        text     = self.plugin:getTranslation("close"),
+        width    = iw,
+        radius   = Size.radius.button,
+        callback = function()
+            UIManager:close(self)
+            UIManager:setDirty(nil, "full")
+        end,
+    }
+
+    local content = VerticalGroup:new{
+        align = "center",
+        title,
+        VerticalSpan:new{ width = Size.span.vertical_large },
+        tarot_section,
+        VerticalSpan:new{ width = Size.span.vertical_small },
+        btn_major,
+        VerticalSpan:new{ width = Size.span.vertical_small },
+        btn_minor,
+        VerticalSpan:new{ width = Size.span.vertical_small },
+        btn_all,
+        VerticalSpan:new{ width = Size.span.vertical_default },
+        lenormand_section,
+        VerticalSpan:new{ width = Size.span.vertical_small },
+        btn_lenormand,
+        VerticalSpan:new{ width = Size.span.vertical_large },
+        btn_close,
+    }
+
+    local dialog_frame = FrameContainer:new{
+        background = Blitbuffer.COLOR_WHITE,
+        bordersize = Size.border.window,
+        radius     = Size.radius.window,
+        padding    = pad,
+        content,
+    }
+
+    self[1] = CenterContainer:new{
+        dimen = Screen:getSize(),
+        dialog_frame,
+    }
+end
+
+function CardBookMenu:showMinorArcanaMenu()
+    local sw  = Screen:getWidth()
+    local w   = math.floor(sw * 0.84)
+    local pad = Size.padding.large
+    local iw  = w - pad * 2
+    local lang = self.plugin.language
+
+    local suit_keys = {
+        { name = self.plugin:getTranslation("suit_wands"), symbol = "|", start = 23, end_ = 36 },
+        { name = self.plugin:getTranslation("suit_cups"), symbol = "~", start = 37, end_ = 50 },
+        { name = self.plugin:getTranslation("suit_swords"), symbol = "+", start = 51, end_ = 64 },
+        { name = self.plugin:getTranslation("suit_pentacles"), symbol = "*", start = 65, end_ = 78 },
+    }
+    
+    local MinorArcanaMenu = InputContainer:extend{
+        plugin = self.plugin,
+        showCardList = function(this, cards)
+            UIManager:show(CardBookDialog:new{
+                plugin = this.plugin,
+                card_list = cards,
+                current_index = 1,
+                parent_callback = function()
+                    UIManager:show(CardBookMenu:new{ plugin = this.plugin })
+                end,
+            })
+            UIManager:setDirty(nil, "full")
+        end,
+    }
+    
+    function MinorArcanaMenu:init()
+        local buttons = {}
+        
+        for _, suit_data in ipairs(suit_keys) do
+            local btn = Button:new{
+                text     = suit_data.symbol .. " " .. suit_data.name,
+                width    = iw,
+                radius   = Size.radius.button,
+                callback = function()
+                    local cards = {}
+                    for _, card in ipairs(MINOR_ARCANA) do
+                        if card.id >= suit_data.start and card.id <= suit_data.end_ then
+                            table.insert(cards, card)
+                        end
+                    end
+                    
+                    UIManager:close(self)
+                    self:showCardList(cards)
+                end,
+            }
+            table.insert(buttons, btn)
+            table.insert(buttons, VerticalSpan:new{ width = Size.span.vertical_small })
+        end
+        
+        local btn_all_minor = Button:new{
+            text     = self.plugin:getTranslation("all_cards") .. " - " .. self.plugin:getTranslation("minor_arcana"),
+            width    = iw,
+            radius   = Size.radius.button,
+            callback = function()
+                UIManager:close(self)
+                self:showCardList(MINOR_ARCANA)
+            end,
+        }
+        
+        table.insert(buttons, btn_all_minor)
+        table.insert(buttons, VerticalSpan:new{ width = Size.span.vertical_default })
+        
+        local btn_back = Button:new{
+            text     = self.plugin:getTranslation("back"),
+            width    = iw,
+            radius   = Size.radius.button,
+            callback = function()
+                UIManager:close(self)
+                UIManager:show(CardBookMenu:new{ plugin = self.plugin })
+                UIManager:setDirty(nil, "full")
+            end,
+        }
+        table.insert(buttons, btn_back)
+
+        local title = TextWidget:new{
+            text      = self.plugin:getTranslation("minor_arcana_list"),
+            face      = Font:getFace("tfont"),
+            bold      = true,
+            max_width = iw,
+            alignment = "center",
+        }
+        
+        local content = VerticalGroup:new{
+            align = "center",
+            title,
+            VerticalSpan:new{ width = Size.span.vertical_large },
+            VerticalGroup:new{ align = "center", unpack(buttons) },
+        }
+
+        local dialog_frame = FrameContainer:new{
+            background = Blitbuffer.COLOR_WHITE,
+            bordersize = Size.border.window,
+            radius     = Size.radius.window,
+            padding    = pad,
+            content,
+        }
+
+        self[1] = CenterContainer:new{
+            dimen = Screen:getSize(),
+            dialog_frame,
+        }
+    end
+    
+    local submenu = MinorArcanaMenu:new{
+        plugin = self.plugin,
+    }
+    
+    UIManager:show(submenu)
+    UIManager:setDirty(nil, "full")
+end
+
+function CardBookMenu:showCardList(cards)
+    UIManager:show(CardBookDialog:new{
+        plugin = self.plugin,
+        card_list = cards,
+        current_index = 1,
+        parent_callback = function()
+            UIManager:show(CardBookMenu:new{ plugin = self.plugin })
+        end,
+    })
+    UIManager:setDirty(nil, "full")
+end
+
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║                  SEÇÃO 11: MENU E ORQUESTRAÇÃO                                ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
 function TarotPlugin:addToMainMenu(menu_items)
     menu_items.tarot = {
         text         = self:getTranslation("title"),
         sorting_hint = "tools",
         sub_item_table = {
             {
-                text     = self:getTranslation("draw_card"),
-                callback = function()
-                    self:showSingleCard()
-                end,
-            },
-            {
-                text     = self:getTranslation("draw_three"),
-                callback = function()
-                    self:showThreeCards()
-                end,
+                text     = self:getTranslation("spreads"),
+                sub_item_table = {
+                    {
+                        text     = self:getTranslation("daily_card"),
+                        callback = function()
+                            self:showDailyCard()
+                        end,
+                    },
+                    {
+                        text     = self:getTranslation("one_card"),
+                        callback = function()
+                            self:showSingleCard()
+                        end,
+                    },
+                    {
+                        text     = self:getTranslation("three_cards"),
+                        callback = function()
+                            self:showThreeCards()
+                        end,
+                    },
+                },
             },
             {
                 text     = self:getTranslation("saved_readings"),
@@ -1805,7 +2433,13 @@ function TarotPlugin:addToMainMenu(menu_items)
                 end,
             },
             {
-                text     = self:getTranslation("settings"),
+                text     = self:getTranslation("card_book"),
+                callback = function()
+                    self:showCardBook()
+                end,
+            },
+            {
+                text     = self:getTranslation("configuration"),
                 callback = function()
                     self:showSettings()
                 end,
@@ -1816,6 +2450,11 @@ end
 
 function TarotPlugin:showSettings()
     UIManager:show(SettingsDialog:new{ plugin = self })
+    UIManager:setDirty(nil, "full")
+end
+
+function TarotPlugin:showCardBook()
+    UIManager:show(CardBookMenu:new{ plugin = self })
     UIManager:setDirty(nil, "full")
 end
 
@@ -1831,6 +2470,7 @@ function TarotPlugin:showSingleCard()
             current_index = 1,
             plugin = self,
             on_new = function() self:showSingleCard() end,
+            is_daily = false,
         }
         UIManager:show(dlg)
         UIManager:setDirty(nil, "full")
@@ -1842,7 +2482,6 @@ function TarotPlugin:showThreeCards()
     UIManager:show(loading)
     UIManager:setDirty(nil, "full")
     UIManager:scheduleIn(0.5, function()
-        -- Usando o novo método para garantir que não existam cartas duplicadas
         local drawn = self:drawUniqueCards(3)
         
         UIManager:close(loading)
@@ -1856,6 +2495,46 @@ function TarotPlugin:showThreeCards()
             },
             plugin = self,
             on_new = function() self:showThreeCards() end,
+            is_daily = false,
+        }
+        UIManager:show(dlg)
+        UIManager:setDirty(nil, "full")
+    end)
+end
+
+function TarotPlugin:getDailyCardSeed()
+    return os.date("%Y%m%d")
+end
+
+function TarotPlugin:showDailyCard()
+    local loading = InfoMessage:new{ text = self:getTranslation("loading") }
+    UIManager:show(loading)
+    UIManager:setDirty(nil, "full")
+    UIManager:scheduleIn(0.5, function()
+        local deck = self:getActiveDeck()
+        local seed = tonumber(self:getDailyCardSeed())
+        math.randomseed(seed)
+        math.random()
+        math.random()
+        math.random()
+        local card = deck[math.random(1, #deck)]
+        local is_reversed = false
+        if self.allow_reversed and not self.use_lenormand then
+            is_reversed = math.random(2) == 1
+        end
+        math.randomseed(os.time())
+        math.random()
+        math.random()
+        math.random()
+        
+        UIManager:close(loading)
+        local dlg = CardDialog:new{
+            cards = {{ card = card, is_reversed = is_reversed }},
+            current_index = 1,
+            plugin = self,
+            title_label = self:getTranslation("daily_card"),
+            on_new = function() self:showDailyCard() end,
+            is_daily = true,
         }
         UIManager:show(dlg)
         UIManager:setDirty(nil, "full")
