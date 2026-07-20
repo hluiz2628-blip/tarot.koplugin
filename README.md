@@ -1,153 +1,99 @@
 # Tarot para KOReader
 
-Um plugin de leitura de tarot e baralho cigano para o KOReader. Ideal para momentos de introspecção durante a leitura.
+Plugin de tarot e baralho cigano para KOReader. Ideal para introspecção durante a leitura. Desenvolvido com auxílio do DeepSeek.
 
-Desenvolvido com o auxílio do DeepSeek.
+## ✨ Funcionalidades
 
-## ✨ O que você pode fazer
-
-- **Tirar uma carta** — Uma carta aleatória com significado detalhado
-- **Tiragem de 3 cartas** — Três cartas para uma leitura mais completa
-- **Salvar suas tiragens** — Guarde suas leituras com título e notas pessoais
-- **Rever tiragens antigas** — Acesse suas leituras salvas a qualquer momento
-- **Escolher o baralho** — Tarot tradicional ou Baralho Cigano (Lenormand)
-- **Cartas invertidas** — Ative ou desative a posição invertida das cartas
-- **Dois idiomas** — Português e inglês
+- **Carta Diária** — Uma carta baseada na data do dia para reflexão diária
+- **1 Carta** — Carta aleatória com significado detalhado
+- **3 Cartas** — Tiragem completa com navegação entre cartas
+- **Livro de Cartas** — Explore todas as cartas com nomes, símbolos e significados
+- **Salvar tiragens** — Guarde com título e notas pessoais
+- **Tiragens salvas** — Acesse ou exclua leituras anteriores
+- **Tarot** (78 cartas) ou **Baralho Cigano** (36 cartas)
+- **Cartas invertidas** — Ative ou desative
+- **Apenas Arcanos Maiores** — Opção para sorteios mais diretos
+- **Português e inglês**
 
 ## 📥 Instalação
 
-1. Copie a pasta `tarot.koplugin` para a pasta de plugins do KOReader:
-   - **Android:** `/sdcard/koreader/plugins/`
-   - **Linux/PC:** `~/.config/koreader/plugins/`
-2. Reinicie o KOReader
-3. Acesse pelo menu **Ferramentas → Leitura de Tarot**
+Insira a pasta `tarot.koplugin` na pasta de plugins do KOReader. Reinicie o KOReader.
 
-## 🎴 Os Baralhos
+> ⚠️ Reinicie o KOReader ao mudar o idioma para aplicar corretamente.
 
-**Tarot** — 78 cartas com os 22 Arcanos Maiores e 56 Arcanos Menores
+## 🎴 Baralhos
 
-**Baralho Cigano** — 36 cartas do sistema Lenormand com símbolos únicos
+- **Tarot** — 78 cartas (22 Arcanos Maiores + 56 Arcanos Menores)
+- **Baralho Cigano** — 36 cartas do sistema Lenormand com símbolos únicos
 
-## 💾 Como salvar uma tiragem
+## 📖 Livro de Cartas
+
+Navegue por Arcanos Maiores, Menores (por naipes) e Baralho Cigano. Cada carta exibe nome, número, símbolo, significado e significado invertido. Ideal para estudo e consulta.
+
+## 💾 Salvando uma tiragem
 
 1. Após tirar as cartas, toque em **Salvar**
-2. Digite um título para sua leitura
-3. Adicione uma nota pessoal (opcional)
-4. Pronto! Sua tiragem está salva
+2. Insira um título e, se quiser, uma nota pessoal
+3. A tiragem será salva automaticamente
 
-## 📖 Como acessar tiragens salvas
+## 📂 Acessando tiragens salvas
 
-No menu principal do plugin, toque em **Tiragens Salvas** e escolha entre:
-- **Abrir no Leitor** — Visualize a tiragem no leitor do KOReader
-- **Excluir** — Remova tiragens que não quiser mais
+No menu principal, vá em **Tiragens Salvas** e escolha **Abrir no Leitor** ou **Excluir**.
 
-## ⚙️ Personalização
+## ⚙️ Configurações
 
-Nas **Configurações** você pode:
-- Escolher entre Tarot e Baralho Cigano
-- Ativar ou desativar cartas invertidas
-- Mostrar apenas Arcanos Maiores
-- Mudar o idioma entre português e inglês
-
-## 📝 Exemplo de tiragem salva
-
-```
-Reflexão da Manhã
-
-Senti uma energia muito forte hoje ao acordar.
-As cartas confirmaram meu momento de transição.
-
-Carta 1 — A Estrela (Posição normal)
-Esperança. Fé. Siga sua intuição. A luz o guia na escuridão.
-
-Carta 2 — O Eremita (Posição normal)
-Introspecção. Sabedoria interior. Busque o silêncio.
-
-Carta 3 — Ás de Copas (Posição normal)
-Emoções. Amor. Conexões afetivas. Novo ciclo.
-
-—
-19/07/2026 08:45
-```
-
----
-
-*Plugin criado para o KOReader, compatível com dispositivos e-ink como Kindle.*
+- Escolha entre Tarot e Baralho Cigano
+- Ative/desative cartas invertidas
+- Mostre apenas Arcanos Maiores
+- Alterne entre português e inglês
 
 ---
 
 # Tarot for KOReader
 
-A tarot and lenormand reading plugin for KOReader. Perfect for moments of introspection while reading.
+Tarot and lenormand reading plugin for KOReader. Perfect for introspection while reading. Developed with the help of DeepSeek.
 
-Developed with the help of DeepSeek.
+## ✨ Features
 
-## ✨ What you can do
-
-- **Draw a card** — A random card with detailed meaning
-- **3-card spread** — Three cards for a deeper reading
-- **Save your readings** — Save readings with title and personal notes
-- **Review past readings** — Access saved readings anytime
-- **Choose your deck** — Traditional Tarot or Lenormand deck
-- **Reversed cards** — Enable or disable reversed position
-- **Two languages** — Portuguese and English
+- **Daily Card** — A card based on the day's date for daily reflection
+- **1 Card** — Random card with detailed meaning
+- **3 Cards** — Full spread with card navigation
+- **Card Book** — Browse all cards with names, symbols and meanings
+- **Save readings** — Save with title and personal notes
+- **Saved readings** — Access or delete previous readings
+- **Tarot** (78 cards) or **Lenormand** (36 cards)
+- **Reversed cards** — Enable or disable
+- **Major Arcana only** — Option for more direct draws
+- **Portuguese and English**
 
 ## 📥 Installation
 
-1. Copy the `tarot.koplugin` folder to KOReader's plugins folder:
-   - **Android:** `/sdcard/koreader/plugins/`
-   - **Linux/PC:** `~/.config/koreader/plugins/`
-2. Restart KOReader
-3. Access via menu: **Tools → Tarot Reading**
+Place the `tarot.koplugin` folder into KOReader's plugins folder. Restart KOReader.
 
-## 🎴 The Decks
+> ⚠️ Restart KOReader when switching languages for changes to take effect.
 
-**Tarot** — 78 cards with 22 Major Arcana and 56 Minor Arcana
+## 🎴 Decks
 
-**Lenormand** — 36 cards of the Lenormand system with unique symbols
+- **Tarot** — 78 cards (22 Major Arcana + 56 Minor Arcana)
+- **Lenormand** — 36 cards with unique symbols
 
-## 💾 How to save a reading
+## 📖 Card Book
+
+Browse Major Arcana, Minor Arcana (by suits) and Lenormand deck. Each card shows name, number, symbol, meaning and reversed meaning. Perfect for study and reference.
+
+## 💾 Saving a reading
 
 1. After drawing cards, tap **Save**
-2. Enter a title for your reading
-3. Add a personal note (optional)
-4. Done! Your reading is saved
+2. Enter a title and, optionally, a personal note
+3. The reading will be saved automatically
 
-## 📖 How to access saved readings
+## 📂 Accessing saved readings
 
-In the plugin's main menu, tap **Saved Readings** and choose between:
-- **Open in Reader** — View the reading in KOReader's viewer
-- **Delete** — Remove readings you no longer want
+In the main menu, go to **Saved Readings** and choose **Open in Reader** or **Delete**.
 
-## ⚙️ Customization
+## ⚙️ Settings
 
-In **Settings** you can:
 - Choose between Tarot and Lenormand
-- Enable or disable reversed cards
+- Enable/disable reversed cards
 - Show only Major Arcana
 - Switch between Portuguese and English
-
-## 📝 Example of saved reading
-
-```
-Morning Reflection
-
-I felt a very strong energy when I woke up today.
-The cards confirmed my moment of transition.
-
-Card 1 — The Star (Upright)
-Hope. Faith. Follow your intuition. Light guides you in darkness.
-
-Card 2 — The Hermit (Upright)
-Introspection. Inner wisdom. Seek silence.
-
-Card 3 — Ace of Cups (Upright)
-Emotions. Love. Affective connections. New cycle.
-
-—
-07/19/2026 08:45
-```
-
----
-
-*Plugin made for KOReader, compatible with e-ink devices such as Kindle.*
