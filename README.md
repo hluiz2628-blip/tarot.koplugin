@@ -1,106 +1,153 @@
-# tarot.koplugin 🔮
+# Tarot para KOReader
 
-**Leitura de Tarot / Tarot Reading**
+Um plugin de leitura de tarot e baralho cigano para o KOReader. Ideal para momentos de introspecção durante a leitura.
 
----
+Desenvolvido com o auxílio do DeepSeek.
 
-## 📖 Português
+## ✨ O que você pode fazer
 
-### Descrição
-Plugin de Tarot para KOReader com 78 cartas (22 Arcanos Maiores e 56 Arcanos Menores), significados em português e inglês, opção de cartas invertidas e navegação entre cartas. Compatível com dispositivos e-ink (Kindle).
+- **Tirar uma carta** — Uma carta aleatória com significado detalhado
+- **Tiragem de 3 cartas** — Três cartas para uma leitura mais completa
+- **Salvar suas tiragens** — Guarde suas leituras com título e notas pessoais
+- **Rever tiragens antigas** — Acesse suas leituras salvas a qualquer momento
+- **Escolher o baralho** — Tarot tradicional ou Baralho Cigano (Lenormand)
+- **Cartas invertidas** — Ative ou desative a posição invertida das cartas
+- **Dois idiomas** — Português e inglês
 
-### Funcionalidades
-- Tiragem de 1 ou 3 cartas
-- Opção de cartas invertidas (ativar/desativar)
-- Apenas Arcanos Maiores (22 cartas) ou deck completo (78 cartas)
-- Interface e significados em Português e Inglês
-- Navegação entre cartas na tiragem
-- Menu de configurações personalizável
+## 📥 Instalação
 
-### Instalação
-1. Copie a pasta `tarot.koplugin/` para:
+1. Copie a pasta `tarot.koplugin` para a pasta de plugins do KOReader:
    - **Android:** `/sdcard/koreader/plugins/`
    - **Linux/PC:** `~/.config/koreader/plugins/`
 2. Reinicie o KOReader
-3. Acesse em: **Menu → Ferramentas → Leitura de Tarot**
+3. Acesse pelo menu **Ferramentas → Leitura de Tarot**
 
-### Como Usar
-- **Tirar uma carta:** Abre uma carta aleatória com significado
-- **Tiragem de 3 cartas:** Abre 3 cartas para leitura completa (Passado, Presente, Futuro)
-- **Configurações:** Personalize idioma, cartas invertidas e tipo de deck
-- Use os botões **< Ant** e **Próx >** para navegar entre as cartas
+## 🎴 Os Baralhos
 
-### Cartas Disponíveis
-- **22 Arcanos Maiores:** O Louco, O Mago, A Sacerdotisa, etc.
-- **56 Arcanos Menores:** Paus, Copas, Espadas e Ouros (Ás ao Rei)
-- Cada carta possui significado normal e invertido
+**Tarot** — 78 cartas com os 22 Arcanos Maiores e 56 Arcanos Menores
 
-### Personalização
-- 🌐 Alterne entre Português e Inglês
-- 🔄 Ative/desative cartas invertidas
-- 📚 Escolha entre deck completo ou apenas Arcanos Maiores
+**Baralho Cigano** — 36 cartas do sistema Lenormand com símbolos únicos
 
-### Compatibilidade
-- ✅ KOReader 2024.01 ou superior
-- ✅ Testado em Kindle e Linux
-- ✅ Otimizado para telas e-ink
+## 💾 Como salvar uma tiragem
+
+1. Após tirar as cartas, toque em **Salvar**
+2. Digite um título para sua leitura
+3. Adicione uma nota pessoal (opcional)
+4. Pronto! Sua tiragem está salva
+
+## 📖 Como acessar tiragens salvas
+
+No menu principal do plugin, toque em **Tiragens Salvas** e escolha entre:
+- **Abrir no Leitor** — Visualize a tiragem no leitor do KOReader
+- **Excluir** — Remova tiragens que não quiser mais
+
+## ⚙️ Personalização
+
+Nas **Configurações** você pode:
+- Escolher entre Tarot e Baralho Cigano
+- Ativar ou desativar cartas invertidas
+- Mostrar apenas Arcanos Maiores
+- Mudar o idioma entre português e inglês
+
+## 📝 Exemplo de tiragem salva
+
+```
+Reflexão da Manhã
+
+Senti uma energia muito forte hoje ao acordar.
+As cartas confirmaram meu momento de transição.
+
+Carta 1 — A Estrela (Posição normal)
+Esperança. Fé. Siga sua intuição. A luz o guia na escuridão.
+
+Carta 2 — O Eremita (Posição normal)
+Introspecção. Sabedoria interior. Busque o silêncio.
+
+Carta 3 — Ás de Copas (Posição normal)
+Emoções. Amor. Conexões afetivas. Novo ciclo.
+
+—
+19/07/2026 08:45
+```
 
 ---
 
-## 📖 English
+*Plugin criado para o KOReader, compatível com dispositivos e-ink como Kindle.*
 
-### Description
-Tarot plugin for KOReader with 78 cards (22 Major Arcana and 56 Minor Arcana), meanings in Portuguese and English, reversed cards option and card navigation. Compatible with e-ink devices (Kindle, Kobo, etc.).
+---
 
-### Features
--  Draw 1 or 3 cards
--  Reversed cards option (enable/disable)
--  Major Arcana only (22 cards) or full deck (78 cards)
--  Interface and meanings in Portuguese and English
--  Card navigation in spreads
--  Customizable settings menu
+# Tarot for KOReader
 
-### Installation
-1. Copy the `tarot.koplugin/` folder to:
+A tarot and lenormand reading plugin for KOReader. Perfect for moments of introspection while reading.
+
+Developed with the help of DeepSeek.
+
+## ✨ What you can do
+
+- **Draw a card** — A random card with detailed meaning
+- **3-card spread** — Three cards for a deeper reading
+- **Save your readings** — Save readings with title and personal notes
+- **Review past readings** — Access saved readings anytime
+- **Choose your deck** — Traditional Tarot or Lenormand deck
+- **Reversed cards** — Enable or disable reversed position
+- **Two languages** — Portuguese and English
+
+## 📥 Installation
+
+1. Copy the `tarot.koplugin` folder to KOReader's plugins folder:
    - **Android:** `/sdcard/koreader/plugins/`
    - **Linux/PC:** `~/.config/koreader/plugins/`
 2. Restart KOReader
-3. Access via: **Menu → Tools → Tarot Reading**
+3. Access via menu: **Tools → Tarot Reading**
 
-### How to Use
-- **Draw a card:** Opens a random card with meaning
-- **3 card spread:** Opens 3 cards for full reading (Past, Present, Future)
-- **Settings:** Customize language, reversed cards and deck type
-- Use **< Prev** and **Next >** buttons to navigate between cards
+## 🎴 The Decks
 
-### Available Cards
-- **22 Major Arcana:** The Fool, The Magician, The High Priestess, etc.
-- **56 Minor Arcana:** Wands, Cups, Swords and Pentacles (Ace to King)
-- Each card has upright and reversed meanings
+**Tarot** — 78 cards with 22 Major Arcana and 56 Minor Arcana
 
-### Customization
-- 🌐 Switch between Portuguese and English
-- 🔄 Enable/disable reversed cards
-- 📚 Choose full deck or Major Arcana only
+**Lenormand** — 36 cards of the Lenormand system with unique symbols
 
-### Compatibility
-- ✅ KOReader 2024.01 or higher
-- ✅ Tested on Kindle and Linux
-- ✅ Optimized for e-ink screens
+## 💾 How to save a reading
+
+1. After drawing cards, tap **Save**
+2. Enter a title for your reading
+3. Add a personal note (optional)
+4. Done! Your reading is saved
+
+## 📖 How to access saved readings
+
+In the plugin's main menu, tap **Saved Readings** and choose between:
+- **Open in Reader** — View the reading in KOReader's viewer
+- **Delete** — Remove readings you no longer want
+
+## ⚙️ Customization
+
+In **Settings** you can:
+- Choose between Tarot and Lenormand
+- Enable or disable reversed cards
+- Show only Major Arcana
+- Switch between Portuguese and English
+
+## 📝 Example of saved reading
+
+```
+Morning Reflection
+
+I felt a very strong energy when I woke up today.
+The cards confirmed my moment of transition.
+
+Card 1 — The Star (Upright)
+Hope. Faith. Follow your intuition. Light guides you in darkness.
+
+Card 2 — The Hermit (Upright)
+Introspection. Inner wisdom. Seek silence.
+
+Card 3 — Ace of Cups (Upright)
+Emotions. Love. Affective connections. New cycle.
+
+—
+07/19/2026 08:45
+```
 
 ---
 
-## 📁 Estrutura de Arquivos / File Structure
-```
-tarot.koplugin/
-├── main.lua       # Código principal / Main code
-├── _meta.lua      # Metadados do plugin / Plugin metadata
-└── README.md      # Este arquivo / This file
-```
-
-## 📜 Licença / License
-Código aberto / Open Source
-
----
-
-✨ **Boas leituras! / Happy readings!** ✨
+*Plugin made for KOReader, compatible with e-ink devices such as Kindle.*
