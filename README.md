@@ -2,11 +2,16 @@
 
 Plugin de tarot e baralho cigano para KOReader. Ideal para introspecção durante a leitura. Desenvolvido com auxílio do DeepSeek.
 
+<p align="center">
+  <img src="img/Tarot2.png" alt="Tarot" width="300">
+</p>
+
 ## ✨ Funcionalidades
 
 - **Carta Diária** — Uma carta baseada na data do dia para reflexão diária
 - **1 Carta** — Carta aleatória com significado detalhado
 - **3 Cartas** — Tiragem completa com navegação entre cartas
+- **Carta Oculta** — Exibe o verso da carta antes de revelar a tiragem (pode ser desativado nas configurações)
 - **Livro de Cartas** — Explore todas as cartas com nomes, símbolos e significados
 - **Salvar tiragens** — Guarde com título e notas pessoais
 - **Tiragens salvas** — Acesse ou exclua leituras anteriores
@@ -45,7 +50,9 @@ No menu principal, vá em **Tiragens Salvas** e escolha **Abrir no Leitor** ou *
 - Escolha entre Tarot e Baralho Cigano
 - Ative/desative cartas invertidas
 - Mostre apenas Arcanos Maiores
+- Ative/desative a **Carta Oculta** (verso antes da revelação)
 - Alterne entre português e inglês
+- Acesse o botão **Sobre** para informações dos baralhos e créditos das imagens
 
 ---
 
@@ -58,6 +65,7 @@ Tarot and lenormand reading plugin for KOReader. Perfect for introspection while
 - **Daily Card** — A card based on the day's date for daily reflection
 - **1 Card** — Random card with detailed meaning
 - **3 Cards** — Full spread with card navigation
+- **Hidden Card** — Shows card back before revealing the spread (can be disabled in settings)
 - **Card Book** — Browse all cards with names, symbols and meanings
 - **Save readings** — Save with title and personal notes
 - **Saved readings** — Access or delete previous readings
@@ -96,4 +104,13 @@ In the main menu, go to **Saved Readings** and choose **Open in Reader** or **De
 - Choose between Tarot and Lenormand
 - Enable/disable reversed cards
 - Show only Major Arcana
+- Enable/disable **Hidden Card** (card back before reveal)
 - Switch between Portuguese and English
+- Access the **About** button for deck information and image credits
+
+---
+
+## 🙏 Créditos das imagens / Image credits
+
+- **Lenormand Cards** por Yve Lepkowski ([https://stolen-thyme.com/](https://stolen-thyme.com/))
+- **Tarot Cards** por Luciella Elisabeth Scarlett ([https://luciellaes.itch.io/](https://luciellaes.itch.io/))
