@@ -8,6 +8,7 @@ local Font             = require("ui/font")
 local FrameContainer   = require("ui/widget/container/framecontainer")
 local HorizontalGroup  = require("ui/widget/horizontalgroup")
 local HorizontalSpan   = require("ui/widget/horizontalspan")
+local ImageWidget      = require("ui/widget/imagewidget")
 local InfoMessage      = require("ui/widget/infomessage")
 local InputContainer   = require("ui/widget/container/inputcontainer")
 local InputDialog      = require("ui/widget/inputdialog")
@@ -109,6 +110,20 @@ local translations = {
         suit_cups = "Copas",
         suit_swords = "Espadas",
         suit_pentacles = "Ouros",
+        -- Novas traduções para Carta Oculta
+        hidden_card = "Carta Oculta",
+        hidden_card_desc = "Mostrar verso da carta antes de revelar a tiragem",
+        click_on_card = "clique na carta",
+        exit = "Sair",
+        reveal = "Revelar",
+        -- Novo: Sobre
+        about = "Sobre",
+        about_title = "Sobre o Tarot e Lenormand",
+        about_text = [[O Tarot é um baralho de 78 cartas, dividido em Arcanos Maiores (22) e Menores (56), usado para reflexão e autoconhecimento. O Baralho Cigano (Lenormand) possui 36 cartas com simbolismo direto para orientação prática.
+
+Agradecimentos pelas imagens gratuitas:
+• Lenormand Cards por Yve Lepkowski (https://stolen-thyme.com/)
+• Tarot Cards por Luciella Elisabeth Scarlett (https://luciellaes.itch.io/)]],
     },
     en = {
         title = "Tarot Reading",
@@ -120,7 +135,7 @@ local translations = {
         draw_three = "3 card spread",
         draw_daily = "Card of the day",
         settings = "Settings",
-        configuration = "Configuration",
+        configuration = "Config",
         new = "New cards",
         close = "Close",
         prev = "< Prev",
@@ -189,6 +204,20 @@ local translations = {
         suit_cups = "Cups",
         suit_swords = "Swords",
         suit_pentacles = "Pentacles",
+        -- New translations for Hidden Card
+        hidden_card = "Hidden Card",
+        hidden_card_desc = "Show card back before revealing the spread",
+        click_on_card = "click on the card",
+        exit = "Exit",
+        reveal = "Reveal",
+        -- New: About
+        about = "About",
+        about_title = "About Tarot and Lenormand",
+        about_text = [[Tarot is a deck of 78 cards, divided into Major Arcana (22) and Minor Arcana (56), used for reflection and self-knowledge. The Lenormand deck has 36 cards with direct symbolism for practical guidance.
+
+Credits for the free card images:
+• Lenormand Cards by Yve Lepkowski (https://stolen-thyme.com/)
+• Tarot Cards by Luciella Elisabeth Scarlett (https://luciellaes.itch.io/)]],
     }
 }
 
@@ -945,7 +974,12 @@ function TarotPlugin:init()
     end
     self.use_lenormand = G_reader_settings:readSetting("tarot_use_lenormand")
     if self.use_lenormand == nil then
-        self.use_lenormand = false 
+        self.use_lenormand = false
+    end
+    -- NOVA CONFIGURAÇÃO: Carta Oculta (padrão ativado)
+    self.hidden_card = G_reader_settings:readSetting("tarot_hidden_card")
+    if self.hidden_card == nil then
+        self.hidden_card = true
     end
     
     self:ensureSavesDir()
@@ -991,8 +1025,8 @@ function TarotPlugin:getActiveDeck()
     if self.use_lenormand then
         return LENORMAND_DECK
     end
-    if self.major_only then 
-        return MAJOR_ARCANA 
+    if self.major_only then
+        return MAJOR_ARCANA
     end
     return FULL_DECK
 end
@@ -1001,7 +1035,7 @@ function TarotPlugin:drawCard()
     local deck = self:getActiveDeck()
     local card = deck[math.random(1, #deck)]
     local is_reversed = false
-    if self.allow_reversed and not self.use_lenormand then  
+    if self.allow_reversed and not self.use_lenormand then
         is_reversed = math.random(2) == 1
     end
     return card, is_reversed
@@ -1048,11 +1082,24 @@ function TarotPlugin:toggleLenormand()
     UIManager:setDirty(nil, "full")
 end
 
+function TarotPlugin:toggleHiddenCard()
+    self.hidden_card = not self.hidden_card
+    G_reader_settings:saveSetting("tarot_hidden_card", self.hidden_card)
+    UIManager:setDirty(nil, "full")
+end
+
 function TarotPlugin:restoreAll()
     G_reader_settings:delSetting("tarot_language")
     G_reader_settings:delSetting("tarot_allow_reversed")
     G_reader_settings:delSetting("tarot_major_only")
     G_reader_settings:delSetting("tarot_use_lenormand")
+    G_reader_settings:delSetting("tarot_hidden_card")
+    -- Limpa dados da carta diária
+    G_reader_settings:delSetting("tarot_daily_date")
+    G_reader_settings:delSetting("tarot_daily_card_id")
+    G_reader_settings:delSetting("tarot_daily_card_is_lenormand")
+    G_reader_settings:delSetting("tarot_daily_card_is_reversed")
+    G_reader_settings:delSetting("tarot_daily_revealed_date")
     
     if self.saves_dir then
         for file in lfs.dir(self.saves_dir) do
@@ -1067,10 +1114,180 @@ function TarotPlugin:restoreAll()
     self.allow_reversed = true
     self.major_only = false
     self.use_lenormand = false
+    self.hidden_card = true
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
--- ║                  SEÇÃO 6: SALVAMENTO (save/load/delete)                      ║
+-- ║           SEÇÃO 6: IMAGENS DAS CARTAS (suporte a PNG/JPG)                    ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
+
+--- Retorna o caminho esperado para a imagem da carta.
+function TarotPlugin:getCardImagePath(card)
+    if card.symbol then
+        local en_clean = card.name.en:gsub("^The%s+", "")
+        return self.plugin_dir .. "/cards_lenormand/" .. tostring(card.number) .. "._" .. en_clean .. ".png"
+    elseif card.roman then
+        local id_str = string.format("%02d", card.id)
+        local name_en_clean = card.name.en:gsub(" ", ""):gsub("'", "")
+        return self.plugin_dir .. "/cards_tarot/" .. id_str .. "-" .. name_en_clean .. ".jpg"
+    elseif card.suit then
+        local suit_en = card.suit.en
+        local rank_map = { Ace=1, Two=2, Three=3, Four=4, Five=5, Six=6, Seven=7, Eight=8, Nine=9, Ten=10, Page=11, Knight=12, Queen=13, King=14 }
+        local rank_val = rank_map[card.rank.en] or 0
+        local rank_str = string.format("%02d", rank_val)
+        return self.plugin_dir .. "/cards_tarot/" .. suit_en .. rank_str .. ".jpg"
+    end
+end
+
+--- Cria o widget de exibição da carta.
+-- Aceita dimensões opcionais apenas para miniaturas.
+function TarotPlugin:getCardImageWidget(card, w_override, h_override)
+    local path = self:getCardImagePath(card)
+    local screen_w = Screen:getWidth()
+    local card_w, card_h
+    if card.symbol then
+        card_w = w_override or 250
+        card_h = h_override or 250
+    else
+        -- Tamanho padrão: 25% da largura da tela para Tarot
+        local base_w = math.floor(screen_w * 0.25)
+        card_w = w_override or base_w
+        -- Se h_override não for fornecido, recalcula com base no w real usado
+        if h_override then
+            card_h = h_override
+        else
+            card_h = math.floor(card_w * (439 / 250))
+        end
+    end
+    
+    local attr = lfs.attributes(path)
+    if attr and attr.mode == "file" then
+        return ImageWidget:new{
+            file = path,
+            width = card_w,
+            height = card_h,
+            scale_for_dpi = false,
+        }
+    else
+        -- Fallback textual
+        local lang = self.language
+        local text = ""
+        if card.symbol then
+            text = card.symbol .. "\n" .. (card.name[lang] or card.name.pt)
+        elseif card.roman then
+            text = card.roman .. "\n" .. (card.name[lang] or card.name.pt)
+        elseif card.suit then
+            local suit_symbol = card.suit.symbol or ""
+            local rank_pt = card.rank[lang] or card.rank.pt
+            text = suit_symbol .. "\n" .. rank_pt
+        end
+        local fallback = TextWidget:new{
+            text = text,
+            face = Font:getFace("tfont"),
+            bold = true,
+            alignment = "center",
+        }
+        return FrameContainer:new{
+            width = card_w,
+            height = card_h,
+            bordersize = 0,
+            background = Blitbuffer.COLOR_WHITE,
+            CenterContainer:new{
+                dimen = { w = card_w, h = card_h },
+                fallback,
+            },
+        }
+    end
+end
+
+-- WIDGET: Carta com efeito escurecido (hachuras densas) para miniaturas
+local DimmedCard = InputContainer:extend{
+    image_widget = nil,
+    width = 0,
+    height = 0,
+}
+
+function DimmedCard:init()
+    self[1] = self.image_widget
+end
+
+function DimmedCard:paintTo(bb, x, y)
+    -- Pinta a imagem normalmente
+    self.image_widget:paintTo(bb, x, y)
+    -- Desenha hachuras horizontais DENSAS (espaçamento de 2px) para escurecer mais
+    local spacing = 2
+    for i = 0, self.height - 1, spacing do
+        bb:paintRect(x, y + i, self.width, 1, Blitbuffer.COLOR_BLACK)
+    end
+end
+
+--- Cria uma miniatura escurecida de uma carta.
+function TarotPlugin:getDimmedCardWidget(card, w, h)
+    local img = self:getCardImageWidget(card, w, h)
+    return DimmedCard:new{
+        image_widget = img,
+        width = w,
+        height = h,
+    }
+end
+
+-- Função que retorna as dimensões PADRÃO da carta central (sem override)
+function TarotPlugin:getDefaultCardSize(card)
+    local screen_w = Screen:getWidth()
+    if card.symbol then
+        return 250, 250
+    else
+        local w = math.floor(screen_w * 0.25)
+        local h = math.floor(w * (439 / 250))
+        return w, h
+    end
+end
+
+-- NOVA FUNÇÃO: Retorna o widget da imagem de verso (back card)
+function TarotPlugin:getBackCardImageWidget()
+    local screen_w = Screen:getWidth()
+    local card_w, card_h
+    local path
+    if self.use_lenormand then
+        path = self.plugin_dir .. "/cards_lenormand/Card_Back.png"
+        card_w = 250
+        card_h = 250
+    else
+        path = self.plugin_dir .. "/cards_tarot/CardBacks.jpg"
+        card_w = math.floor(screen_w * 0.25)
+        card_h = math.floor(card_w * (439 / 250))
+    end
+    
+    local attr = lfs.attributes(path)
+    if attr and attr.mode == "file" then
+        return ImageWidget:new{
+            file = path,
+            width = card_w,
+            height = card_h,
+            scale_for_dpi = false,
+        }
+    else
+        local fallback = TextWidget:new{
+            text = "?",
+            face = Font:getFace("tfont"),
+            bold = true,
+            alignment = "center",
+        }
+        return FrameContainer:new{
+            width = card_w,
+            height = card_h,
+            bordersize = 0,
+            background = Blitbuffer.gray(0.8),
+            CenterContainer:new{
+                dimen = { w = card_w, h = card_h },
+                fallback,
+            },
+        }
+    end
+end
+
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║                  SEÇÃO 7: SALVAMENTO (save/load/delete)                      ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
 function TarotPlugin:saveReading(cards, title, note)
     self:ensureSavesDir()
@@ -1365,7 +1582,7 @@ function TarotPlugin:showSaveNoteInput(cards, title)
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
--- ║                  SEÇÃO 7: DIÁLOGO DA CARTA (CardDialog)                      ║
+-- ║   SEÇÃO 8: DIÁLOGO DA CARTA (CardDialog) – CENTRAL FIXA + MINIATURAS        ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
 local CardDialog = InputContainer:extend{
     cards = nil,
@@ -1389,12 +1606,17 @@ function CardDialog:init()
     local lang = self.plugin.language
     local total_cards = #self.cards
 
-    local title_prefix = "~ * ~\n"
+    -- Verifica se a imagem real existe
+    local card_path = self.plugin:getCardImagePath(card)
+    local has_image = card_path and lfs.attributes(card_path) and lfs.attributes(card_path).mode == "file"
+    local hide_name = (self.plugin.use_lenormand) and (lang == "en") and has_image
+
+    -- 1. Título
     local title_suffix = self.plugin:getTranslation("title")
     if self.plugin.use_lenormand then
         title_suffix = self.plugin:getTranslation("lenormand_title")
     end
-    local title_text = title_prefix .. title_suffix
+    local title_text = title_suffix
 
     local title_w = TextWidget:new{
         text      = title_text,
@@ -1404,6 +1626,95 @@ function CardDialog:init()
         alignment = "center",
     }
 
+    -- 2. Imagem da carta (centralizada, tamanho fixo, com miniaturas laterais se houver)
+    local card_image
+    if total_cards > 1 then
+        -- Espaçamento entre carta central e miniaturas
+        local spacing = 24
+        local has_left = self.current_index > 1
+        local has_right = self.current_index < total_cards
+
+        -- Tamanho PADRÃO da carta central (NUNCA muda)
+        local main_w, main_h = self.plugin:getDefaultCardSize(card)
+        local center_img = self.plugin:getCardImageWidget(card, main_w, main_h)
+
+        -- Tamanho das miniaturas: 2/3 da central
+        local mini_w = math.floor(main_w * 2/3)
+        local mini_h = math.floor(main_h * 2/3)
+
+        -- Calcula o espaço restante para cada lado após descontar a central
+        -- A central ocupará exatamente main_w pixels.
+        -- O espaço total disponível é iw.
+        -- O espaço restante para os lados é (iw - main_w).
+        -- Esse espaço é dividido igualmente entre esquerda e direita.
+        local remaining = iw - main_w
+        local half_remaining = math.floor(remaining / 2)
+
+        -- Widgets das miniaturas
+        local left_img, right_img
+        if has_left then
+            local left_card = self.cards[self.current_index - 1].card
+            left_img = self.plugin:getDimmedCardWidget(left_card, mini_w, mini_h)
+        end
+        if has_right then
+            local right_card = self.cards[self.current_index + 1].card
+            right_img = self.plugin:getDimmedCardWidget(right_card, mini_w, mini_h)
+        end
+
+        -- Montagem do grupo horizontal com centralização absoluta da carta principal
+        local hgroup = HorizontalGroup:new{ align = "center" }
+
+        if has_left then
+            -- Lado esquerdo: espaço flexível + miniatura + espaçamento
+            -- O espaço restante à esquerda deve acomodar a miniatura + spacing
+            local left_padding = half_remaining - mini_w - spacing
+            if left_padding < 0 then left_padding = 0 end
+            table.insert(hgroup, HorizontalSpan:new{ width = left_padding })
+            table.insert(hgroup, left_img)
+            table.insert(hgroup, HorizontalSpan:new{ width = spacing })
+        else
+            -- Sem miniatura à esquerda, apenas o espaço
+            table.insert(hgroup, HorizontalSpan:new{ width = half_remaining })
+        end
+
+        -- Carta central
+        table.insert(hgroup, center_img)
+
+        if has_right then
+            -- Lado direito: espaçamento + miniatura + espaço flexível
+            local right_padding = half_remaining - mini_w - spacing
+            if right_padding < 0 then right_padding = 0 end
+            table.insert(hgroup, HorizontalSpan:new{ width = spacing })
+            table.insert(hgroup, right_img)
+            table.insert(hgroup, HorizontalSpan:new{ width = right_padding })
+        else
+            -- Sem miniatura à direita, apenas o espaço
+            table.insert(hgroup, HorizontalSpan:new{ width = half_remaining })
+        end
+
+        card_image = hgroup
+    else
+        -- Carta única: widget padrão centralizado
+        card_image = self.plugin:getCardImageWidget(card)
+    end
+
+    -- 3. Nome da carta (condicional)
+    local name_w
+    if not hide_name then
+        local name_text = card.name[lang] or card.name.pt
+        if is_reversed and not self.plugin.use_lenormand then
+            name_text = name_text .. " (" .. self.plugin:getTranslation("reversed") .. ")"
+        end
+        name_w = TextWidget:new{
+            text      = name_text,
+            face      = Font:getFace("cfont"),
+            bold      = true,
+            max_width = iw,
+            alignment = "center",
+        }
+    end
+
+    -- 4. Separador
     local divider = TextWidget:new{
         text      = "─ ─ ─ ─ ─ ─ ─ ─",
         face      = Font:getFace("x_smallinfofont"),
@@ -1412,62 +1723,7 @@ function CardDialog:init()
         alignment = "center",
     }
 
-    local number_text = card.roman or (card.number and tostring(card.number)) or (card.rank and (card.rank[lang] or card.rank.pt)) or ""
-    
-    local number_w = TextWidget:new{
-        text      = number_text,
-        face      = Font:getFace("tfont"),
-        bold      = true,
-        max_width = iw,
-        alignment = "center",
-    }
-
-    local suit_w
-    if card.symbol then
-        suit_w = TextWidget:new{
-            text      = card.symbol .. "  " .. card.symbol .. "  " .. card.symbol,
-            face      = Font:getFace("smalltfont"),
-            fgcolor   = Blitbuffer.gray(0.5),
-            max_width = iw,
-            alignment = "center",
-        }
-    elseif card.suit then
-        suit_w = TextWidget:new{
-            text      = card.suit.symbol .. "  " .. (card.suit[lang] or card.suit.pt) .. "  " .. card.suit.symbol,
-            face      = Font:getFace("smalltfont"),
-            fgcolor   = Blitbuffer.gray(0.5),
-            max_width = iw,
-            alignment = "center",
-        }
-    end
-
-    local name_text = card.name[lang] or card.name.pt
-    if is_reversed and not self.plugin.use_lenormand then
-        name_text = name_text .. " (" .. self.plugin:getTranslation("reversed") .. ")"
-    end
-    local name_w = TextWidget:new{
-        text      = name_text,
-        face      = Font:getFace("cfont"),
-        bold      = true,
-        max_width = iw,
-        alignment = "center",
-    }
-
-    local type_text
-    if self.plugin.use_lenormand then
-        type_text = "Lenormand / " .. self.plugin:getTranslation("lenormand_deck")
-    else
-        type_text = card.roman and self.plugin:getTranslation("major_arcana") or self.plugin:getTranslation("minor_arcana")
-    end
-    
-    local type_w = TextWidget:new{
-        text      = type_text,
-        face      = Font:getFace("x_smallinfofont"),
-        fgcolor   = Blitbuffer.gray(0.5),
-        max_width = iw,
-        alignment = "center",
-    }
-
+    -- 5. Significado
     local meaning_text
     if self.plugin.use_lenormand then
         meaning_text = card.meaning[lang] or card.meaning.pt
@@ -1482,17 +1738,7 @@ function CardDialog:init()
         alignment = "center",
     }
 
-    local counter_w
-    if total_cards > 1 then
-        counter_w = TextWidget:new{
-            text      = string.format(self.plugin:getTranslation("card_count"), self.current_index, total_cards),
-            face      = Font:getFace("x_smallinfofont"),
-            fgcolor   = Blitbuffer.gray(0.5),
-            max_width = iw,
-            alignment = "center",
-        }
-    end
-
+    -- 6. Botões de navegação
     local nav_row
     if total_cards > 1 then
         local btn_prev = Button:new{
@@ -1547,6 +1793,7 @@ function CardDialog:init()
         }
     end
 
+    -- Botões fixos: Salvar, (Novo/Diário), Fechar
     local btn_save = Button:new{
         text     = self.plugin:getTranslation("save"),
         width    = math.floor(iw * 0.30),
@@ -1598,38 +1845,38 @@ function CardDialog:init()
         }
     end
 
+    -- Montagem do conteúdo
     local content = VerticalGroup:new{
         align = "center",
+        -- 1. Título
         title_w,
-        VerticalSpan:new{ width = Size.span.vertical_small },
-        divider,
+        VerticalSpan:new{ width = Size.span.vertical_default },
+        -- 2. Imagem (centralizada, tamanho fixo, com miniaturas)
+        card_image,
+        VerticalSpan:new{ width = Size.span.vertical_default },
     }
 
-    if counter_w then
+    -- 3. Nome
+    if name_w then
+        table.insert(content, name_w)
         table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
-        table.insert(content, counter_w)
     end
 
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-    table.insert(content, number_w)
-    if suit_w then
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
-        table.insert(content, suit_w)
-    end
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-    table.insert(content, name_w)
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
-    table.insert(content, type_w)
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
+    -- 4. Separador
     table.insert(content, divider)
     table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-    table.insert(content, meaning_w)
 
+    -- 5. Significado
+    table.insert(content, meaning_w)
+    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+
+    -- 6. Navegação
     if nav_row then
         table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
         table.insert(content, nav_row)
     end
 
+    -- 7. Botões de ação
     table.insert(content, VerticalSpan:new{ width = Size.span.vertical_large })
     table.insert(content, btns_row)
 
@@ -1648,7 +1895,135 @@ function CardDialog:init()
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
--- ║          SEÇÃO 8: DIÁLOGO DE CONFIGURAÇÕES (SettingsDialog)                  ║
+-- ║   NOVO DIÁLOGO: CARTA OCULTA (HiddenCardDialog) – VERSÃO FINAL              ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
+local HiddenCardDialog = InputContainer:extend{
+    plugin = nil,
+    cards = nil,
+    on_new = nil,
+    is_daily = false,
+    on_reveal = nil,
+}
+
+function HiddenCardDialog:init()
+    local sw  = Screen:getWidth()
+    local w   = math.floor(sw * 0.84)
+    local pad = Size.padding.large
+    local iw  = w - pad * 2
+
+    local title_text = self.plugin:getTranslation("title")
+    local title_w = TextWidget:new{
+        text      = title_text,
+        face      = Font:getFace("tfont"),
+        bold      = true,
+        max_width = iw,
+        alignment = "center",
+    }
+
+    local back_path
+    if self.plugin.use_lenormand then
+        back_path = self.plugin.plugin_dir .. "/cards_lenormand/Card_Back.png"
+    else
+        back_path = self.plugin.plugin_dir .. "/cards_tarot/CardBacks.jpg"
+    end
+    local back_attr = lfs.attributes(back_path)
+    local has_back_image = back_attr and back_attr.mode == "file"
+
+    local screen_w = Screen:getWidth()
+    local card_w, card_h
+    if self.plugin.use_lenormand then
+        card_w = 250
+        card_h = 250
+    else
+        card_w = math.floor(screen_w * 0.25)
+        card_h = math.floor(card_w * (439 / 250))
+    end
+
+    local image_widget
+    if has_back_image then
+        image_widget = ImageWidget:new{
+            file = back_path,
+            width = card_w,
+            height = card_h,
+            scale_for_dpi = false,
+        }
+    else
+        image_widget = FrameContainer:new{
+            width = card_w,
+            height = card_h,
+            bordersize = 0,
+            background = Blitbuffer.gray(0.8),
+            CenterContainer:new{
+                dimen = { w = card_w, h = card_h },
+                TextWidget:new{
+                    text = "?",
+                    face = Font:getFace("tfont"),
+                    bold = true,
+                    alignment = "center",
+                },
+            },
+        }
+    end
+
+    local btn_reveal = Button:new{
+        text     = self.plugin:getTranslation("reveal"),
+        width    = math.floor(iw * 0.5),
+        radius   = Size.radius.button,
+        callback = function()
+            UIManager:close(self)
+            UIManager:setDirty(nil, "full")
+            if self.on_reveal then
+                self.on_reveal()
+            end
+        end,
+    }
+    local separator = TextWidget:new{
+        text      = "━━━━━━━━━━━━━━━━━━━━",
+        face      = Font:getFace("x_smallinfofont"),
+        fgcolor   = Blitbuffer.gray(0.7),
+        max_width = iw,
+        alignment = "center",
+    }
+
+    local btn_exit = Button:new{
+        text     = self.plugin:getTranslation("exit"),
+        width    = iw,
+        radius   = Size.radius.button,
+        callback = function()
+            UIManager:close(self)
+            UIManager:setDirty(nil, "full")
+        end,
+    }
+
+    local content = VerticalGroup:new{
+        align = "center",
+        title_w,
+        VerticalSpan:new{ width = Size.span.vertical_large },
+        image_widget,
+        VerticalSpan:new{ width = Size.span.vertical_large },
+        btn_reveal,
+        VerticalSpan:new{ width = Size.span.vertical_default },
+        separator,
+        VerticalSpan:new{ width = Size.span.vertical_default },
+        btn_exit,
+    }
+
+    local dialog_frame = FrameContainer:new{
+        background = Blitbuffer.COLOR_WHITE,
+        bordersize = Size.border.window,
+        radius     = Size.radius.window,
+        padding    = pad,
+        content,
+    }
+
+    self[1] = CenterContainer:new{
+        dimen = Screen:getSize(),
+        dialog_frame,
+    }
+end
+
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║          SEÇÃO 9: DIÁLOGO DE CONFIGURAÇÕES (SettingsDialog)                  ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
 local SettingsDialog = InputContainer:extend{
     plugin = nil,
@@ -1670,9 +2045,7 @@ function SettingsDialog:init()
 
     local rows = VerticalGroup:new{ align = "left" }
 
-    -- ═══════════════════════════════════════════════════════
-    -- SUBSEÇÃO: Tipo de Baralho
-    -- ═══════════════════════════════════════════════════════
+    -- Tipo de Baralho
     local deck_section = TextWidget:new{
         text      = "— " .. self.plugin:getTranslation("deck_type") .. " —",
         face      = Font:getFace("smalltfont"),
@@ -1719,7 +2092,6 @@ function SettingsDialog:init()
     table.insert(rows, deck_btns)
     table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_default })
 
-    -- Opções do Tarot (ocultas no Lenormand)
     if not self.plugin.use_lenormand then
         local rev_mark = self.plugin.allow_reversed and "☑" or "☐"
         local rev_label = "  " .. rev_mark .. "  " .. self.plugin:getTranslation("allow_reversed_desc")
@@ -1754,9 +2126,34 @@ function SettingsDialog:init()
         table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_default })
     end
 
-    -- ═══════════════════════════════════════════════════════
-    -- SUBSEÇÃO: Idioma
-    -- ═══════════════════════════════════════════════════════
+    -- Carta Oculta
+    local hidden_section = TextWidget:new{
+        text      = "— " .. self.plugin:getTranslation("hidden_card") .. " —",
+        face      = Font:getFace("smalltfont"),
+        bold      = true,
+        max_width = iw,
+        alignment = "left",
+    }
+    table.insert(rows, hidden_section)
+    table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_small })
+
+    local hidden_mark = self.plugin.hidden_card and "☑" or "☐"
+    local hidden_label = "  " .. hidden_mark .. "  " .. self.plugin:getTranslation("hidden_card_desc")
+    local btn_hidden = Button:new{
+        text     = hidden_label,
+        width    = iw,
+        radius   = Size.radius.button,
+        callback = function()
+            self.plugin:toggleHiddenCard()
+            UIManager:close(self)
+            UIManager:show(SettingsDialog:new{ plugin = self.plugin })
+            UIManager:setDirty(nil, "full")
+        end,
+    }
+    table.insert(rows, btn_hidden)
+    table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_default })
+
+    -- Idioma
     local lang_label = TextWidget:new{
         text      = "— " .. self.plugin:getTranslation("language") .. " —",
         face      = Font:getFace("smalltfont"),
@@ -1804,9 +2201,7 @@ function SettingsDialog:init()
     table.insert(rows, lang_btns)
     table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_default })
 
-    -- ═══════════════════════════════════════════════════════
-    -- SUBSEÇÃO: Redefinir
-    -- ═══════════════════════════════════════════════════════
+    -- Redefinir
     local reset_section = TextWidget:new{
         text      = "— " .. self.plugin:getTranslation("reset_section") .. " —",
         face      = Font:getFace("smalltfont"),
@@ -1858,9 +2253,21 @@ function SettingsDialog:init()
         end,
     }
     table.insert(rows, btn_restore)
+    table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_default })
+
+    -- Botão Sobre (NOVO)
+    local btn_about = Button:new{
+        text     = self.plugin:getTranslation("about"),
+        width    = iw,
+        radius   = Size.radius.button,
+        callback = function()
+            UIManager:close(self)
+            self.plugin:showAboutDialog()
+        end,
+    }
+    table.insert(rows, btn_about)
     table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_large })
 
-    -- Botão Fechar
     local btn_close = Button:new{
         text     = self.plugin:getTranslation("close"),
         width    = iw,
@@ -1894,7 +2301,7 @@ function SettingsDialog:init()
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
--- ║           SEÇÃO 9: DIÁLOGO DO LIVRO DE CARTAS (CardBookDialog)               ║
+-- ║           SEÇÃO 10: DIÁLOGO DO LIVRO DE CARTAS (CardBookDialog)             ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
 local CardBookDialog = InputContainer:extend{
     plugin = nil,
@@ -1912,17 +2319,19 @@ function CardBookDialog:init()
 
     local card = self.card_list[self.current_index]
 
-    -- Title
+    local card_path = self.plugin:getCardImagePath(card)
+    local has_image = card_path and lfs.attributes(card_path) and lfs.attributes(card_path).mode == "file"
+    local hide_ascii = card.symbol and has_image
+
     local book_title = self.plugin:getTranslation("card_book")
     local title_w = TextWidget:new{
-        text      = "~ * ~\n" .. book_title,
+        text      = book_title,
         face      = Font:getFace("tfont"),
         bold      = true,
         max_width = iw,
         alignment = "center",
     }
 
-    -- Divider
     local divider = TextWidget:new{
         text      = "─ ─ ─ ─ ─ ─ ─ ─",
         face      = Font:getFace("x_smallinfofont"),
@@ -1931,27 +2340,48 @@ function CardBookDialog:init()
         alignment = "center",
     }
 
-    -- Number/Arcana
-    local number_text = ""
-    if card.roman then
-        number_text = card.roman .. " - " .. self.plugin:getTranslation("arcana_label") .. " " .. self.plugin:getTranslation("major_arcana")
-    elseif card.number then
-        number_text = tostring(card.number) .. " - Lenormand"
-    elseif card.rank then
-        local rank_text = card.rank[lang] or card.rank.pt
-        local suit_text = card.suit[lang] or card.suit.pt
-        number_text = rank_text .. " - " .. self.plugin:getTranslation("minor_arcana") .. " (" .. suit_text .. ")"
-    end
-    
-    local number_w = TextWidget:new{
-        text      = number_text,
-        face      = Font:getFace("x_smallinfofont"),
-        fgcolor   = Blitbuffer.gray(0.5),
-        max_width = iw,
-        alignment = "center",
-    }
+    local card_image = self.plugin:getCardImageWidget(card)
 
-    -- Card name
+    local number_w, suit_w
+    if not hide_ascii then
+        local number_text = ""
+        if card.roman then
+            number_text = card.roman .. " - " .. self.plugin:getTranslation("arcana_label") .. " " .. self.plugin:getTranslation("major_arcana")
+        elseif card.number then
+            number_text = tostring(card.number) .. " - Lenormand"
+        elseif card.rank then
+            local rank_text = card.rank[lang] or card.rank.pt
+            local suit_text = card.suit[lang] or card.suit.pt
+            number_text = rank_text .. " - " .. self.plugin:getTranslation("minor_arcana") .. " (" .. suit_text .. ")"
+        end
+        
+        number_w = TextWidget:new{
+            text      = number_text,
+            face      = Font:getFace("x_smallinfofont"),
+            fgcolor   = Blitbuffer.gray(0.5),
+            max_width = iw,
+            alignment = "center",
+        }
+
+        if card.symbol then
+            suit_w = TextWidget:new{
+                text      = card.symbol .. "  " .. card.symbol .. "  " .. card.symbol,
+                face      = Font:getFace("smalltfont"),
+                fgcolor   = Blitbuffer.gray(0.5),
+                max_width = iw,
+                alignment = "center",
+            }
+        elseif card.suit then
+            suit_w = TextWidget:new{
+                text      = card.suit.symbol .. "  " .. (card.suit[lang] or card.suit.pt) .. "  " .. card.suit.symbol,
+                face      = Font:getFace("smalltfont"),
+                fgcolor   = Blitbuffer.gray(0.5),
+                max_width = iw,
+                alignment = "center",
+            }
+        end
+    end
+
     local name_text = card.name[lang] or card.name.pt
     local name_w = TextWidget:new{
         text      = name_text,
@@ -1961,27 +2391,6 @@ function CardBookDialog:init()
         alignment = "center",
     }
 
-    -- Symbol/Suit
-    local suit_w
-    if card.symbol then
-        suit_w = TextWidget:new{
-            text      = card.symbol .. "  " .. card.symbol .. "  " .. card.symbol,
-            face      = Font:getFace("smalltfont"),
-            fgcolor   = Blitbuffer.gray(0.5),
-            max_width = iw,
-            alignment = "center",
-        }
-    elseif card.suit then
-        suit_w = TextWidget:new{
-            text      = card.suit.symbol .. "  " .. (card.suit[lang] or card.suit.pt) .. "  " .. card.suit.symbol,
-            face      = Font:getFace("smalltfont"),
-            fgcolor   = Blitbuffer.gray(0.5),
-            max_width = iw,
-            alignment = "center",
-        }
-    end
-
-    -- Upright meaning
     local meaning_label_w = TextWidget:new{
         text      = self.plugin:getTranslation("meaning_label") .. ":",
         face      = Font:getFace("smalltfont"),
@@ -1998,7 +2407,6 @@ function CardBookDialog:init()
         alignment = "left",
     }
 
-    -- Reversed meaning (only for Tarot, not Lenormand)
     local reversed_label_w
     local reversed_w
     if not self.plugin.use_lenormand and card.reversed_meaning then
@@ -2019,7 +2427,6 @@ function CardBookDialog:init()
         }
     end
 
-    -- Navigation
     local nav_row
     if #self.card_list > 1 then
         local btn_prev = Button:new{
@@ -2078,7 +2485,6 @@ function CardBookDialog:init()
         }
     end
 
-    -- Back button
     local btn_back = Button:new{
         text     = self.plugin:getTranslation("back"),
         width    = iw,
@@ -2092,22 +2498,27 @@ function CardBookDialog:init()
         end,
     }
 
-    -- Build content
     local content = VerticalGroup:new{
         align = "center",
         title_w,
         VerticalSpan:new{ width = Size.span.vertical_small },
         divider,
         VerticalSpan:new{ width = Size.span.vertical_default },
-        number_w,
     }
-    
-    if suit_w then
+
+    table.insert(content, card_image)
+    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+
+    if number_w then
+        table.insert(content, number_w)
         table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
-        table.insert(content, suit_w)
     end
     
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+    if suit_w then
+        table.insert(content, suit_w)
+        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+    end
+    
     table.insert(content, name_w)
     table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
     table.insert(content, divider)
@@ -2146,7 +2557,7 @@ function CardBookDialog:init()
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
--- ║      SEÇÃO 10: MENU DO LIVRO DE CARTAS (CardBookMenu)                        ║
+-- ║      SEÇÃO 11: MENU DO LIVRO DE CARTAS (CardBookMenu)                        ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
 local CardBookMenu = InputContainer:extend{
     plugin = nil,
@@ -2159,14 +2570,13 @@ function CardBookMenu:init()
     local iw  = w - pad * 2
 
     local title = TextWidget:new{
-        text      = "~ * ~\n" .. self.plugin:getTranslation("card_book"),
+        text      = self.plugin:getTranslation("card_book"),
         face      = Font:getFace("tfont"),
         bold      = true,
         max_width = iw,
         alignment = "center",
     }
 
-    -- Seção Tarot
     local tarot_section = TextWidget:new{
         text      = "— " .. self.plugin:getTranslation("tarot_deck") .. " —",
         face      = Font:getFace("smalltfont"),
@@ -2175,7 +2585,6 @@ function CardBookMenu:init()
         alignment = "left",
     }
 
-    -- Botões do Tarot
     local btn_major = Button:new{
         text     = self.plugin:getTranslation("major_arcana_list"),
         width    = iw,
@@ -2206,7 +2615,6 @@ function CardBookMenu:init()
         end,
     }
 
-    -- Seção Baralho Cigano
     local lenormand_section = TextWidget:new{
         text      = "— " .. self.plugin:getTranslation("lenormand_deck") .. " —",
         face      = Font:getFace("smalltfont"),
@@ -2273,13 +2681,12 @@ function CardBookMenu:showMinorArcanaMenu()
     local w   = math.floor(sw * 0.84)
     local pad = Size.padding.large
     local iw  = w - pad * 2
-    local lang = self.plugin.language
 
     local suit_keys = {
-        { name = self.plugin:getTranslation("suit_wands"), symbol = "|", start = 23, end_ = 36 },
-        { name = self.plugin:getTranslation("suit_cups"), symbol = "~", start = 37, end_ = 50 },
-        { name = self.plugin:getTranslation("suit_swords"), symbol = "+", start = 51, end_ = 64 },
-        { name = self.plugin:getTranslation("suit_pentacles"), symbol = "*", start = 65, end_ = 78 },
+        { name = self.plugin:getTranslation("suit_wands"), symbol = "|", start = 22, end_ = 35 },
+        { name = self.plugin:getTranslation("suit_cups"), symbol = "~", start = 36, end_ = 49 },
+        { name = self.plugin:getTranslation("suit_swords"), symbol = "+", start = 50, end_ = 63 },
+        { name = self.plugin:getTranslation("suit_pentacles"), symbol = "*", start = 64, end_ = 77 },
     }
     
     local MinorArcanaMenu = InputContainer:extend{
@@ -2396,7 +2803,7 @@ function CardBookMenu:showCardList(cards)
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
--- ║                  SEÇÃO 11: MENU E ORQUESTRAÇÃO                                ║
+-- ║                  SEÇÃO 12: MENU E ORQUESTRAÇÃO                               ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
 function TarotPlugin:addToMainMenu(menu_items)
     menu_items.tarot = {
@@ -2453,6 +2860,56 @@ function TarotPlugin:showSettings()
     UIManager:setDirty(nil, "full")
 end
 
+function TarotPlugin:showAboutDialog()
+    local sw  = Screen:getWidth()
+    local w   = math.floor(sw * 0.8)
+    local pad = Size.padding.large
+    local iw  = w - pad * 2
+
+    local text = self:getTranslation("about_text")
+    local textbox = TextBoxWidget:new{
+        text      = text,
+        face      = Font:getFace("cfont"),
+        width     = iw,
+        alignment = "left",
+    }
+
+    local btn_close = Button:new{
+        text     = self:getTranslation("close"),
+        width    = iw,
+        radius   = Size.radius.button,
+        callback = function()
+            -- Fecha o widget raiz (CenterContainer) que foi exibido
+            UIManager:close(self.about_dialog)
+            UIManager:setDirty(nil, "full")
+        end,
+    }
+
+    local content = VerticalGroup:new{
+        align = "center",
+        textbox,
+        VerticalSpan:new{ width = Size.span.vertical_default },
+        btn_close,
+    }
+
+    local frame = FrameContainer:new{
+        background = Blitbuffer.COLOR_WHITE,
+        bordersize = Size.border.window,
+        radius     = Size.radius.window,
+        padding    = pad,
+        content,
+    }
+
+    -- Armazena o CenterContainer (widget raiz) para poder fechá‑lo
+    self.about_dialog = CenterContainer:new{
+        dimen = Screen:getSize(),
+        frame,
+    }
+
+    UIManager:show(self.about_dialog)
+    UIManager:setDirty(nil, "full")
+end
+
 function TarotPlugin:showCardBook()
     UIManager:show(CardBookMenu:new{ plugin = self })
     UIManager:setDirty(nil, "full")
@@ -2465,14 +2922,38 @@ function TarotPlugin:showSingleCard()
     UIManager:scheduleIn(0.5, function()
         local card, is_reversed = self:drawCard()
         UIManager:close(loading)
-        local dlg = CardDialog:new{
-            cards = {{ card = card, is_reversed = is_reversed }},
-            current_index = 1,
-            plugin = self,
-            on_new = function() self:showSingleCard() end,
-            is_daily = false,
-        }
-        UIManager:show(dlg)
+        
+        local cards = {{ card = card, is_reversed = is_reversed }}
+        local on_new_func = function() self:showSingleCard() end
+        
+        if self.hidden_card then
+            local hidden_dlg = HiddenCardDialog:new{
+                plugin = self,
+                cards = cards,
+                on_new = on_new_func,
+                is_daily = false,
+                on_reveal = function()
+                    UIManager:show(CardDialog:new{
+                        cards = cards,
+                        current_index = 1,
+                        plugin = self,
+                        on_new = on_new_func,
+                        is_daily = false,
+                    })
+                    UIManager:setDirty(nil, "full")
+                end,
+            }
+            UIManager:show(hidden_dlg)
+        else
+            local dlg = CardDialog:new{
+                cards = cards,
+                current_index = 1,
+                plugin = self,
+                on_new = on_new_func,
+                is_daily = false,
+            }
+            UIManager:show(dlg)
+        end
         UIManager:setDirty(nil, "full")
     end)
 end
@@ -2483,60 +2964,137 @@ function TarotPlugin:showThreeCards()
     UIManager:setDirty(nil, "full")
     UIManager:scheduleIn(0.5, function()
         local drawn = self:drawUniqueCards(3)
-        
         UIManager:close(loading)
-        local dlg = CardDialog:new{
-            cards = drawn,
-            current_index = 1,
-            card_labels = {
-                string.format(self:getTranslation("card_count"), 1, 3),
-                string.format(self:getTranslation("card_count"), 2, 3),
-                string.format(self:getTranslation("card_count"), 3, 3),
-            },
-            plugin = self,
-            on_new = function() self:showThreeCards() end,
-            is_daily = false,
-        }
-        UIManager:show(dlg)
+        
+        local on_new_func = function() self:showThreeCards() end
+        
+        if self.hidden_card then
+            local hidden_dlg = HiddenCardDialog:new{
+                plugin = self,
+                cards = drawn,
+                on_new = on_new_func,
+                is_daily = false,
+                on_reveal = function()
+                    UIManager:show(CardDialog:new{
+                        cards = drawn,
+                        current_index = 1,
+                        card_labels = {
+                            string.format(self:getTranslation("card_count"), 1, 3),
+                            string.format(self:getTranslation("card_count"), 2, 3),
+                            string.format(self:getTranslation("card_count"), 3, 3),
+                        },
+                        plugin = self,
+                        on_new = on_new_func,
+                        is_daily = false,
+                    })
+                    UIManager:setDirty(nil, "full")
+                end,
+            }
+            UIManager:show(hidden_dlg)
+        else
+            local dlg = CardDialog:new{
+                cards = drawn,
+                current_index = 1,
+                card_labels = {
+                    string.format(self:getTranslation("card_count"), 1, 3),
+                    string.format(self:getTranslation("card_count"), 2, 3),
+                    string.format(self:getTranslation("card_count"), 3, 3),
+                },
+                plugin = self,
+                on_new = on_new_func,
+                is_daily = false,
+            }
+            UIManager:show(dlg)
+        end
         UIManager:setDirty(nil, "full")
     end)
 end
 
-function TarotPlugin:getDailyCardSeed()
+function TarotPlugin:getCurrentDateStr()
     return os.date("%Y%m%d")
+end
+
+function TarotPlugin:getCardById(id, is_lenormand)
+    if is_lenormand then
+        for _, c in ipairs(LENORMAND_DECK) do
+            if c.id == id then return c end
+        end
+    else
+        for _, c in ipairs(FULL_DECK) do
+            if c.id == id then return c end
+        end
+    end
+    local deck = self:getActiveDeck()
+    return deck[1]
 end
 
 function TarotPlugin:showDailyCard()
     local loading = InfoMessage:new{ text = self:getTranslation("loading") }
     UIManager:show(loading)
     UIManager:setDirty(nil, "full")
-    UIManager:scheduleIn(0.5, function()
-        local deck = self:getActiveDeck()
-        local seed = tonumber(self:getDailyCardSeed())
-        math.randomseed(seed)
-        math.random()
-        math.random()
-        math.random()
-        local card = deck[math.random(1, #deck)]
-        local is_reversed = false
-        if self.allow_reversed and not self.use_lenormand then
-            is_reversed = math.random(2) == 1
+    
+    UIManager:scheduleIn(0.3, function()
+        local today = self:getCurrentDateStr()
+        local stored_date = G_reader_settings:readSetting("tarot_daily_date") or ""
+        local card, is_reversed
+        
+        if stored_date == today then
+            local card_id = G_reader_settings:readSetting("tarot_daily_card_id")
+            local is_lenormand = G_reader_settings:readSetting("tarot_daily_card_is_lenormand")
+            card = self:getCardById(card_id, is_lenormand)
+            is_reversed = G_reader_settings:readSetting("tarot_daily_card_is_reversed") or false
+        else
+            local deck = self:getActiveDeck()
+            card = deck[math.random(1, #deck)]
+            is_reversed = false
+            if self.allow_reversed and not self.use_lenormand then
+                is_reversed = math.random(2) == 1
+            end
+            G_reader_settings:saveSetting("tarot_daily_date", today)
+            G_reader_settings:saveSetting("tarot_daily_card_id", card.id)
+            G_reader_settings:saveSetting("tarot_daily_card_is_lenormand", self.use_lenormand)
+            G_reader_settings:saveSetting("tarot_daily_card_is_reversed", is_reversed)
+            G_reader_settings:saveSetting("tarot_daily_revealed_date", "")
         end
-        math.randomseed(os.time())
-        math.random()
-        math.random()
-        math.random()
         
         UIManager:close(loading)
-        local dlg = CardDialog:new{
-            cards = {{ card = card, is_reversed = is_reversed }},
-            current_index = 1,
-            plugin = self,
-            title_label = self:getTranslation("daily_card"),
-            on_new = function() self:showDailyCard() end,
-            is_daily = true,
-        }
-        UIManager:show(dlg)
+        
+        local cards = {{ card = card, is_reversed = is_reversed }}
+        local on_new_func = function() self:showDailyCard() end
+        
+        local revealed_date = G_reader_settings:readSetting("tarot_daily_revealed_date") or ""
+        
+        if self.hidden_card and revealed_date ~= today then
+            local hidden_dlg = HiddenCardDialog:new{
+                plugin = self,
+                cards = cards,
+                on_new = on_new_func,
+                is_daily = true,
+                on_reveal = function()
+                    G_reader_settings:saveSetting("tarot_daily_revealed_date", today)
+                    UIManager:show(CardDialog:new{
+                        cards = cards,
+                        current_index = 1,
+                        plugin = self,
+                        title_label = self:getTranslation("daily_card"),
+                        on_new = on_new_func,
+                        is_daily = true,
+                    })
+                    UIManager:setDirty(nil, "full")
+                end,
+            }
+            UIManager:show(hidden_dlg)
+        else
+            local dlg = CardDialog:new{
+                cards = cards,
+                current_index = 1,
+                plugin = self,
+                title_label = self:getTranslation("daily_card"),
+                on_new = on_new_func,
+                is_daily = true,
+            }
+            UIManager:show(dlg)
+        end
         UIManager:setDirty(nil, "full")
     end)
 end
