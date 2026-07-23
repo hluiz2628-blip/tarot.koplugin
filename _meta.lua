@@ -5,5 +5,5 @@ return {
     name = "tarot",
     fullname = T("Tarot Reading"),
     description = T("Draw Tarot and Lenormand cards for reflection, save readings, and browse the complete card book."),
-    version = "4.0.0",
+    version = "4.0.1",
 }

@@ -1,134 +1,328 @@
 --[[
-Carregador de traduções exclusivo do plugin Tarot.
+Carregador de traduções isolado do plugin Tarot.
 
-O módulo gettext do KOReader usa um estado global. Para não substituir as
-traduções da interface principal, este arquivo:
-  1. guarda o estado gettext atual;
-  2. carrega temporariamente o catálogo do plugin;
-  3. copia o catálogo carregado;
-  4. restaura integralmente o estado do KOReader;
-  5. devolve um proxy que consulta primeiro o plugin e depois o KOReader.
+O gettext do KOReader lê diretamente arquivos .po. A implementação anterior
+alterava temporariamente o catálogo global, copiava suas tabelas e depois
+tentava restaurá-lo. Embora funcionasse no aplicativo para computador, esse
+procedimento podia falhar no Kindle e deixava apenas traduções genéricas do
+catálogo principal do KOReader, como "Close" -> "Fechar".
 
-Compatível com a organização usada no KOReader 2026.03:
-    l10n/<idioma>/koreader.mo
-O arquivo .po correspondente permanece junto do .mo para manutenção.
+Esta versão:
+  1. lê o idioma configurado diretamente em settings.reader.lua;
+  2. normaliza variantes como pt-BR, pt_BR.UTF-8 e zh_CN:zh;
+  3. abre somente o .po pertencente ao plugin;
+  4. nunca altera o gettext global do KOReader;
+  5. usa o catálogo global apenas como fallback para entradas ausentes.
+
+Estrutura esperada:
+    l10n/pt_BR/koreader.po
+    l10n/zh_CN/koreader.po
+
+O inglês permanece como idioma-fonte do código e não precisa de catálogo para
+ser exibido. O arquivo l10n/en/koreader.po pode continuar no pacote para
+manutenção e distribuição padronizada.
 ]]
 
-local util = require("util")
-local GetText = require("gettext")
+local CoreGetText = require("gettext")
 local logger = require("logger")
 
--- Descobre a raiz do plugin sem assumir onde o usuário instalou o KOReader.
-local source_path = debug.getinfo(1, "S").source
+-- Descobre a pasta real do plugin sem assumir o caminho de instalação.
+local source_path = debug.getinfo(1, "S").source or ""
 if source_path:sub(1, 1) == "@" then
     source_path = source_path:sub(2)
 end
+
 local plugin_path = source_path:match("^(.*)[/\\][^/\\]+$") or "."
-plugin_path = plugin_path:gsub("/+", "/")
+plugin_path = plugin_path:gsub("\\", "/"):gsub("/+", "/")
+
+local l10n_path = plugin_path .. "/l10n"
 
 local PluginGetText = {
-    dirname = plugin_path .. "/l10n",
+    current_lang = "C",
+    requested_lang = "C",
+    catalog_path = nil,
+    translation = {},
 }
 
--- Carrega o catálogo do plugin sem deixar alterações no gettext global.
-local function loadPluginLanguage(language)
-    local original = {
-        dirname = GetText.dirname,
-        context = GetText.context,
-        translation = GetText.translation,
-        wrapUntranslated = GetText.wrapUntranslated,
-        current_lang = GetText.current_lang,
-        getPlural = GetText.getPlural,
+-- Remove espaços externos sem depender de util.trim.
+local function trim(value)
+    return (value:gsub("^%s+", ""):gsub("%s+$", ""))
+end
+
+-- Adiciona um item apenas se ele ainda não estiver na lista.
+local function addUnique(list, seen, value)
+    if value and value ~= "" and not seen[value] then
+        seen[value] = true
+        table.insert(list, value)
+    end
+end
+
+-- Normaliza o código informado pelo KOReader ou pelo sistema operacional.
+local function normalizeLanguage(language)
+    if type(language) ~= "string" then
+        return nil
+    end
+
+    language = trim(language)
+    if language == "" then
+        return nil
+    end
+
+    -- Listas como "pt_BR:pt" usam o primeiro idioma preferencial.
+    language = language:match("^([^:]+)") or language
+
+    -- Remove codificação e modificadores: pt_BR.UTF-8@variant -> pt_BR.
+    language = language:gsub("%..*$", "")
+    language = language:gsub("@.*$", "")
+    language = language:gsub("-", "_")
+
+    return language
+end
+
+-- Produz candidatos compatíveis com os códigos usados pelo KOReader.
+local function getLanguageCandidates(language)
+    local normalized = normalizeLanguage(language)
+    local candidates = {}
+    local seen = {}
+
+    if not normalized then
+        return candidates
+    end
+
+    addUnique(candidates, seen, normalized)
+
+    local lower = normalized:lower()
+    local base = lower:match("^([a-z][a-z])")
+
+    if base == "pt" then
+        -- O plugin fornece português brasileiro como catálogo principal.
+        addUnique(candidates, seen, "pt_BR")
+        addUnique(candidates, seen, "pt")
+    elseif base == "zh" then
+        -- zh, zh-Hans e variantes simplificadas usam zh_CN.
+        if lower == "zh" or lower:find("hans", 1, true)
+            or lower:find("_cn", 1, true)
+            or lower:find("_sg", 1, true) then
+            addUnique(candidates, seen, "zh_CN")
+        end
+    elseif base == "en" then
+        addUnique(candidates, seen, "en")
+    elseif base then
+        addUnique(candidates, seen, base)
+    end
+
+    return candidates
+end
+
+-- Testa um arquivo em modo somente leitura e o fecha imediatamente.
+local function fileExists(path)
+    local file = io.open(path, "rb")
+    if not file then
+        return false
+    end
+    file:close()
+    return true
+end
+
+-- Decodifica o conteúdo entre aspas usado em msgid e msgstr.
+local function decodePOString(quoted)
+    if type(quoted) ~= "string" then
+        return nil
+    end
+
+    local value = quoted:match('^%s*"(.*)"%s*$')
+    if value == nil then
+        return nil
+    end
+
+    local escapes = {
+        a = "\a",
+        b = "\b",
+        f = "\f",
+        n = "\n",
+        r = "\r",
+        t = "\t",
+        v = "\v",
+        ['"'] = '"',
+        ["\\"] = "\\",
     }
 
-    GetText.dirname = PluginGetText.dirname
-
-    local ok, err = pcall(GetText.changeLang, language)
-    if ok and (
-        (GetText.translation and next(GetText.translation) ~= nil)
-        or (GetText.context and next(GetText.context) ~= nil)
-    ) then
-        local copied = util.tableDeepCopy(GetText)
-        if copied then
-            PluginGetText = copied
-        end
-    elseif not ok then
-        logger.warn(
-            "tarot.koplugin: falha ao carregar idioma",
-            tostring(language),
-            tostring(err)
-        )
-    end
-
-    -- Restauração obrigatória: o restante do KOReader não pode perceber que
-    -- outro catálogo foi carregado temporariamente.
-    GetText.dirname = original.dirname
-    GetText.context = original.context
-    GetText.translation = original.translation
-    GetText.wrapUntranslated = original.wrapUntranslated
-    GetText.current_lang = original.current_lang
-    GetText.getPlural = original.getPlural
+    return (value:gsub("\\(.)", function(character)
+        return escapes[character] or character
+    end))
 end
 
--- Cria um objeto chamável: T("Text") e também T.ngettext(...).
-local function createProxy(plugin_gettext, koreader_gettext)
-    if not plugin_gettext.current_lang
-        or plugin_gettext.current_lang == "C"
-        or not plugin_gettext.translation
-        or not plugin_gettext.wrapUntranslated then
-        return koreader_gettext
+-- Lê o subconjunto padrão de PO utilizado pelos catálogos deste plugin.
+local function loadPO(path)
+    local file, open_error = io.open(path, "r")
+    if not file then
+        return nil, open_error or "não foi possível abrir o arquivo"
     end
 
-    local function sourceForMethod(method, args)
-        if method == "gettext" then
-            return args[1]
-        elseif method == "pgettext" then
-            return args[2]
-        elseif method == "ngettext" then
-            local plural = plugin_gettext.getPlural
-                and plugin_gettext.getPlural(args[3]) ~= 0
-            return plural and args[2] or args[1]
-        elseif method == "npgettext" then
-            local plural = plugin_gettext.getPlural
-                and plugin_gettext.getPlural(args[4]) ~= 0
-            return plural and args[3] or args[2]
+    local translations = {}
+    local entry = {}
+    local active_field = nil
+    local fuzzy = false
+
+    local function commitEntry()
+        if not fuzzy
+            and entry.msgid
+            and entry.msgid ~= ""
+            and entry.msgstr
+            and entry.msgstr ~= "" then
+            translations[entry.msgid] = entry.msgstr
         end
+
+        entry = {}
+        active_field = nil
+        fuzzy = false
     end
 
-    return setmetatable({}, {
-        __index = function(_, key)
-            local value = plugin_gettext[key]
-            if type(value) ~= "function" then
-                return value
+    for line in file:lines() do
+        if line == "" then
+            commitEntry()
+        elseif line:match("^#,.*fuzzy") then
+            fuzzy = true
+        else
+            local field, quoted = line:match("^(msgid)%s+(.+)$")
+            if not field then
+                field, quoted = line:match("^(msgstr)%s+(.+)$")
             end
 
-            local fallback = koreader_gettext[key]
-            return function(...)
-                local args = { ... }
-                local translated = value(...)
-                local source = sourceForMethod(key, args)
-                if translated == source and type(fallback) == "function" then
-                    return fallback(...)
+            if field then
+                local decoded = decodePOString(quoted)
+                if decoded == nil then
+                    file:close()
+                    return nil, "linha PO inválida: " .. line
                 end
-                return translated
+                active_field = field
+                entry[field] = decoded
+            elseif active_field then
+                local decoded = decodePOString(line)
+                if decoded ~= nil then
+                    entry[active_field] = (entry[active_field] or "") .. decoded
+                end
             end
-        end,
-        __call = function(_, msgid)
-            local translated = plugin_gettext(msgid)
-            if translated == msgid then
-                return koreader_gettext(msgid)
-            end
-            return translated
-        end,
-    })
+        end
+    end
+
+    commitEntry()
+    file:close()
+
+    return translations
 end
 
--- O KOReader já resolveu o idioma global durante a inicialização.
-local current_language = GetText.current_lang
-    or G_reader_settings:readSetting("language")
+-- A configuração persistida é mais confiável que o estado interno do gettext
+-- em dispositivos onde os plugins podem ser carregados em momentos distintos.
+local function getConfiguredLanguage()
+    if G_reader_settings
+        and type(G_reader_settings.readSetting) == "function" then
+        local ok, language = pcall(
+            G_reader_settings.readSetting,
+            G_reader_settings,
+            "language"
+        )
+        if ok and language and language ~= "" then
+            return language
+        end
+    end
 
-if current_language and current_language ~= "C" then
-    loadPluginLanguage(current_language)
+    return CoreGetText.current_lang or "C"
 end
 
-return createProxy(PluginGetText, GetText)
+local function loadConfiguredCatalog()
+    local requested = getConfiguredLanguage()
+    PluginGetText.requested_lang = requested or "C"
+
+    local normalized = normalizeLanguage(requested)
+    if not normalized
+        or normalized == "C"
+        or normalized:lower():match("^en") then
+        -- O próprio msgid já é o texto inglês.
+        PluginGetText.current_lang = "C"
+        return
+    end
+
+    local candidates = getLanguageCandidates(requested)
+    local attempted = {}
+
+    for _, language in ipairs(candidates) do
+        local path = l10n_path .. "/" .. language .. "/koreader.po"
+        table.insert(attempted, path)
+
+        if fileExists(path) then
+            local translations, load_error = loadPO(path)
+            if translations and next(translations) ~= nil then
+                PluginGetText.translation = translations
+                PluginGetText.current_lang = language
+                PluginGetText.catalog_path = path
+                logger.info(
+                    "tarot.koplugin: catálogo carregado:",
+                    language,
+                    path
+                )
+                return
+            end
+
+            logger.warn(
+                "tarot.koplugin: catálogo inválido ou vazio:",
+                path,
+                tostring(load_error)
+            )
+        end
+    end
+
+    logger.warn(
+        "tarot.koplugin: catálogo não encontrado para",
+        tostring(requested),
+        table.concat(attempted, ", ")
+    )
+end
+
+loadConfiguredCatalog()
+
+-- Consulta primeiro o catálogo do Tarot e só depois o gettext principal.
+local function translate(msgid)
+    if type(msgid) ~= "string" then
+        return tostring(msgid)
+    end
+
+    local translated = PluginGetText.translation[msgid]
+    if translated and translated ~= "" then
+        return translated
+    end
+
+    return CoreGetText(msgid)
+end
+
+-- Métodos mantidos para compatibilidade com o formato do gettext do KOReader.
+function PluginGetText.gettext(msgid)
+    return translate(msgid)
+end
+
+function PluginGetText.pgettext(context, msgid)
+    local translated = PluginGetText.translation[msgid]
+    if translated and translated ~= "" then
+        return translated
+    end
+    if type(CoreGetText.pgettext) == "function" then
+        return CoreGetText.pgettext(context, msgid)
+    end
+    return CoreGetText(msgid)
+end
+
+function PluginGetText.ngettext(msgid, msgid_plural, number)
+    local source = number == 1 and msgid or msgid_plural
+    return translate(source)
+end
+
+function PluginGetText.npgettext(context, msgid, msgid_plural, number)
+    local source = number == 1 and msgid or msgid_plural
+    return PluginGetText.pgettext(context, source)
+end
+
+return setmetatable(PluginGetText, {
+    __call = function(_, msgid)
+        return translate(msgid)
+    end,
+})
