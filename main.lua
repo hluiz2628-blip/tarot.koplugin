@@ -28,6 +28,34 @@ local lfs              = require("libs/libkoreader-lfs")
 local util             = require("util")
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║                     SEÇÃO 0: LOCALIZAÇÃO (l10n)                             ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
+-- Carrega traduções da pasta l10n se disponível
+local l10n_strings = {}
+local function loadL10n(lang_code)
+    local plugin_dir = debug.getinfo(1, "S").source:match("^@(.*[/\\])") or ""
+    local l10n_path = plugin_dir .. "l10n/" .. lang_code .. ".po"
+    local file = io.open(l10n_path, "r")
+    if not file then
+        -- Tenta caminho alternativo para KOReader
+        l10n_path = "./l10n/" .. lang_code .. ".po"
+        file = io.open(l10n_path, "r")
+    end
+    if not file then return {} end
+    
+    local content = file:read("*all")
+    file:close()
+    
+    local result = {}
+    for msgid, msgstr in content:gmatch('msgid%s*"([^"]+)"%s*msgstr%s*"([^"]*)"') do
+        if msgid ~= "" and msgstr ~= "" then
+            result[msgid] = msgstr
+        end
+    end
+    return result
+end
+
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
 -- ║                     SEÇÃO 1: TRADUÇÕES (translations)                       ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
 local translations = {
@@ -1794,10 +1822,18 @@ function TarotPlugin:init()
     end
     
     self:ensureSavesDir()
+    
+    -- Carrega strings de localização do arquivo .po se disponível
+    l10n_strings = loadL10n(self.language or "pt")
 end
 
 function TarotPlugin:getTranslation(key)
     local lang = self.language or "pt"
+    -- Prioriza strings da pasta l10n (.po files)
+    if l10n_strings and l10n_strings[key] then
+        return l10n_strings[key]
+    end
+    -- Fallback para tabela interna de traduções
     local t = translations[lang]
     if t and t[key] then return t[key] end
     if translations.pt and translations.pt[key] then return translations.pt[key] end
@@ -1929,6 +1965,9 @@ function TarotPlugin:restoreAll()
     self.major_only = false
     self.use_lenormand = false
     self.hidden_card = true
+    
+    -- Recarrega strings de localização após restauração
+    l10n_strings = loadL10n(self.language)
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -3001,6 +3040,8 @@ function SettingsDialog:init()
             callback = function()
                 self.plugin.language = "pt"
                 G_reader_settings:saveSetting("tarot_language", "pt")
+                -- Recarrega strings de localização ao mudar idioma
+                l10n_strings = loadL10n("pt")
                 UIManager:close(self)
                 self.plugin:refreshMenu()
                 UIManager:show(SettingsDialog:new{ plugin = self.plugin })
@@ -3015,6 +3056,8 @@ function SettingsDialog:init()
             callback = function()
                 self.plugin.language = "en"
                 G_reader_settings:saveSetting("tarot_language", "en")
+                -- Recarrega strings de localização ao mudar idioma
+                l10n_strings = loadL10n("en")
                 UIManager:close(self)
                 self.plugin:refreshMenu()
                 UIManager:show(SettingsDialog:new{ plugin = self.plugin })
