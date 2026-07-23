@@ -1,10 +1,9 @@
--- meta information for tarot.koplugin
-local _ = require("gettext")
+-- Metadados lidos pelo gerenciador de plugins do KOReader.
+local T = require("tarot_gettext")
+
 return {
-    fullname = _("Leitura de Tarot"),
-    description = _([[Exibe cartas de tarot aleatórias com significados.]]),
-    author = "Comunidade KOReader",
-    version = "0.2",
-    -- KOReader minimun version
-    requires = "2024.01",
+    name = "tarot",
+    fullname = T("Tarot Reading"),
+    description = T("Draw Tarot and Lenormand cards for reflection, save readings, and browse the complete card book."),
+    version = "4.0.0",
 }
