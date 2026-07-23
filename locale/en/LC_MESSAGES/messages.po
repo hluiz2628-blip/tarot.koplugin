@@ -1,0 +1,283 @@
+# English translations for Tarot/Lenormand plugin
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00:00\n"
+"PO-Revision-Date: 2024-01-01 00:00:00\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "title"
+msgstr "Tarot Reading"
+
+msgid "spreads"
+msgstr "Spreads"
+
+msgid "one_card"
+msgstr "1 Card"
+
+msgid "three_cards"
+msgstr "3 Cards"
+
+msgid "daily_card"
+msgstr "Daily Card"
+
+msgid "draw_card"
+msgstr "Draw a card"
+
+msgid "draw_three"
+msgstr "3 card spread"
+
+msgid "draw_daily"
+msgstr "Card of the day"
+
+msgid "settings"
+msgstr "Settings"
+
+msgid "configuration"
+msgstr "Config"
+
+msgid "new"
+msgstr "New cards"
+
+msgid "close"
+msgstr "Close"
+
+msgid "prev"
+msgstr "< Prev"
+
+msgid "next"
+msgstr "Next >"
+
+msgid "language"
+msgstr "Language"
+
+msgid "portuguese"
+msgstr "Português"
+
+msgid "english"
+msgstr "English"
+
+msgid "upright"
+msgstr "Upright"
+
+msgid "reversed"
+msgstr "Reversed"
+
+msgid "loading"
+msgstr "Shuffling the cards..."
+
+msgid "card_count"
+msgstr "Card %d of %d"
+
+msgid "allow_reversed"
+msgstr "Reversed cards"
+
+msgid "allow_reversed_desc"
+msgstr "Allow cards to appear reversed"
+
+msgid "major_only"
+msgstr "Major Arcana only"
+
+msgid "major_only_desc"
+msgstr "Draw only from the 22 Major Arcana"
+
+msgid "major_arcana"
+msgstr "Major Arcana"
+
+msgid "minor_arcana"
+msgstr "Minor Arcana"
+
+msgid "deck_type"
+msgstr "Deck Type"
+
+msgid "deck_type_desc"
+msgstr "Choose between Tarot and Lenormand"
+
+msgid "tarot_deck"
+msgstr "Tarot"
+
+msgid "lenormand_deck"
+msgstr "Lenormand"
+
+msgid "lenormand_reading"
+msgstr "Lenormand Reading"
+
+msgid "lenormand_title"
+msgstr "Lenormand Deck"
+
+msgid "save"
+msgstr "Save"
+
+msgid "save_title"
+msgstr "Spread title (max 50 characters)"
+
+msgid "save_title_hint"
+msgstr "Ex: Daily reflection"
+
+msgid "save_note"
+msgstr "Note about the reading (max 500 characters)"
+
+msgid "save_note_hint"
+msgstr "Ex: What I felt seeing these cards..."
+
+msgid "save_success"
+msgstr "Spread saved successfully!"
+
+msgid "save_error"
+msgstr "Error saving the spread."
+
+msgid "saved_readings"
+msgstr "Saved Spreads"
+
+msgid "no_saved"
+msgstr "No saved spreads found."
+
+msgid "open_reading"
+msgstr "Open in Reader"
+
+msgid "delete_reading"
+msgstr "Delete"
+
+msgid "delete_confirm"
+msgstr "Delete this spread?"
+
+msgid "delete_success"
+msgstr "Spread deleted."
+
+msgid "delete_error"
+msgstr "Error deleting file."
+
+msgid "saved_on"
+msgstr "Saved on"
+
+msgid "title_label"
+msgstr "Title"
+
+msgid "note_label"
+msgstr "Note"
+
+msgid "card_position"
+msgstr "Position"
+
+msgid "restore"
+msgstr "Restore"
+
+msgid "restore_desc"
+msgstr "Delete all settings and saved spreads"
+
+msgid "restore_confirm"
+msgstr "Are you sure? This will delete ALL settings and saved spreads. This action cannot be undone."
+
+msgid "restore_success"
+msgstr "Everything has been restored. The plugin will restart."
+
+msgid "restore_error"
+msgstr "Error restoring. Some files could not be removed."
+
+msgid "yes"
+msgstr "Yes"
+
+msgid "no"
+msgstr "No"
+
+msgid "confirm"
+msgstr "Confirm"
+
+msgid "cancel"
+msgstr "Cancel"
+
+msgid "reset_section"
+msgstr "Reset"
+
+msgid "card_book"
+msgstr "Card Book"
+
+msgid "major_arcana_list"
+msgstr "Major Arcana (22)"
+
+msgid "minor_arcana_list"
+msgstr "Minor Arcana (56)"
+
+msgid "lenormand_list"
+msgstr "Lenormand Deck (36)"
+
+msgid "all_cards"
+msgstr "View All Cards"
+
+msgid "search_card"
+msgstr "Search Card"
+
+msgid "meaning_label"
+msgstr "Meaning"
+
+msgid "reversed_meaning_label"
+msgstr "Reversed Meaning"
+
+msgid "number_label"
+msgstr "Number"
+
+msgid "arcana_label"
+msgstr "Arcana"
+
+msgid "filter_title"
+msgstr "Filter Cards"
+
+msgid "no_results"
+msgstr "No cards found."
+
+msgid "back"
+msgstr "Back"
+
+msgid "suit_wands"
+msgstr "Wands"
+
+msgid "suit_cups"
+msgstr "Cups"
+
+msgid "suit_swords"
+msgstr "Swords"
+
+msgid "suit_pentacles"
+msgstr "Pentacles"
+
+msgid "hidden_card"
+msgstr "Hidden Card"
+
+msgid "hidden_card_desc"
+msgstr "Show card back before revealing the spread"
+
+msgid "click_on_card"
+msgstr "click on the card"
+
+msgid "exit"
+msgstr "Exit"
+
+msgid "reveal"
+msgstr "Reveal"
+
+msgid "about"
+msgstr "About"
+
+msgid "about_title"
+msgstr "About Tarot and Lenormand"
+
+msgid "about_text"
+msgstr "Tarot is a deck of 78 cards, divided into Major Arcana (22) and Minor Arcana (56), used for reflection and self-knowledge. The Lenormand deck has 36 cards with direct symbolism for practical guidance.\n\nCredits for the free card images:\n• Lenormand Cards by Yve Lepkowski (https://stolen-thyme.com/)\n• Tarot Cards by Luciella Elisabeth Scarlett (https://luciellaes.itch.io/)"
+
+msgid "view_in_book"
+msgstr "view in book"
+
+msgid "keywords_label"
+msgstr "Keywords"
+
+msgid "planet_sign_label"
+msgstr "Planet / Sign"
+
+msgid "timing_label"
+msgstr "Timing"

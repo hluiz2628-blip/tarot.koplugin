@@ -1,0 +1,283 @@
+# Portuguese (Brazil) translations for Tarot/Lenormand plugin
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00:00\n"
+"PO-Revision-Date: 2024-01-01 00:00:00\n"
+"Last-Translator: \n"
+"Language-Team: Portuguese (Brazil)\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "title"
+msgstr "Leitura de Tarot"
+
+msgid "spreads"
+msgstr "Spreads"
+
+msgid "one_card"
+msgstr "1 Carta"
+
+msgid "three_cards"
+msgstr "3 Cartas"
+
+msgid "daily_card"
+msgstr "Carta Diária"
+
+msgid "draw_card"
+msgstr "Tirar uma carta"
+
+msgid "draw_three"
+msgstr "Tiragem de 3 cartas"
+
+msgid "draw_daily"
+msgstr "Carta do dia"
+
+msgid "settings"
+msgstr "Configurações"
+
+msgid "configuration"
+msgstr "Configuração"
+
+msgid "new"
+msgstr "Novas cartas"
+
+msgid "close"
+msgstr "Fechar"
+
+msgid "prev"
+msgstr "< Ant"
+
+msgid "next"
+msgstr "Próx >"
+
+msgid "language"
+msgstr "Idioma"
+
+msgid "portuguese"
+msgstr "Português"
+
+msgid "english"
+msgstr "English"
+
+msgid "upright"
+msgstr "Posição normal"
+
+msgid "reversed"
+msgstr "Invertida"
+
+msgid "loading"
+msgstr "Embaralhando as cartas..."
+
+msgid "card_count"
+msgstr "Carta %d de %d"
+
+msgid "allow_reversed"
+msgstr "Cartas invertidas"
+
+msgid "allow_reversed_desc"
+msgstr "Permitir que cartas apareçam invertidas"
+
+msgid "major_only"
+msgstr "Apenas Arcanos Maiores"
+
+msgid "major_only_desc"
+msgstr "Sortear apenas os 22 Arcanos Maiores"
+
+msgid "major_arcana"
+msgstr "Arcanos Maiores"
+
+msgid "minor_arcana"
+msgstr "Arcanos Menores"
+
+msgid "deck_type"
+msgstr "Tipo de Baralho"
+
+msgid "deck_type_desc"
+msgstr "Escolha entre Tarot e Baralho Cigano"
+
+msgid "tarot_deck"
+msgstr "Tarot"
+
+msgid "lenormand_deck"
+msgstr "Baralho Cigano"
+
+msgid "lenormand_reading"
+msgstr "Leitura do Baralho Cigano"
+
+msgid "lenormand_title"
+msgstr "Baralho Cigano"
+
+msgid "save"
+msgstr "Salvar"
+
+msgid "save_title"
+msgstr "Título da tiragem (máx. 50 caracteres)"
+
+msgid "save_title_hint"
+msgstr "Ex: Reflexão do dia"
+
+msgid "save_note"
+msgstr "Nota sobre a leitura (máx. 500 caracteres)"
+
+msgid "save_note_hint"
+msgstr "Ex: O que senti ao ver estas cartas..."
+
+msgid "save_success"
+msgstr "Tiragem salva com sucesso!"
+
+msgid "save_error"
+msgstr "Erro ao salvar a tiragem."
+
+msgid "saved_readings"
+msgstr "Tiragens Salvas"
+
+msgid "no_saved"
+msgstr "Nenhuma tiragem salva encontrada."
+
+msgid "open_reading"
+msgstr "Abrir no Leitor"
+
+msgid "delete_reading"
+msgstr "Excluir"
+
+msgid "delete_confirm"
+msgstr "Excluir esta tiragem?"
+
+msgid "delete_success"
+msgstr "Tiragem excluída."
+
+msgid "delete_error"
+msgstr "Erro ao excluir arquivo."
+
+msgid "saved_on"
+msgstr "Salvo em"
+
+msgid "title_label"
+msgstr "Título"
+
+msgid "note_label"
+msgstr "Nota"
+
+msgid "card_position"
+msgstr "Posição"
+
+msgid "restore"
+msgstr "Restaurar"
+
+msgid "restore_desc"
+msgstr "Apagar todas as configurações e tiragens salvas"
+
+msgid "restore_confirm"
+msgstr "Tem certeza? Isso apagará TODAS as configurações e tiragens salvas. Esta ação não pode ser desfeita."
+
+msgid "restore_success"
+msgstr "Tudo foi restaurado. O plugin será reiniciado."
+
+msgid "restore_error"
+msgstr "Erro ao restaurar. Alguns arquivos não puderam ser removidos."
+
+msgid "yes"
+msgstr "Sim"
+
+msgid "no"
+msgstr "Não"
+
+msgid "confirm"
+msgstr "Confirmar"
+
+msgid "cancel"
+msgstr "Cancelar"
+
+msgid "reset_section"
+msgstr "Redefinir"
+
+msgid "card_book"
+msgstr "Livro de Cartas"
+
+msgid "major_arcana_list"
+msgstr "Arcanos Maiores (22)"
+
+msgid "minor_arcana_list"
+msgstr "Arcanos Menores (56)"
+
+msgid "lenormand_list"
+msgstr "Baralho Cigano (36)"
+
+msgid "all_cards"
+msgstr "Ver Todas as Cartas"
+
+msgid "search_card"
+msgstr "Buscar Carta"
+
+msgid "meaning_label"
+msgstr "Significado"
+
+msgid "reversed_meaning_label"
+msgstr "Significado Invertido"
+
+msgid "number_label"
+msgstr "Número"
+
+msgid "arcana_label"
+msgstr "Arcano"
+
+msgid "filter_title"
+msgstr "Filtrar Cartas"
+
+msgid "no_results"
+msgstr "Nenhuma carta encontrada."
+
+msgid "back"
+msgstr "Voltar"
+
+msgid "suit_wands"
+msgstr "Paus"
+
+msgid "suit_cups"
+msgstr "Copas"
+
+msgid "suit_swords"
+msgstr "Espadas"
+
+msgid "suit_pentacles"
+msgstr "Ouros"
+
+msgid "hidden_card"
+msgstr "Carta Oculta"
+
+msgid "hidden_card_desc"
+msgstr "Mostrar verso da carta antes de revelar a tiragem"
+
+msgid "click_on_card"
+msgstr "clique na carta"
+
+msgid "exit"
+msgstr "Sair"
+
+msgid "reveal"
+msgstr "Revelar"
+
+msgid "about"
+msgstr "Sobre"
+
+msgid "about_title"
+msgstr "Sobre o Tarot e Lenormand"
+
+msgid "about_text"
+msgstr "O Tarot é um baralho de 78 cartas, dividido em Arcanos Maiores (22) e Menores (56), usado para reflexão e autoconhecimento. O Baralho Cigano (Lenormand) possui 36 cartas com simbolismo direto para orientação prática.\n\nAgradecimentos pelas imagens gratuitas:\n• Lenormand Cards por Yve Lepkowski (https://stolen-thyme.com/)\n• Tarot Cards por Luciella Elisabeth Scarlett (https://luciellaes.itch.io/)"
+
+msgid "view_in_book"
+msgstr "ver no livro"
+
+msgid "keywords_label"
+msgstr "Palavras-chave"
+
+msgid "planet_sign_label"
+msgstr "Planeta / Signo"
+
+msgid "timing_label"
+msgstr "Timing"
