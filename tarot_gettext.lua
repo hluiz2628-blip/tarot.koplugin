@@ -1,11 +1,15 @@
 --[[
 Carregador de traduções isolado do plugin Tarot.
 
-O gettext do KOReader lê diretamente arquivos .po. A implementação anterior
-alterava temporariamente o catálogo global, copiava suas tabelas e depois
-tentava restaurá-lo. Embora funcionasse no aplicativo para computador, esse
-procedimento podia falhar no Kindle e deixava apenas traduções genéricas do
-catálogo principal do KOReader, como "Close" -> "Fechar".
+O gettext interno do KOReader 2026.03 carrega catálogos compilados .mo.
+Este módulo possui um leitor próprio e deliberadamente simples de .po para
+permitir que as traduções do plugin sejam mantidas sem etapa de compilação.
+Ele não altera o catálogo global do KOReader.
+
+A implementação anterior alterava temporariamente o catálogo global, copiava
+suas tabelas e depois tentava restaurá-lo. Embora funcionasse no aplicativo
+para computador, esse procedimento podia falhar no Kindle e deixava apenas
+traduções genéricas do catálogo principal, como "Close" -> "Fechar".
 
 Esta versão:
   1. lê o idioma configurado diretamente em settings.reader.lua;
