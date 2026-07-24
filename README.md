@@ -31,7 +31,7 @@ Then restart KOReader and open the plugin from the tools menu.
 
 ## Version
 
-**5.1.0 — Layout Adaptativo**
+**Arcana - 5.1.0**
 
 ## Cards credits
 
