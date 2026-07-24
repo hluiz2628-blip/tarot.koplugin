@@ -16,6 +16,7 @@ local InfoMessage      = require("ui/widget/infomessage")
 local InputContainer   = require("ui/widget/container/inputcontainer")
 local InputDialog      = require("ui/widget/inputdialog")
 local Menu             = require("ui/widget/menu")
+local OverlapGroup     = require("ui/widget/overlapgroup")
 local ReaderUI         = require("apps/reader/readerui")
 local Screen           = require("device").screen
 local Size             = require("ui/size")
@@ -64,9 +65,9 @@ local UI_TEXT = {
     remove_last_card = "Remove last card",
     drawn_card_count = "Cards drawn: %d of %d",
     physical_deck = "Physical deck",
-    physical_deck_hint = "Select up to 10 cards",
+    physical_deck_hint = "Select up to 16 cards",
     physical_deck_empty = "Select at least one card.",
-    physical_deck_limit = "You can select up to 10 cards.",
+    physical_deck_limit = "You can select up to 16 cards.",
     physical_deck_reverse_hint = "Press and hold a card in the list to reverse it.",
     card_dialog_navigation_hint = "Click the card beside it to access it.",
     do_not_show_again = "Do not show this message again",
@@ -119,6 +120,12 @@ local UI_TEXT = {
     meaning_mode_hidden = "Hidden",
     settings_page = "Page %d of %d",
     journal_system = "Journal and system",
+    screen_refresh = "Screen refresh",
+    refresh_mode = "Update mode",
+    refresh_mode_standard = "Balanced",
+    refresh_mode_smooth = "Fewer flashes",
+    refresh_mode_clean = "Cleaner screen",
+    refresh_mode_hint = "Fewer flashes reduces black/white blinking, but may leave more ghosting on e-ink screens.",
     major_arcana = "Major Arcana",
     minor_arcana = "Minor Arcana",
     deck_type = "Deck Type",
@@ -273,11 +280,16 @@ local UI_TEXT = {
     suit_swords = "Swords",
     suit_pentacles = "Pentacles",
     hidden_card = "Hidden Card",
+    move_card = "Move",
+    delete_card = "Delete",
+    undo_action = "Undo",
+    turn_face_down = "Hide",
+    tap_another_location_to_move = "Tap another location to move",
     click_on_card = "click on the card",
     exit = "Exit",
     reveal = "Reveal",
     reveal_next = "Reveal next card",
-    click_card_to_reveal = "Click the card to reveal it.",
+    click_card_to_reveal = "Tap an empty space to add a card. Tap a hidden card to reveal it, and tap a revealed card to open its details. Press and hold a card to show Move, Delete, and Undo. Revealed cards also show Hide.",
     click_next_card_to_reveal = "Click the next card to reveal it. Press and hold to reveal all remaining cards.",
     reveal_all_confirm = "Reveal all remaining cards?",
     revealed_count = "Revealed %d of %d",
@@ -406,14 +418,81 @@ local function makeMutedText(text, width)
     }
 end
 
+
+-- Esqueleto padrão para telas fullscreen do plugin. Ele imita a organização
+-- usada em Hidden Cards: título fixo no topo, conteúdo respirando no centro e
+-- ações principais no rodapé. O cálculo usa a área segura do KOReader para
+-- continuar funcionando em Kindle Basic 2022, janelas pequenas de desktop,
+-- Android e outros e-ink sem empurrar botões para fora da tela.
+local function makeFullscreenScaffold(spec)
+    spec = spec or {}
+    local layout = spec.layout or getFullscreenLayout(spec.content_factor)
+    local iw = spec.width or layout.content_w
+    local header = spec.header
+    if not header and spec.title and spec.title ~= "" then
+        header = makeSectionHeader(spec.title, iw, spec.subtitle)
+    end
+
+    local body = spec.body or VerticalGroup:new{ align = "center" }
+    local footer = spec.footer
+    local header_gap = header and (spec.header_gap or Size.span.vertical_default) or 0
+    local footer_gap = footer and (spec.footer_gap or Size.span.vertical_default) or 0
+    local header_h = header and header:getSize().h or 0
+    local footer_h = footer and footer:getSize().h or 0
+    local body_h = layout.safe_h - header_h - footer_h - header_gap - footer_gap
+    if body_h < 1 then body_h = 1 end
+
+    local content = VerticalGroup:new{ align = "center" }
+    if header then
+        table.insert(content, header)
+        if header_gap > 0 then table.insert(content, VerticalSpan:new{ width = header_gap }) end
+    end
+
+    table.insert(content, CenterContainer:new{
+        dimen = Geom:new{ w = iw, h = body_h },
+        body,
+    })
+
+    if footer then
+        if footer_gap > 0 then table.insert(content, VerticalSpan:new{ width = footer_gap }) end
+        table.insert(content, footer)
+    end
+
+    return makeFullscreenFrame(content, layout)
+end
+
+-- Rodapé padrão: divisor discreto + ações textuais/botões. Mantém o mesmo
+-- lugar visual para Voltar, Fechar, Salvar e paginação em todas as telas.
+local function makeFullscreenFooter(width, content, with_divider)
+    local footer = VerticalGroup:new{ align = "center" }
+    if with_divider ~= false then
+        table.insert(footer, makeTarotDivider(width))
+        table.insert(footer, VerticalSpan:new{ width = Size.span.vertical_default })
+    end
+    if content then table.insert(footer, content) end
+    return footer
+end
+
 -- Raio seguro para botões. Alguns builds/dispositivos podem não preencher
 -- `Size.radius.button`; nesse caso, usamos fallbacks conhecidos antes de cair
 -- em um valor fixo pequeno. Isso evita botões quadrados no Kindle.
-local function getTarotButtonRadius()
+local function getTarotBaseButtonRadius()
     if Size.radius then
         return Size.radius.button or Size.radius.default or Size.radius.window or 8
     end
     return 8
+end
+
+-- Estilo principal dos botões do plugin. Usa o mesmo arredondamento reforçado
+-- que ficou visualmente melhor na Home, mas com limite superior para não virar
+-- “pílula gigante” em janelas muito altas no desktop.
+local function getTarotButtonRadius()
+    local base = getTarotBaseButtonRadius()
+    local screen_h = Screen and Screen.getHeight and Screen:getHeight() or 0
+    local responsive = screen_h > 0 and math.floor(screen_h * 0.018) or base
+    if responsive < base then responsive = base end
+    if responsive > 30 then responsive = 30 end
+    return responsive
 end
 
 -- Cartão visual simples para agrupar configurações relacionadas. Usa borda
@@ -436,24 +515,36 @@ local function makeSettingsCard(title, body, width)
         width      = width,
         background = Blitbuffer.COLOR_WHITE,
         bordersize = 1,
-        radius     = getTarotButtonRadius(),
+        radius     = getTarotBaseButtonRadius(),
         padding    = Size.padding.default,
         inner,
     }
 end
 
--- Botão padrão com cantos arredondados. Não forçamos `bordersize` aqui: o
--- KOReader gerencia melhor o estado pressionado quando o botão mantém o
--- comportamento nativo de borda/desenho.
+-- Botão principal com cantos arredondados. É o estilo usado nos botões da
+-- Home e reaproveitado nos demais menus. Botões textuais/sem borda continuam
+-- usando makeTransparentTextButton, para preservar rodapés e links discretos.
 local function makeRoundedButton(spec)
     spec = spec or {}
     return Button:new{
         text             = spec.text,
         width            = spec.width,
+        height           = spec.height,
         radius           = spec.radius or getTarotButtonRadius(),
+        bordersize       = spec.bordersize ~= nil and spec.bordersize or 1,
         enabled          = spec.enabled,
+        align            = spec.align,
+        margin           = spec.margin,
+        padding          = spec.padding,
+        padding_h        = spec.padding_h,
+        padding_v        = spec.padding_v,
+        text_font_face   = spec.text_font_face,
+        text_font_size   = spec.text_font_size,
+        text_font_bold   = spec.text_font_bold,
+        font_face        = spec.font_face,
         is_enter_default = spec.is_enter_default,
         callback         = spec.callback,
+        hold_callback    = spec.hold_callback,
     }
 end
 
@@ -480,10 +571,110 @@ local function makeTransparentTextButton(spec)
     return button
 end
 
+
+-- Mapeia a preferência do plugin para o modo de atualização do KOReader.
+-- "full" preserva o comportamento antigo; "partial" reduz piscadas; "flashui"
+-- força uma limpeza visual mais forte para quem prefere menos ghosting.
+local function getTarotRefreshType(owner, fallback_type)
+    local plugin = nil
+    if owner then
+        if owner.screen_refresh_mode then
+            plugin = owner
+        elseif owner.plugin and owner.plugin.screen_refresh_mode then
+            plugin = owner.plugin
+        end
+    end
+
+    local mode = plugin and plugin.screen_refresh_mode or "smooth"
+    if mode == "smooth" then
+        return "partial"
+    elseif mode == "clean" then
+        return "flashui"
+    end
+
+    return fallback_type or "full"
+end
+
+local function setTarotDirty(owner, fallback_type, widget, refreshregion, refreshdither)
+    UIManager:setDirty(widget or nil, getTarotRefreshType(owner, fallback_type), refreshregion, refreshdither)
+end
+
+-- Estilo responsivo da lista do Baralho Físico. A fonte e o espaçamento
+-- diminuem levemente em janelas baixas, permitindo mais linhas sem esconder
+-- o rodapé; em telas altas, mantemos a leitura confortável.
+local function getPhysicalDeckListStyle(layout)
+    local sh = layout and layout.screen_h or Screen:getHeight()
+    if sh < 720 then
+        return { font_size = 16, padding_v = Size.padding.tiny, max_items = 10, min_items = 3 }
+    elseif sh < 950 then
+        return { font_size = 18, padding_v = Size.padding.small, max_items = 12, min_items = 4 }
+    elseif sh < 1200 then
+        return { font_size = 20, padding_v = Size.padding.small, max_items = 15, min_items = 5 }
+    end
+    return { font_size = 20, padding_v = Size.padding.small, max_items = 20, min_items = 6 }
+end
+
+-- Calcula quantas cartas cabem na página do Baralho Físico usando a altura
+-- realmente restante entre cabeçalho e rodapé. Isso substitui os antigos
+-- valores fixos e adapta melhor Kindle Basic 2022, desktop redimensionado e
+-- celulares com barras de navegação.
+local function getAdaptivePhysicalDeckItemsPerPage(layout, header_widget, style)
+    style = style or getPhysicalDeckListStyle(layout)
+    local iw = layout.content_w
+
+    local sample_row = Button:new{
+        text = "☑ 16  78. Eight of Pentacles — Reversed",
+        width = iw,
+        bordersize = 0,
+        radius = 0,
+        align = "left",
+        text_font_face = "smallinfofont",
+        text_font_size = style.font_size,
+        text_font_bold = false,
+        padding_h = Size.padding.default,
+        padding_v = style.padding_v,
+        callback = function() end,
+    }
+
+    local sample_footer = makeFullscreenFooter(iw, VerticalGroup:new{
+        align = "center",
+        HorizontalGroup:new{
+            align = "center",
+            makeTransparentTextButton{ text = "<", width = math.floor(iw * 0.22), enabled = false },
+            TextWidget:new{
+                text = "999 / 999",
+                face = Font:getFace("x_smallinfofont"),
+                max_width = math.floor(iw * 0.44),
+                alignment = "center",
+            },
+            makeTransparentTextButton{ text = ">", width = math.floor(iw * 0.22), enabled = false },
+        },
+        VerticalSpan:new{ width = Size.span.vertical_small },
+        HorizontalGroup:new{
+            align = "center",
+            makeTransparentTextButton{ text = "Back", width = math.floor(iw * 0.38) },
+            HorizontalSpan:new{ width = math.floor(iw * 0.08) },
+            makeTransparentTextButton{ text = "Done", width = math.floor(iw * 0.38) },
+        },
+    })
+
+    local header_h = header_widget and header_widget:getSize().h or 0
+    local footer_h = sample_footer:getSize().h
+    local vertical_gaps = Size.span.vertical_default * 2
+    local available_h = layout.safe_h - header_h - footer_h - vertical_gaps
+    local row_h = math.max(1, sample_row:getSize().h)
+    local count = math.floor(available_h / row_h)
+
+    if count < style.min_items then count = style.min_items end
+    if count > style.max_items then count = style.max_items end
+    return count
+end
+
 -- Menu simples em fullscreen, usado para substituir ButtonDialog nos fluxos
 -- de navegação do plugin. Caixas de texto continuam como InputDialog para
 -- preservar o teclado e o comportamento nativo do KOReader.
 local FullscreenMenuDialog = InputContainer:extend{
+    plugin = nil,
     title = nil,
     buttons = nil,
 }
@@ -492,7 +683,7 @@ function FullscreenMenuDialog:init()
     local layout = getFullscreenLayout(0.88)
     local iw = layout.content_w
 
-    local content = VerticalGroup:new{ align = "center" }
+    local body = VerticalGroup:new{ align = "center" }
     local footer_rows = {}
 
     local function makeMenuButton(spec, width, button_dialog, is_footer)
@@ -503,7 +694,7 @@ function FullscreenMenuDialog:init()
             -- externas de diálogos antigos, causa comum de botões sem efeito.
             if button_spec.close_before or button_spec.close_dialog then
                 UIManager:close(button_dialog)
-                UIManager:setDirty(nil, "full")
+                setTarotDirty(self.plugin or self)
             end
 
             if button_spec.callback then
@@ -512,7 +703,7 @@ function FullscreenMenuDialog:init()
 
             if button_spec.close_after then
                 UIManager:close(button_dialog)
-                UIManager:setDirty(nil, "full")
+                setTarotDirty(self.plugin or self)
             end
         end
 
@@ -568,11 +759,6 @@ function FullscreenMenuDialog:init()
         end
     end
 
-    if self.title and self.title ~= "" then
-        table.insert(content, makeSectionHeader(self.title, iw))
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_large })
-    end
-
     for _, row in ipairs(self.buttons or {}) do
         local is_footer = false
         for _, spec in ipairs(row) do
@@ -585,18 +771,23 @@ function FullscreenMenuDialog:init()
         if is_footer then
             table.insert(footer_rows, row)
         else
-            appendRows(content, { row }, false)
+            appendRows(body, { row }, false)
         end
     end
 
+    local footer
     if #footer_rows > 0 then
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_large })
-        table.insert(content, makeTarotDivider(iw))
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-        appendRows(content, footer_rows, true)
+        local footer_content = VerticalGroup:new{ align = "center" }
+        appendRows(footer_content, footer_rows, true)
+        footer = makeFullscreenFooter(iw, footer_content)
     end
 
-    self[1] = makeFullscreenFrame(content, layout)
+    self[1] = makeFullscreenScaffold{
+        layout = layout,
+        title = self.title,
+        body = body,
+        footer = footer,
+    }
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -1667,6 +1858,13 @@ function TarotPlugin:init()
         and self.meaning_text_size ~= "large" then
         self.meaning_text_size = "standard"
     end
+
+    self.screen_refresh_mode = G_reader_settings:readSetting("tarot_screen_refresh_mode")
+    if self.screen_refresh_mode ~= "standard"
+        and self.screen_refresh_mode ~= "smooth"
+        and self.screen_refresh_mode ~= "clean" then
+        self.screen_refresh_mode = "smooth"
+    end
     -- A Carta Oculta agora é parte obrigatória do fluxo de tiragem. A antiga
     -- preferência é removida para que instalações atualizadas não preservem
     -- silenciosamente o estado desativado de versões anteriores.
@@ -1679,6 +1877,7 @@ function TarotPlugin:init()
     self.card_dialog_hint_shown_this_session = false
     self.physical_deck_hint_shown_this_session = false
     self.hidden_card_reveal_hint_shown_this_session = false
+    self.hidden_grid_hint_v2_shown_this_session = false
     self.next_card_reveal_hint_shown_this_session = false
     
     self:ensureSavesDir()
@@ -1820,19 +2019,19 @@ end
 function TarotPlugin:toggleReversed()
     self.allow_reversed = not self.allow_reversed
     G_reader_settings:saveSetting("tarot_allow_reversed", self.allow_reversed)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:toggleMajorOnly()
     self.major_only = not self.major_only
     G_reader_settings:saveSetting("tarot_major_only", self.major_only)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:setReadingDeck(use_lenormand)
     self.use_lenormand = use_lenormand == true
     G_reader_settings:saveSetting("tarot_use_lenormand", self.use_lenormand)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:toggleLenormand()
@@ -1845,7 +2044,7 @@ function TarotPlugin:setDailyCardDeckMode(mode)
     end
     self.daily_card_deck_mode = mode
     G_reader_settings:saveSetting("tarot_daily_deck_mode", mode)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 -- Resolve o baralho da Carta Diária sem alterar o baralho escolhido para as
@@ -1880,7 +2079,7 @@ function TarotPlugin:setSpreadMeaningMode(mode)
     G_reader_settings:saveSetting("tarot_spread_meaning_mode", mode)
     -- Mantém a chave antiga sincronizada para facilitar eventual downgrade.
     G_reader_settings:saveSetting("tarot_disable_spread_meanings", self.disable_spread_meanings)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:toggleSpreadMeanings()
@@ -1893,19 +2092,28 @@ function TarotPlugin:setMeaningTextSize(size)
     end
     self.meaning_text_size = size
     G_reader_settings:saveSetting("tarot_meaning_text_size", size)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self)
+end
+
+function TarotPlugin:setScreenRefreshMode(mode)
+    if mode ~= "standard" and mode ~= "smooth" and mode ~= "clean" then
+        return
+    end
+    self.screen_refresh_mode = mode
+    G_reader_settings:saveSetting("tarot_screen_refresh_mode", mode)
+    setTarotDirty(self)
 end
 
 function TarotPlugin:toggleShowReversedLabel()
     self.show_reversed_label = not self.show_reversed_label
     G_reader_settings:saveSetting("tarot_show_reversed_label", self.show_reversed_label)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:toggleAutoSaveSpreads()
     self.auto_save_spreads = not self.auto_save_spreads
     G_reader_settings:saveSetting("tarot_auto_save_spreads", self.auto_save_spreads)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:toggleUnsavedCloseWarning()
@@ -1914,13 +2122,13 @@ function TarotPlugin:toggleUnsavedCloseWarning()
         "tarot_disable_unsaved_close_warning",
         self.disable_unsaved_close_warning
     )
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:toggleViewInBookButton()
     self.disable_view_in_book = not self.disable_view_in_book
     G_reader_settings:saveSetting("tarot_disable_view_in_book", self.disable_view_in_book)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 -- Exibe uma orientação com caixa de seleção e um único botão "Confirmar".
@@ -1975,8 +2183,8 @@ end
 -- espaço permanente nas telas e cada uma possui sua própria preferência.
 function TarotPlugin:showHiddenCardRevealHint()
     self:showDismissibleHint(
-        "tarot_hidden_card_reveal_hint_dismissed",
-        "hidden_card_reveal_hint_shown_this_session",
+        "tarot_hidden_grid_hint_v2_dismissed",
+        "hidden_grid_hint_v2_shown_this_session",
         "click_card_to_reveal"
     )
 end
@@ -2006,11 +2214,13 @@ function TarotPlugin:restoreAll()
         "tarot_disable_unsaved_close_warning",
         "tarot_show_reversed_label",
         "tarot_meaning_text_size",
+        "tarot_screen_refresh_mode",
         "tarot_hidden_card",
         "tarot_physical_deck_reverse_hint_seen",
         "tarot_physical_deck_reverse_hint_dismissed",
         "tarot_card_dialog_navigation_hint_dismissed",
         "tarot_hidden_card_reveal_hint_dismissed",
+        "tarot_hidden_grid_hint_v2_dismissed",
         "tarot_next_card_reveal_hint_dismissed",
         "tarot_daily_date",
         "tarot_daily_card_id",
@@ -2108,6 +2318,7 @@ function TarotPlugin:restoreAll()
     self.card_dialog_hint_shown_this_session = false
     self.physical_deck_hint_shown_this_session = false
     self.hidden_card_reveal_hint_shown_this_session = false
+    self.hidden_grid_hint_v2_shown_this_session = false
     self.next_card_reveal_hint_shown_this_session = false
 
     -- Descarta referências a telas e estados antigos para impedir que uma tela
@@ -2119,7 +2330,7 @@ function TarotPlugin:restoreAll()
     self.journal_trash_dialog = nil
     self.journal_backup_dialog = nil
 
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
     return ok
 end
 
@@ -2412,6 +2623,7 @@ function TarotPlugin:writeJournalEntry(entry)
         "entry_type=" .. journalEscape(entry.entry_type),
         "deck=" .. journalEscape(entry.deck),
         "spread_type=" .. journalEscape(entry.spread_type or ""),
+        "layout_mode=" .. journalEscape(entry.layout_mode or "auto"),
         "title=" .. journalEscape(entry.title),
         "note=" .. journalEscape(entry.note),
         "outcome=" .. journalEscape(entry.outcome),
@@ -2422,7 +2634,12 @@ function TarotPlugin:writeJournalEntry(entry)
     for _, card_data in ipairs(entry.cards) do
         local id = tonumber(card_data.id)
         if id then
-            table.insert(lines, "card=" .. tostring(id) .. "|" .. (card_data.is_reversed and "1" or "0"))
+            local card_line = "card=" .. tostring(id) .. "|" .. (card_data.is_reversed and "1" or "0")
+            local grid_slot = tonumber(card_data.grid_slot)
+            if grid_slot and grid_slot >= 1 and grid_slot <= 16 then
+                card_line = card_line .. "|" .. tostring(grid_slot)
+            end
+            table.insert(lines, card_line)
         end
     end
 
@@ -2449,11 +2666,15 @@ function TarotPlugin:readJournalEntry(path)
     for line in content:gmatch("[^\r\n]+") do
         local key, value = line:match("^([^=]+)=(.*)$")
         if key == "card" then
-            local id, reversed = value:match("^(%-?%d+)|([01])$")
+            local id, reversed, grid_slot = value:match("^(%-?%d+)|([01])|(%d+)$")
+            if not id then
+                id, reversed = value:match("^(%-?%d+)|([01])$")
+            end
             if id then
                 table.insert(entry.cards, {
                     id = tonumber(id),
                     is_reversed = reversed == "1",
+                    grid_slot = tonumber(grid_slot),
                 })
             end
         elseif key then
@@ -2476,6 +2697,7 @@ function TarotPlugin:readJournalEntry(path)
     entry.outcome = entry.outcome or ""
     entry.entry_type = entry.entry_type or "free"
     entry.deck = entry.deck or "none"
+    entry.layout_mode = entry.layout_mode == "custom" and "custom" or "auto"
     entry.filename = path:match("([^/]+)$")
     return entry
 end
@@ -2488,6 +2710,7 @@ function TarotPlugin:makeJournalEntryFromCards(cards, title, note, entry_type)
             table.insert(card_refs, {
                 id = card_data.card.id,
                 is_reversed = card_data.is_reversed == true,
+                grid_slot = tonumber(card_data.grid_slot),
             })
         end
     end
@@ -2508,6 +2731,12 @@ function TarotPlugin:makeJournalEntryFromCards(cards, title, note, entry_type)
         entry_type = entry_type or "spread",
         deck = is_lenormand and "lenormand" or "tarot",
         spread_type = spread_type,
+        layout_mode = (function()
+            for _, card_data in ipairs(cards or {}) do
+                if tonumber(card_data.grid_slot) then return "custom" end
+            end
+            return "auto"
+        end)(),
         title = title or "",
         note = note or "",
         outcome = "",
@@ -2715,6 +2944,10 @@ function TarotPlugin:getJournalEntryTypeText(entry)
 end
 
 function TarotPlugin:getJournalDeckText(entry)
+    -- Reflexões Livres não pertencem a nenhum baralho. Retornar texto vazio
+    -- evita que o valor interno "none" seja exibido incorretamente como
+    -- "Registro Antigo" na lista do Diário.
+    if entry.entry_type == "free" then return "" end
     if entry.deck == "tarot" then return self:getTranslation("tarot_deck") end
     if entry.deck == "lenormand" then return self:getTranslation("lenormand_deck") end
     return self:getTranslation("legacy_entry")
@@ -2729,7 +2962,13 @@ end
 function TarotPlugin:formatJournalListItem(entry)
     local star = entry.favorite and "★ " or ""
     local date_text = os.date("%d/%m/%Y", entry.created_at or 0)
-    local metadata = star .. date_text .. " · " .. self:getJournalDeckText(entry) .. " · " .. self:getJournalEntryTypeText(entry)
+    local metadata_parts = { star .. date_text }
+    local deck_text = self:getJournalDeckText(entry)
+    if deck_text and deck_text ~= "" then
+        table.insert(metadata_parts, deck_text)
+    end
+    table.insert(metadata_parts, self:getJournalEntryTypeText(entry))
+    local metadata = table.concat(metadata_parts, " · ")
     local preview_source = entry.entry_type == "legacy" and entry.legacy_content or entry.note
     local preview = journalPreview(preview_source, 90)
     local title = self:getJournalDisplayTitle(entry)
@@ -2743,7 +2982,7 @@ function TarotPlugin:closeJournalDialog()
     if self.journal_dialog then
         UIManager:close(self.journal_dialog)
         self.journal_dialog = nil
-        UIManager:setDirty(nil, "full")
+        setTarotDirty(self.plugin or self)
     end
 end
 
@@ -2766,62 +3005,12 @@ function TarotPlugin:showSavedReadingsMenu(page)
 
     local layout = getFullscreenLayout(0.94)
     local iw = layout.content_w
-    local content = VerticalGroup:new{ align = "center" }
     local subtitle = string.format(self:getTranslation("journal_records"), #entries)
-    table.insert(content, makeSectionHeader(self:getTranslation("saved_readings"), iw, subtitle))
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-
-    local action_w = math.floor((iw - Size.span.horizontal_default) / 2)
-    table.insert(content, HorizontalGroup:new{
-        align = "center",
-        makeRoundedButton{
-            text = self:getTranslation("new_reflection"), width = action_w,
-            callback = function()
-                self:closeJournalDialog()
-                self:showNewReflectionTitleInput()
-            end,
-        },
-        HorizontalSpan:new{ width = Size.span.horizontal_default },
-        makeRoundedButton{
-            text = self:getTranslation("search"), width = action_w,
-            callback = function()
-                self:closeJournalDialog()
-                self:showJournalSearchInput()
-            end,
-        },
-    })
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-    table.insert(content, HorizontalGroup:new{
-        align = "center",
-        makeRoundedButton{
-            text = self:getTranslation("filter"), width = action_w,
-            callback = function()
-                self:closeJournalDialog()
-                self:showJournalFilterMenu()
-            end,
-        },
-        HorizontalSpan:new{ width = Size.span.horizontal_default },
-        makeRoundedButton{
-            text = self:getTranslation("more"), width = action_w,
-            callback = function()
-                self:closeJournalDialog()
-                self:showJournalMoreMenu()
-            end,
-        },
-    })
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+    local header_w = makeSectionHeader(self:getTranslation("saved_readings"), iw, subtitle)
+    local body = VerticalGroup:new{ align = "center" }
 
     if #entries == 0 then
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_large })
-        table.insert(content, makeMutedText(self:getTranslation("no_journal_results"), math.floor(iw * 0.88)))
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_large })
-        table.insert(content, makeRoundedButton{
-            text = self:getTranslation("clear_filters"), width = math.floor(iw * 0.72),
-            callback = function()
-                self:clearJournalFilters()
-                self:showSavedReadingsMenu(1)
-            end,
-        })
+        table.insert(body, makeMutedText(self:getTranslation("no_journal_results"), math.floor(iw * 0.88)))
     else
         local start_index = (state.page - 1) * per_page + 1
         local end_index = math.min(#entries, start_index + per_page - 1)
@@ -2832,18 +3021,18 @@ function TarotPlugin:showSavedReadingsMenu(page)
             local entry = entries[index]
             local month_key = os.date("%m/%Y", entry.created_at or 0)
             if month_key ~= previous_month then
-                table.insert(content, TextWidget:new{
+                table.insert(body, TextWidget:new{
                     text = "— " .. month_key .. " —",
                     face = Font:getFace("x_smallinfofont"),
                     fgcolor = Blitbuffer.gray(0.48),
                     max_width = iw,
                     alignment = "center",
                 })
-                table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
+                table.insert(body, VerticalSpan:new{ width = Size.span.vertical_small })
                 previous_month = month_key
             end
 
-            table.insert(content, Button:new{
+            table.insert(body, makeRoundedButton{
                 text = self:formatJournalListItem(entry),
                 width = iw,
                 height = item_height,
@@ -2868,14 +3057,51 @@ function TarotPlugin:showSavedReadingsMenu(page)
                     end
                 end or nil,
             })
-            table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
+            table.insert(body, VerticalSpan:new{ width = Size.span.vertical_small })
         end
     end
 
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+    local action_w = math.floor((iw - Size.span.horizontal_default) / 2)
+    local shortcuts_row_1 = HorizontalGroup:new{
+        align = "center",
+        makeRoundedButton{
+            text = self:getTranslation("new_reflection"), width = action_w,
+            callback = function()
+                self:closeJournalDialog()
+                self:showNewReflectionTitleInput()
+            end,
+        },
+        HorizontalSpan:new{ width = Size.span.horizontal_default },
+        makeRoundedButton{
+            text = self:getTranslation("search"), width = action_w,
+            callback = function()
+                self:closeJournalDialog()
+                self:showJournalSearchInput()
+            end,
+        },
+    }
+    local shortcuts_row_2 = HorizontalGroup:new{
+        align = "center",
+        makeRoundedButton{
+            text = self:getTranslation("filter"), width = action_w,
+            callback = function()
+                self:closeJournalDialog()
+                self:showJournalFilterMenu()
+            end,
+        },
+        HorizontalSpan:new{ width = Size.span.horizontal_default },
+        makeRoundedButton{
+            text = self:getTranslation("more"), width = action_w,
+            callback = function()
+                self:closeJournalDialog()
+                self:showJournalMoreMenu()
+            end,
+        },
+    }
+
     local nav_button_w = math.floor(iw * 0.23)
     local page_label_w = math.floor(iw * 0.32)
-    table.insert(content, HorizontalGroup:new{
+    local nav_row = HorizontalGroup:new{
         align = "center",
         makeRoundedButton{
             text = "‹", width = nav_button_w, enabled = state.page > 1,
@@ -2883,7 +3109,7 @@ function TarotPlugin:showSavedReadingsMenu(page)
         },
         HorizontalSpan:new{ width = Size.span.horizontal_default },
         CenterContainer:new{
-            dimen = { w = page_label_w, h = 40 },
+            dimen = Geom:new{ w = page_label_w, h = 40 },
             TextWidget:new{
                 text = string.format(self:getTranslation("page_count"), state.page, total_pages),
                 face = Font:getFace("smallinfofont"),
@@ -2896,19 +3122,38 @@ function TarotPlugin:showSavedReadingsMenu(page)
             text = "›", width = nav_button_w, enabled = state.page < total_pages,
             callback = function() self:showSavedReadingsMenu(state.page + 1) end,
         },
-    })
+    }
 
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-    table.insert(content, makeTarotDivider(iw))
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
-    table.insert(content, makeTransparentTextButton{
+    local footer_content = VerticalGroup:new{ align = "center" }
+    if #entries == 0 then
+        table.insert(footer_content, makeRoundedButton{
+            text = self:getTranslation("clear_filters"), width = math.floor(iw * 0.72),
+            callback = function()
+                self:clearJournalFilters()
+                self:showSavedReadingsMenu(1)
+            end,
+        })
+        table.insert(footer_content, VerticalSpan:new{ width = Size.span.vertical_default })
+    end
+    table.insert(footer_content, shortcuts_row_1)
+    table.insert(footer_content, VerticalSpan:new{ width = Size.span.vertical_default })
+    table.insert(footer_content, shortcuts_row_2)
+    table.insert(footer_content, VerticalSpan:new{ width = Size.span.vertical_default })
+    table.insert(footer_content, nav_row)
+    table.insert(footer_content, VerticalSpan:new{ width = Size.span.vertical_default })
+    table.insert(footer_content, makeTransparentTextButton{
         text = self:getTranslation("close"), width = math.floor(iw * 0.42),
         callback = function() self:closeJournalDialog() end,
     })
 
-    self.journal_dialog = makeFullscreenFrame(content, layout)
+    self.journal_dialog = makeFullscreenScaffold{
+        layout = layout,
+        header = header_w,
+        body = body,
+        footer = makeFullscreenFooter(iw, footer_content),
+    }
     UIManager:show(self.journal_dialog)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:showEmptyJournal()
@@ -3063,11 +3308,12 @@ function TarotPlugin:showJournalFilterMenu(draft)
     }
 
     self.journal_filter_dialog = FullscreenMenuDialog:new{
+        plugin = self,
         title = self:getTranslation("journal_filter_title"),
         buttons = buttons,
     }
     UIManager:show(self.journal_filter_dialog)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:clearJournalFilters()
@@ -3102,6 +3348,7 @@ function TarotPlugin:showJournalMoreMenu()
         },
     }
     self.journal_more_dialog = FullscreenMenuDialog:new{
+        plugin = self,
         title = self:getTranslation("more"), buttons = buttons,
     }
     UIManager:show(self.journal_more_dialog)
@@ -3219,7 +3466,13 @@ function TarotPlugin:formatJournalEntryText(entry)
     if (entry.updated_at or 0) > (entry.created_at or 0) + 1 then
         table.insert(lines, self:getTranslation("updated_on") .. ": " .. os.date("%d/%m/%Y %H:%M", entry.updated_at))
     end
-    table.insert(lines, self:getJournalDeckText(entry) .. " · " .. self:getJournalEntryTypeText(entry))
+    local deck_text = self:getJournalDeckText(entry)
+    local type_text = self:getJournalEntryTypeText(entry)
+    if deck_text and deck_text ~= "" then
+        table.insert(lines, deck_text .. " · " .. type_text)
+    else
+        table.insert(lines, type_text)
+    end
     table.insert(lines, "")
     table.insert(lines, self:getTranslation("my_reflection"))
     table.insert(lines, "")
@@ -3369,6 +3622,7 @@ function TarotPlugin:showJournalEditMenu(entry)
         },
     }
     self.journal_edit_menu = FullscreenMenuDialog:new{
+        plugin = self,
         title = self:getTranslation("edit"), buttons = buttons,
     }
     UIManager:show(self.journal_edit_menu)
@@ -3551,6 +3805,7 @@ end
 function TarotPlugin:confirmDeleteFile(entry)
     local dialog
     dialog = FullscreenMenuDialog:new{
+        plugin = self,
         title = self:getTranslation("delete_confirm"),
         buttons = {
             {
@@ -3621,6 +3876,7 @@ function TarotPlugin:showJournalTrash(page)
     })
 
     self.journal_trash_dialog = FullscreenMenuDialog:new{
+        plugin = self,
         title = self:getTranslation("trash_title"), buttons = buttons,
     }
     UIManager:show(self.journal_trash_dialog)
@@ -3629,6 +3885,7 @@ end
 function TarotPlugin:showTrashEntryOptions(entry, page)
     local dialog
     dialog = FullscreenMenuDialog:new{
+        plugin = self,
         title = self:getJournalDisplayTitle(entry),
         buttons = {
             {
@@ -3661,6 +3918,7 @@ end
 function TarotPlugin:confirmPermanentDelete(entry, page)
     local dialog
     dialog = FullscreenMenuDialog:new{
+        plugin = self,
         title = self:getTranslation("delete_permanent_confirm"),
         buttons = {
             {
@@ -3687,13 +3945,16 @@ function TarotPlugin:formatJournalMarkdown(entry)
         "# " .. self:getJournalDisplayTitle(entry),
         "",
         "**" .. self:getTranslation("created_on") .. ":** " .. os.date("%d/%m/%Y %H:%M", entry.created_at or 0),
-        "**" .. self:getTranslation("deck_type") .. ":** " .. self:getJournalDeckText(entry),
-        "**" .. self:getTranslation("type_label") .. ":** " .. self:getJournalEntryTypeText(entry),
-        "",
-        "## " .. self:getTranslation("reflection_text"),
-        "",
-        entry.note or "",
     }
+    local deck_text = self:getJournalDeckText(entry)
+    if deck_text and deck_text ~= "" then
+        table.insert(lines, "**" .. self:getTranslation("deck_type") .. ":** " .. deck_text)
+    end
+    table.insert(lines, "**" .. self:getTranslation("type_label") .. ":** " .. self:getJournalEntryTypeText(entry))
+    table.insert(lines, "")
+    table.insert(lines, "## " .. self:getTranslation("reflection_text"))
+    table.insert(lines, "")
+    table.insert(lines, entry.note or "")
     if journalTrim(entry.outcome) ~= "" then
         table.insert(lines, "")
         table.insert(lines, "## " .. self:getTranslation("outcome_text"))
@@ -3793,6 +4054,7 @@ function TarotPlugin:showJournalBackupsMenu()
     end
     table.insert(buttons, {{ text = self:getTranslation("back"), footer = true, close_before = true, callback = function() self:showSavedReadingsMenu() end }})
     self.journal_backup_dialog = FullscreenMenuDialog:new{
+        plugin = self,
         title = self:getTranslation("restore_backup"), buttons = buttons,
     }
     UIManager:show(self.journal_backup_dialog)
@@ -3967,7 +4229,7 @@ function ZoomCardDialog:init()
         content = zoomed_image,
         callback = function()
             UIManager:close(self)
-            UIManager:setDirty(nil, "full")
+            setTarotDirty(self.plugin or self)
         end,
     }
 
@@ -4008,6 +4270,7 @@ local CardDialog = InputContainer:extend{
     deck_is_lenormand = nil,
     on_close = nil,
     auto_save_state = nil,
+    hidden_grid_view = false,
 }
 
 function CardDialog:init()
@@ -4040,6 +4303,7 @@ function CardDialog:init()
     -- todas as reconstruções do CardDialog.
     if is_spread_view
         and self.plugin.auto_save_spreads == true
+        and not self.hidden_grid_view
         and not has_unrevealed_cards
         and self.auto_save_state == nil then
         self.auto_save_state = self.plugin:autoSaveReading(self.cards) and "saved" or "failed"
@@ -4055,13 +4319,10 @@ function CardDialog:init()
     end
     local title_text = title_suffix
 
-    -- O fluxo principal de tiragem já informa seu contexto antes da revelação.
-    -- Para ganhar espaço útil no Kindle, o CardDialog não repete "Tirar Cartas"
-    -- nem o divisor do cabeçalho. Outros usos do CardDialog mantêm seus títulos.
-    local header_w
-    if self.title_label ~= self.plugin:getTranslation("draw_cards") then
-        header_w = makeSectionHeader(title_text, iw)
-    end
+    -- Título fixo no topo em todas as telas de carta, inclusive nas tiragens.
+    -- A área central e o rodapé são calculados separadamente para evitar
+    -- sobreposição em telas e-ink pequenas.
+    local header_w = makeSectionHeader(title_text, iw)
 
     -- Mostra o progresso somente durante a revelação sequencial. Quando todas
     -- as cartas já foram abertas, o diálogo volta ao visual convencional.
@@ -4096,8 +4357,9 @@ function CardDialog:init()
             deck_is_lenormand = self.deck_is_lenormand,
             on_close = self.on_close,
             auto_save_state = self.auto_save_state,
+            hidden_grid_view = self.hidden_grid_view,
         })
-        UIManager:setDirty(nil, "full")
+        setTarotDirty(self.plugin or self)
     end
 
     local function revealNextCard()
@@ -4117,8 +4379,9 @@ function CardDialog:init()
             deck_is_lenormand = self.deck_is_lenormand,
             on_close = self.on_close,
             auto_save_state = self.auto_save_state,
+            hidden_grid_view = self.hidden_grid_view,
         })
-        UIManager:setDirty(nil, "full")
+        setTarotDirty(self.plugin or self)
     end
 
     local function revealAllCards()
@@ -4145,8 +4408,9 @@ function CardDialog:init()
                     deck_is_lenormand = self.deck_is_lenormand,
                     on_close = self.on_close,
                     auto_save_state = self.auto_save_state,
+            hidden_grid_view = self.hidden_grid_view,
                 })
-                UIManager:setDirty(nil, "full")
+                setTarotDirty(self.plugin or self)
             end,
         }
         UIManager:show(confirm)
@@ -4172,7 +4436,7 @@ function CardDialog:init()
                     deck_is_lenormand = use_lenormand,
                     is_reversed = is_reversed,
                 })
-                UIManager:setDirty(nil, "full")
+                setTarotDirty(self.plugin or self)
             end,
         }
 
@@ -4266,7 +4530,7 @@ function CardDialog:init()
                     deck_is_lenormand = use_lenormand,
                     is_reversed = is_reversed,
                 })
-                UIManager:setDirty(nil, "full")
+                setTarotDirty(self.plugin or self)
             end,
         }
     end
@@ -4352,14 +4616,14 @@ function CardDialog:init()
         enabled = not has_unrevealed_cards and not was_auto_saved,
         callback = function()
             UIManager:close(self)
-            UIManager:setDirty(nil, "full")
+            setTarotDirty(self.plugin or self)
             self.plugin:showSaveTitleInput(self.cards, self.is_daily and "daily" or "spread")
         end,
     }
 
     local function closeCardDialogNow()
         UIManager:close(self)
-        UIManager:setDirty(nil, "full")
+        setTarotDirty(self.plugin or self)
         if self.on_close then self.on_close() end
     end
 
@@ -4368,6 +4632,7 @@ function CardDialog:init()
         width    = math.floor(iw * 0.40),
         callback = function()
             local should_warn = is_spread_view
+                and not self.hidden_grid_view
                 and not has_unrevealed_cards
                 and not was_auto_saved
                 and self.plugin.disable_unsaved_close_warning ~= true
@@ -4392,7 +4657,7 @@ function CardDialog:init()
     }
 
     local btns_row
-    if self.read_only or (has_unrevealed_cards and not self.is_daily) then
+    if self.hidden_grid_view or self.read_only or (has_unrevealed_cards and not self.is_daily) then
         -- Durante a revelação, a instrução é mostrada em um aviso descartável.
         -- Nenhum texto ou botão ocupa o rodapé permanentemente.
         btns_row = nil
@@ -4403,37 +4668,28 @@ function CardDialog:init()
         }
     end
 
-    local content = VerticalGroup:new{
-        align = "center",
-    }
-    if header_w then
-        table.insert(content, header_w)
-    end
+    local body = VerticalGroup:new{ align = "center" }
 
     if reveal_progress_w then
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-        table.insert(content, reveal_progress_w)
+        table.insert(body, reveal_progress_w)
+        table.insert(body, VerticalSpan:new{ width = Size.span.vertical_default })
     end
 
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-    table.insert(content, card_image)
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+    table.insert(body, card_image)
+    table.insert(body, VerticalSpan:new{ width = Size.span.vertical_default })
 
     if name_w then
-        table.insert(content, name_w)
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
+        table.insert(body, name_w)
+        table.insert(body, VerticalSpan:new{ width = Size.span.vertical_small })
     end
 
-  
-
-   
     if show_meaning then
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_large })
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
-        table.insert(content, meaning_w)
+        table.insert(body, VerticalSpan:new{ width = Size.span.vertical_large })
+        table.insert(body, meaning_w)
     end
 
-    -- Botão textual discreto para abrir a carta no livro.
+    -- Botão textual discreto para abrir a carta no livro. Continua próximo ao
+    -- conteúdo da carta, enquanto salvar/fechar ficam sempre no rodapé.
     local btn_view_in_book = makeTransparentTextButton{
         text = self.plugin:getTranslation("view_in_book"),
         width = math.floor(iw * 0.5),
@@ -4442,26 +4698,25 @@ function CardDialog:init()
         end,
     }
     if not self.read_only and not self.plugin.disable_view_in_book then
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
-        table.insert(content, btn_view_in_book)
+        table.insert(body, VerticalSpan:new{ width = Size.span.vertical_small })
+        table.insert(body, btn_view_in_book)
     end
 
-    -- Quando existe uma ação (Salvar), ela fica visualmente isolada entre
-    -- dois divisores. Sem ação, usamos apenas um divisor antes de Fechar para
-    -- impedir linhas duplicadas ou vazios artificiais.
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-    table.insert(content, makeDialogDivider())
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-
+    local footer_content = VerticalGroup:new{ align = "center" }
     if btns_row then
-        table.insert(content, btns_row)
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_large })
-        table.insert(content, makeDialogDivider())
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+        table.insert(footer_content, btns_row)
+        table.insert(footer_content, VerticalSpan:new{ width = Size.span.vertical_default })
+        table.insert(footer_content, makeDialogDivider())
+        table.insert(footer_content, VerticalSpan:new{ width = Size.span.vertical_default })
     end
-    table.insert(content, btn_close)
+    table.insert(footer_content, btn_close)
 
-    self[1] = makeFullscreenFrame(content, layout)
+    self[1] = makeFullscreenScaffold{
+        layout = layout,
+        header = header_w,
+        body = body,
+        footer = makeFullscreenFooter(iw, footer_content),
+    }
 
     if total_cards > 1 and is_spread_view then
         if has_unrevealed_cards then
@@ -4479,11 +4734,13 @@ function CardDialog:init()
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
--- ║      SELETOR DE BARALHO FÍSICO — LISTA TEXTUAL COM ATÉ 10 CARTAS           ║
+-- ║      SELETOR DE BARALHO FÍSICO — LISTA TEXTUAL COM ATÉ 16 CARTAS           ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
 -- O seletor não sorteia cartas e não exibe imagens. Ele apenas registra, na
--- ordem dos toques, até dez cartas que o usuário retirou do próprio baralho.
+-- ordem dos toques, até dezesseis cartas que o usuário retirou do próprio baralho.
 -- Ao confirmar, as cartas escolhidas são abertas no CardDialog já existente.
+local PHYSICAL_DECK_MAX_CARDS = 16
+
 local PhysicalDeckDialog = InputContainer:extend{
     plugin = nil,
     deck = nil,
@@ -4503,23 +4760,25 @@ function PhysicalDeckDialog:init()
     self.reversed_indices = self.reversed_indices or {}
     self.page = tonumber(self.page) or 1
 
-    -- Quantidade conservadora de linhas por página. O cálculo evita que os
-    -- rodapés sejam empurrados para fora da tela em Kindles de menor altura.
-    local items_per_page
-    if sh < 720 then
-        items_per_page = 7
-    elseif sh < 950 then
-        items_per_page = 9
-    else
-        items_per_page = 11
-    end
+    local list_style = getPhysicalDeckListStyle(layout)
+
+    local header_w = makeSectionHeader(
+        self.plugin:getTranslation("physical_deck"),
+        iw,
+        self.plugin:getTranslation("physical_deck_hint")
+    )
+
+    -- A quantidade de linhas por página agora nasce do espaço real disponível.
+    -- Em telas altas cabem mais cartas; em janelas baixas o número recua antes
+    -- de sobrepor rodapé, paginação ou botões de ação.
+    local items_per_page = getAdaptivePhysicalDeckItemsPerPage(layout, header_w, list_style)
 
     local total_pages = math.max(1, math.ceil(#self.deck / items_per_page))
     if self.page < 1 then self.page = 1 end
     if self.page > total_pages then self.page = total_pages end
 
     -- Retorna a ordem em que a carta foi selecionada. Além de informar se a
-    -- carta está marcada, isso permite exibir claramente as posições 1 a 10.
+    -- carta está marcada, isso permite exibir claramente as posições 1 a 16.
     local function getSelectionPosition(index)
         for position, selected_index in ipairs(self.selected_indices) do
             if selected_index == index then return position end
@@ -4555,7 +4814,7 @@ function PhysicalDeckDialog:init()
             reversed_indices = copyReversedSelection(),
             page = page or self.page,
         })
-        UIManager:setDirty(nil, "full")
+        setTarotDirty(self.plugin or self)
     end
 
     local function toggleCard(index)
@@ -4568,7 +4827,7 @@ function PhysicalDeckDialog:init()
             return
         end
 
-        if #self.selected_indices >= 10 then
+        if #self.selected_indices >= PHYSICAL_DECK_MAX_CARDS then
             UIManager:show(InfoMessage:new{
                 text = self.plugin:getTranslation("physical_deck_limit"),
             })
@@ -4588,7 +4847,7 @@ function PhysicalDeckDialog:init()
 
         local selected_position = getSelectionPosition(index)
         if not selected_position then
-            if #self.selected_indices >= 10 then
+            if #self.selected_indices >= PHYSICAL_DECK_MAX_CARDS then
                 UIManager:show(InfoMessage:new{
                     text = self.plugin:getTranslation("physical_deck_limit"),
                 })
@@ -4603,15 +4862,7 @@ function PhysicalDeckDialog:init()
         reopen(self.page)
     end
 
-    local content = VerticalGroup:new{
-        align = "center",
-        makeSectionHeader(
-            self.plugin:getTranslation("physical_deck"),
-            iw,
-            self.plugin:getTranslation("physical_deck_hint")
-        ),
-        VerticalSpan:new{ width = Size.span.vertical_default },
-    }
+    local content = VerticalGroup:new{ align = "center" }
 
     local first_index = (self.page - 1) * items_per_page + 1
     local last_index = math.min(first_index + items_per_page - 1, #self.deck)
@@ -4640,10 +4891,10 @@ function PhysicalDeckDialog:init()
             radius = 0,
             align = "left",
             text_font_face = "smallinfofont",
-            text_font_size = 20,
+            text_font_size = list_style.font_size,
             text_font_bold = false,
             padding_h = Size.padding.default,
-            padding_v = Size.padding.small,
+            padding_v = list_style.padding_v,
             callback = function()
                 toggleCard(card_index)
             end,
@@ -4682,12 +4933,6 @@ function PhysicalDeckDialog:init()
         },
     }
 
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
-    table.insert(content, nav_row)
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
-    table.insert(content, makeTarotDivider(iw))
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
-
     local footer_row = HorizontalGroup:new{
         align = "center",
         makeTransparentTextButton{
@@ -4696,7 +4941,7 @@ function PhysicalDeckDialog:init()
             callback = function()
                 UIManager:close(self)
                 self.plugin:showSpreadsMenu()
-                UIManager:setDirty(nil, "full")
+                setTarotDirty(self.plugin or self)
             end,
         },
         HorizontalSpan:new{ width = math.floor(iw * 0.08) },
@@ -4745,13 +4990,24 @@ function PhysicalDeckDialog:init()
                     end,
                     is_daily = false,
                 })
-                UIManager:setDirty(nil, "full")
+                setTarotDirty(self.plugin or self)
             end,
         },
     }
 
-    table.insert(content, footer_row)
-    self[1] = makeFullscreenFrame(content, layout)
+    local footer = makeFullscreenFooter(iw, VerticalGroup:new{
+        align = "center",
+        nav_row,
+        VerticalSpan:new{ width = Size.span.vertical_small },
+        footer_row,
+    })
+
+    self[1] = makeFullscreenScaffold{
+        layout = layout,
+        header = header_w,
+        body = content,
+        footer = footer,
+    }
 end
 
 -- Abre as cartas de um registro em modo somente leitura. A navegação entre
@@ -4784,11 +5040,11 @@ function TarotPlugin:showJournalCards(entry)
             self:showJournalEntry(entry)
         end,
     })
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
--- ║   NOVO DIÁLOGO: CARTA OCULTA (HiddenCardDialog) – VERSÃO FINAL              ║
+-- ║ CARTA OCULTA — GRADE FIXA 4×4, INSERÇÃO DIRETA E ORGANIZAÇÃO POR TOQUE      ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
 local HiddenCardDialog = InputContainer:extend{
     plugin = nil,
@@ -4798,29 +5054,82 @@ local HiddenCardDialog = InputContainer:extend{
     on_reveal = nil,
     title_label = nil,
     allow_add_card = false,
-    max_cards = 10,
+    max_cards = 16,
     deck_is_lenormand = nil,
+    selected_action_index = nil,
+    moving_index = nil,
+    show_opening_hint = false,
 }
 
 function HiddenCardDialog:init()
-    local layout = getFullscreenLayout()
-    local iw  = layout.content_w
+    local layout = getFullscreenLayout(0.96)
+    local iw = layout.content_w
 
     self.cards = self.cards or {}
-    self.max_cards = tonumber(self.max_cards) or 10
+    self.max_cards = math.max(1, math.min(16, tonumber(self.max_cards) or 16))
+
     local use_lenormand = self.deck_is_lenormand
     if use_lenormand == nil then
         use_lenormand = self.plugin.use_lenormand == true
     end
-    if self.max_cards < 1 then self.max_cards = 1 end
 
     local header_w = makeSectionHeader(
-        self.title_label or self.plugin:getTranslation("title"),
+        self.title_label or self.plugin:getTranslation("draw_cards"),
         iw
     )
 
-    -- Reconstrói a tela preservando exatamente a pilha atual. O gesto é usado
-    -- pelos controles +/− e atualiza contagem, miniatura e estados desativados.
+    for _, item in ipairs(self.cards) do
+        if item.is_revealed == nil then item.is_revealed = false end
+    end
+
+    -- Nas tiragens livres, cada carta ocupa uma das 16 posições fixas. Isso
+    -- permite iniciar com zero cartas e montar cruzes, linhas ou diagonais sem
+    -- que o tamanho e a posição das cartas existentes mudem.
+    local function normalizeGridSlots()
+        if self.is_daily then return end
+        local used = {}
+        for _, item in ipairs(self.cards) do
+            local slot = tonumber(item.grid_slot)
+            if slot and slot >= 1 and slot <= 16 and not used[slot] then
+                item.grid_slot = slot
+                used[slot] = true
+            else
+                item.grid_slot = nil
+            end
+        end
+        for _, item in ipairs(self.cards) do
+            if not item.grid_slot then
+                for slot = 1, 16 do
+                    if not used[slot] then
+                        item.grid_slot = slot
+                        used[slot] = true
+                        break
+                    end
+                end
+            end
+        end
+    end
+    normalizeGridSlots()
+
+    local function allCardsRevealed()
+        if #self.cards == 0 then return false end
+        for _, item in ipairs(self.cards) do
+            if item.is_revealed ~= true then return false end
+        end
+        return true
+    end
+
+    local function orderedCardsForReading()
+        local ordered = {}
+        for _, item in ipairs(self.cards) do table.insert(ordered, item) end
+        if not self.is_daily then
+            table.sort(ordered, function(a, b)
+                return (tonumber(a.grid_slot) or 99) < (tonumber(b.grid_slot) or 99)
+            end)
+        end
+        return ordered
+    end
+
     local function refreshHiddenDialog()
         UIManager:close(self)
         UIManager:show(HiddenCardDialog:new{
@@ -4833,265 +5142,498 @@ function HiddenCardDialog:init()
             allow_add_card = self.allow_add_card,
             max_cards = self.max_cards,
             deck_is_lenormand = use_lenormand,
+            selected_action_index = self.selected_action_index,
+            moving_index = self.moving_index,
+            -- O aviso pertence à abertura da tiragem, nunca às reconstruções
+            -- internas causadas por revelar, mover, excluir ou adicionar cartas.
+            show_opening_hint = false,
         })
-        UIManager:setDirty(nil, "full")
+        setTarotDirty(self.plugin or self)
     end
 
-    local function revealCards()
-        UIManager:close(self)
-        UIManager:setDirty(nil, "full")
-        if self.on_reveal then
-            self.on_reveal()
+    local function clearTransientSelection()
+        self.selected_action_index = nil
+        self.moving_index = nil
+    end
+
+    local function slotIsOccupied(slot)
+        for index, item in ipairs(self.cards) do
+            if tonumber(item.grid_slot) == slot then return true, index end
         end
+        return false, nil
     end
 
-    local function addCard()
+    local function addCardAtSlot(slot)
+        if self.is_daily or not self.allow_add_card then return end
+        if self.selected_action_index or self.moving_index then return end
         if #self.cards >= self.max_cards then return end
+        local occupied = slotIsOccupied(slot)
+        if occupied then return end
+
         local new_card = self.plugin:drawAdditionalUniqueCard(self.cards)
         if not new_card then return end
+        new_card.is_revealed = false
+        new_card.grid_slot = slot
         table.insert(self.cards, new_card)
         refreshHiddenDialog()
     end
 
-    local function removeCard()
-        if #self.cards <= 1 then return end
-        table.remove(self.cards)
+    local function deleteCard(index)
+        if self.is_daily or not self.cards[index] then return end
+        table.remove(self.cards, index)
+        clearTransientSelection()
+        normalizeGridSlots()
         refreshHiddenDialog()
     end
 
-    local back_path
-    if use_lenormand then
-        back_path = self.plugin.plugin_dir .. "/cards_lenormand/Card_Back.png"
-    else
-        back_path = self.plugin.plugin_dir .. "/cards_tarot/CardBacks.jpg"
-    end
-    local back_attr = lfs.attributes(back_path)
-    local has_back_image = back_attr and back_attr.mode == "file"
+    local function openRevealedCard(source_item)
+        local revealed_cards = {}
+        local dialog_index = nil
+        for _, item in ipairs(orderedCardsForReading()) do
+            if item.is_revealed == true then
+                table.insert(revealed_cards, item)
+                if item == source_item then dialog_index = #revealed_cards end
+            end
+        end
+        if not dialog_index or #revealed_cards == 0 then return end
 
-    local screen_w = Screen:getWidth()
-    local card_w, card_h
-
-    -- Mede os símbolos reais antes de calcular o layout. Assim, o box +/−
-    -- nunca recebe uma largura menor do que a necessária para renderizá-los.
-    -- O hífen ASCII é usado no controle de remoção porque existe em todas as
-    -- fontes suportadas pelo KOReader e não sofre recorte em fontes e-ink.
-    local control_font_size = 28
-    local control_face = Font:getFace("tfont", control_font_size)
-    local plus_probe = TextWidget:new{ text = "+", face = control_face, bold = true }
-    local minus_probe = TextWidget:new{ text = "-", face = control_face, bold = true }
-    local control_symbol_w = math.max(plus_probe:getSize().w, minus_probe:getSize().w)
-    local control_symbol_h = math.max(plus_probe:getSize().h, minus_probe:getSize().h)
-    plus_probe:free()
-    minus_probe:free()
-
-    local control_inner_pad = math.max(4, math.floor((Size.padding.default or 12) / 3))
-    local control_box_pad = math.max(2, math.floor((Size.padding.default or 12) / 4))
-    local control_button_w = math.max(44, control_symbol_w + control_inner_pad * 2)
-    local control_button_h = math.max(42, control_symbol_h + control_inner_pad * 2)
-    local control_outer_w = control_button_w + control_box_pad * 2 + 2
-    local side_spacing = math.max(4, math.min(18, math.floor(iw * 0.025)))
-
-    -- Reserva dois espaços laterais simétricos antes de dimensionar a carta.
-    -- Isso mantém a carta centralizada e impede que o box invada ou seja
-    -- comprimido em qualquer largura de tela normalmente aceita pelo KOReader.
-    local max_card_w_with_controls = math.max(72, iw - 2 * (control_outer_w + side_spacing))
-    if use_lenormand then
-        card_w = math.min(250, max_card_w_with_controls)
-        card_h = card_w
-    else
-        local desired_card_w = math.floor(screen_w * 0.25)
-        card_w = math.min(desired_card_w, max_card_w_with_controls)
-        card_h = math.floor(card_w * (439 / 250))
+        UIManager:show(CardDialog:new{
+            cards = revealed_cards,
+            current_index = dialog_index,
+            plugin = self.plugin,
+            title_label = self.title_label or self.plugin:getTranslation("draw_cards"),
+            is_daily = false,
+            deck_is_lenormand = use_lenormand,
+            hidden_grid_view = true,
+            on_close = function()
+                setTarotDirty(self.plugin or self)
+            end,
+        })
+        setTarotDirty(self.plugin or self)
     end
 
-    local function makeBackWidget(width, height)
-        if has_back_image then
-            return ImageWidget:new{
-                file = back_path,
-                width = width,
-                height = height,
-                scale_for_dpi = false,
+    local function tapCard(index)
+        local item = self.cards[index]
+        if not item then return end
+
+        -- Enquanto o menu de uma carta está aberto, somente as ações desse menu
+        -- são aceitas. Isso evita revelar ou adicionar cartas por acidente.
+        if self.selected_action_index then return end
+
+        if self.moving_index then
+            if self.moving_index == index then
+                self.moving_index = nil
+            else
+                local source = self.cards[self.moving_index]
+                if source then
+                    source.grid_slot, item.grid_slot = item.grid_slot, source.grid_slot
+                end
+                self.moving_index = nil
+            end
+            refreshHiddenDialog()
+            return
+        end
+
+        if self.is_daily and item.is_revealed ~= true then
+            UIManager:close(self)
+            setTarotDirty(self.plugin or self)
+            if self.on_reveal then self.on_reveal() end
+            return
+        end
+
+        if item.is_revealed == true then
+            openRevealedCard(item)
+        else
+            item.is_revealed = true
+            refreshHiddenDialog()
+        end
+    end
+
+    local function tapEmptySlot(slot)
+        if self.is_daily then return end
+        if self.selected_action_index then return end
+
+        if self.moving_index then
+            local source = self.cards[self.moving_index]
+            if source then source.grid_slot = slot end
+            self.moving_index = nil
+            refreshHiddenDialog()
+            return
+        end
+
+        addCardAtSlot(slot)
+    end
+
+    local function holdCard(index)
+        if self.is_daily or not self.cards[index] then return end
+        self.selected_action_index = index
+        self.moving_index = nil
+        refreshHiddenDialog()
+    end
+
+    local action_gap = math.max(6, math.floor(iw * 0.025))
+    local action_button_w = math.max(70, math.floor((iw - action_gap) / 2))
+
+    local btn_save = makeTransparentTextButton{
+        text = self.plugin:getTranslation("save"),
+        width = action_button_w,
+        enabled = allCardsRevealed(),
+        callback = function()
+            clearTransientSelection()
+            UIManager:close(self)
+            setTarotDirty(self.plugin or self)
+            self.plugin:showSaveTitleInput(orderedCardsForReading(), "spread")
+        end,
+    }
+
+    local function closeHiddenNow()
+        UIManager:close(self)
+        setTarotDirty(self.plugin or self)
+    end
+
+    local function closeHidden()
+        local complete = allCardsRevealed()
+        local ordered_cards = orderedCardsForReading()
+
+        if complete and self.plugin.auto_save_spreads == true then
+            if self.plugin:autoSaveReading(ordered_cards) then
+                closeHiddenNow()
+            else
+                UIManager:show(InfoMessage:new{
+                    text = self.plugin:getTranslation("journal_save_error"),
+                })
+            end
+            return
+        end
+
+        local should_warn = complete
+            and self.plugin.auto_save_spreads ~= true
+            and self.plugin.disable_unsaved_close_warning ~= true
+
+        if not should_warn then
+            closeHiddenNow()
+            return
+        end
+
+        local warning
+        warning = ConfirmBox:new{
+            text = self.plugin:getTranslation("unsaved_close_warning"),
+            ok_text = self.plugin:getTranslation("close_without_saving"),
+            cancel_text = self.plugin:getTranslation("continue_reading"),
+            ok_callback = function()
+                UIManager:close(warning)
+                closeHiddenNow()
+            end,
+        }
+        UIManager:show(warning)
+    end
+
+    local btn_close = makeTransparentTextButton{
+        text = self.plugin:getTranslation("close"),
+        width = action_button_w,
+        callback = closeHidden,
+    }
+
+    local actions_row = HorizontalGroup:new{
+        align = "center",
+        btn_save,
+        HorizontalSpan:new{ width = action_gap },
+        btn_close,
+    }
+
+    local footer = makeFullscreenFooter(iw,
+        self.is_daily and makeTransparentTextButton{
+            text = self.plugin:getTranslation("close"),
+            width = math.max(100, math.floor(iw * 0.42)),
+            callback = closeHiddenNow,
+        } or actions_row
+    )
+
+    local gap_x = math.max(4, math.floor(iw * 0.012))
+    local gap_y = math.max(4, math.floor(layout.safe_h * 0.006))
+    local header_h = header_w:getSize().h
+    local footer_h = footer:getSize().h
+    local grid_footer_gap = math.max(Size.span.vertical_default, gap_y * 2)
+    local available_grid_h = layout.safe_h - header_h - footer_h - grid_footer_gap
+    if available_grid_h < 80 then available_grid_h = 80 end
+
+    local ratio = use_lenormand and 1 or (439 / 250)
+    local card_w
+    local card_h
+    local grid
+
+    local function makeActionMenu(index, width, height)
+        local item = self.cards[index]
+        local action_count = item and item.is_revealed == true and 4 or 3
+        local menu_w = width
+        -- Mantém o box e as áreas de toque compactos. O destaque visual vem
+        -- apenas da fonte maior, não de botões ou bordas mais grossos.
+        local menu_h = math.max(54, math.floor(height * 0.82))
+        if menu_h > height then menu_h = height end
+        local outer_pad = math.max(2, Size.padding.tiny)
+        local button_gap = math.max(0, math.floor(height * 0.004))
+        local inner_h = math.max(1, menu_h - outer_pad * 2)
+        local button_h = math.max(1, math.floor((inner_h - button_gap * (action_count - 1)) / action_count))
+        local font_size = math.max(8, math.min(
+            18,
+            math.floor(width / 5.8),
+            math.floor(button_h * 0.70)
+        ))
+
+        local function largeTextActionButton(text, callback)
+            return Button:new{
+                text = text,
+                width = math.max(24, menu_w - outer_pad * 2),
+                height = button_h,
+                bordersize = 0,
+                margin = 0,
+                padding = 0,
+                padding_h = 0,
+                padding_v = 0,
+                background = nil,
+                radius = 0,
+                text_font_face = "x_smallinfofont",
+                text_font_size = font_size,
+                text_font_bold = true,
+                callback = callback,
             }
         end
+
+        local menu_content = VerticalGroup:new{ align = "center" }
+
+        table.insert(menu_content, largeTextActionButton(self.plugin:getTranslation("move_card"), function()
+            self.moving_index = index
+            self.selected_action_index = nil
+            refreshHiddenDialog()
+        end))
+        table.insert(menu_content, VerticalSpan:new{ width = button_gap })
+
+        table.insert(menu_content, largeTextActionButton(self.plugin:getTranslation("delete_card"), function()
+            deleteCard(index)
+        end))
+
+        if item and item.is_revealed == true then
+            table.insert(menu_content, VerticalSpan:new{ width = button_gap })
+            table.insert(menu_content, largeTextActionButton(self.plugin:getTranslation("turn_face_down"), function()
+                item.is_revealed = false
+                clearTransientSelection()
+                refreshHiddenDialog()
+            end))
+        end
+
+        table.insert(menu_content, VerticalSpan:new{ width = button_gap })
+        table.insert(menu_content, largeTextActionButton(self.plugin:getTranslation("undo_action"), function()
+            clearTransientSelection()
+            refreshHiddenDialog()
+        end))
+
         return FrameContainer:new{
-            width = width,
-            height = height,
-            bordersize = 0,
-            background = Blitbuffer.gray(0.8),
+            width = menu_w,
+            height = menu_h,
+            bordersize = 1,
+            radius = getTarotBaseButtonRadius(),
+            padding = outer_pad,
+            background = Blitbuffer.COLOR_WHITE,
             CenterContainer:new{
-                dimen = { w = width, h = height },
-                TextWidget:new{
-                    text = "?",
-                    face = Font:getFace("tfont"),
-                    bold = true,
-                    alignment = "center",
+                dimen = Geom:new{ w = menu_w - outer_pad * 2, h = menu_h - outer_pad * 2 },
+                menu_content,
+            },
+        }
+    end
+
+    local function makeMoveInstructionMenu(index, width, height)
+        local menu_w = width
+        local menu_h = math.max(58, math.floor(height * 0.82))
+        if menu_h > height then menu_h = height end
+        local outer_pad = math.max(3, Size.padding.tiny)
+        local gap = math.max(3, math.floor(height * 0.025))
+        local undo_h = math.max(22, math.floor(menu_h * 0.30))
+        local text_h = math.max(18, menu_h - undo_h - gap - outer_pad * 2)
+        local font_size = math.max(9, math.min(15, math.floor(width / 7.0)))
+
+        local instruction = TextBoxWidget:new{
+            text = self.plugin:getTranslation("tap_another_location_to_move"),
+            face = Font:getFace("x_smallinfofont", font_size),
+            bold = true,
+            width = math.max(20, menu_w - outer_pad * 2),
+            height = text_h,
+            alignment = "center",
+        }
+
+        local undo_font_size = math.max(9, math.min(
+            18,
+            math.floor(width / 5.8),
+            math.floor(undo_h * 0.72)
+        ))
+        local undo_button = Button:new{
+            text = self.plugin:getTranslation("undo_action"),
+            width = math.max(24, menu_w - outer_pad * 2),
+            height = undo_h,
+            bordersize = 0,
+            margin = 0,
+            padding = 0,
+            padding_h = 0,
+            padding_v = 0,
+            background = nil,
+            radius = 0,
+            text_font_face = "x_smallinfofont",
+            text_font_size = undo_font_size,
+            text_font_bold = true,
+            callback = function()
+                clearTransientSelection()
+                refreshHiddenDialog()
+            end,
+        }
+
+        return FrameContainer:new{
+            width = menu_w,
+            height = menu_h,
+            bordersize = 1,
+            radius = getTarotBaseButtonRadius(),
+            padding = outer_pad,
+            background = Blitbuffer.COLOR_WHITE,
+            CenterContainer:new{
+                dimen = Geom:new{ w = menu_w - outer_pad * 2, h = menu_h - outer_pad * 2 },
+                VerticalGroup:new{
+                    align = "center",
+                    instruction,
+                    VerticalSpan:new{ width = gap },
+                    undo_button,
                 },
             },
         }
     end
 
-    -- A carta central é o próprio controle de revelação. O contêiner não muda
-    -- sua aparência, apenas adiciona uma área de toque sobre o verso.
-    local main_back_widget = TappableImageContainer:new{
-        content = makeBackWidget(card_w, card_h),
-        callback = revealCards,
-    }
-    local image_widget = main_back_widget
-
-    if self.allow_add_card then
-        local side_slot = math.floor((iw - card_w) / 2)
-        if side_slot < control_outer_w + side_spacing then
-            side_slot = control_outer_w + side_spacing
-        end
-        local spacing = side_spacing
-        local available_side = math.max(control_outer_w, side_slot - spacing)
-
-        -- À esquerda permanece uma única miniatura quando há mais cartas. À
-        -- direita, no espaço equivalente à miniatura futura do CardDialog,
-        -- surge um único box com + e −.
-        local left_widget
-        local left_padding
-        if #self.cards > 1 then
-            local desired_mini_w = math.floor(card_w * 2 / 3)
-            local mini_w = math.min(desired_mini_w, available_side)
-            local mini_h = math.floor(card_h * mini_w / card_w)
-            left_widget = makeBackWidget(mini_w, mini_h)
-            left_padding = side_slot - mini_w - spacing
-            if left_padding < 0 then left_padding = 0 end
+    local function makeCardVisual(index, width, height)
+        local item = self.cards[index]
+        local visual
+        if item.is_revealed == true then
+            visual = self.plugin:getCardImageWidget(
+                item.card,
+                width,
+                height,
+                (item.is_reversed and not use_lenormand) and 180 or 0
+            )
+        else
+            visual = self.plugin:getBackCardImageWidget(width, height, use_lenormand)
         end
 
-        -- O box tem dimensões mínimas derivadas da fonte, botões com altura
-        -- explícita e divisor gráfico real. Nenhum elemento depende de uma
-        -- sequência de caracteres que possa ser truncada ou virar reticências.
-        local outer_control_w = math.min(available_side, control_outer_w)
-        local inner_control_w = math.max(control_button_w, outer_control_w - control_box_pad * 2 - 2)
-
-        local btn_add = Button:new{
-            text = "+",
-            width = inner_control_w,
-            height = control_button_h,
-            padding_h = 0,
-            padding_v = 0,
-            margin = 0,
-            bordersize = 0,
-            background = nil,
-            radius = 0,
-            enabled = #self.cards < self.max_cards,
-            text_font_face = "tfont",
-            text_font_size = control_font_size,
-            text_font_bold = true,
-            avoid_text_truncation = false,
-            callback = addCard,
-        }
-        local btn_remove = Button:new{
-            text = "-",
-            width = inner_control_w,
-            height = control_button_h,
-            padding_h = 0,
-            padding_v = 0,
-            margin = 0,
-            bordersize = 0,
-            background = nil,
-            radius = 0,
-            enabled = #self.cards > 1,
-            text_font_face = "tfont",
-            text_font_size = control_font_size,
-            text_font_bold = true,
-            avoid_text_truncation = false,
-            callback = removeCard,
+        local card_touch = TappableImageContainer:new{
+            content = visual,
+            callback = function() tapCard(index) end,
+            hold_callback = not self.is_daily and function() holdCard(index) end or nil,
         }
 
-        local control_divider = FrameContainer:new{
-            width = inner_control_w,
-            height = math.max(1, Screen:scaleBySize(1)),
-            bordersize = 0,
-            padding = 0,
-            margin = 0,
-            background = Blitbuffer.gray(0.65),
-            HorizontalSpan:new{ width = inner_control_w },
-        }
+        if self.selected_action_index ~= index and self.moving_index ~= index then
+            return card_touch
+        end
 
-        local control_box = FrameContainer:new{
-            width = outer_control_w,
-            background = Blitbuffer.COLOR_WHITE,
-            bordersize = 1,
-            radius = getTarotButtonRadius(),
-            padding = control_box_pad,
-            VerticalGroup:new{
-                align = "center",
-                btn_add,
-                control_divider,
-                btn_remove,
+        -- A carta continua visível por baixo; o menu arredondado é pintado por
+        -- cima sem borda preta de seleção, exatamente no mesmo espaço da carta.
+        -- Enquanto qualquer um dos dois boxes está aberto, a imagem deixa de ser
+        -- uma camada tocável, para que somente os botões recebam os eventos.
+        local overlay_menu
+        if self.moving_index == index then
+            overlay_menu = makeMoveInstructionMenu(index, width, height)
+        else
+            overlay_menu = makeActionMenu(index, width, height)
+        end
+
+        return OverlapGroup:new{
+            dimen = Geom:new{ w = width, h = height },
+            visual,
+            CenterContainer:new{
+                dimen = Geom:new{ w = width, h = height },
+                overlay_menu,
             },
         }
+    end
 
-        local right_padding = side_slot - spacing - outer_control_w
-        if right_padding < 0 then right_padding = 0 end
-        local hgroup = HorizontalGroup:new{ align = "center" }
+    if self.is_daily then
+        local count = math.max(1, #self.cards)
+        card_w = math.min(math.floor(iw * 0.52), math.floor(available_grid_h / ratio))
+        card_w = math.max(36, card_w)
+        card_h = math.max(36, math.floor(card_w * ratio))
+        local row = HorizontalGroup:new{ align = "center" }
+        for index = 1, count do
+            table.insert(row, makeCardVisual(index, card_w, card_h))
+            if index < count then table.insert(row, HorizontalSpan:new{ width = gap_x }) end
+        end
+        grid = CenterContainer:new{
+            dimen = Geom:new{ w = iw, h = available_grid_h },
+            row,
+        }
+    else
+        local columns, rows = 4, 4
+        local max_w_by_width = math.floor((iw - gap_x * (columns - 1)) / columns)
+        local max_h_per_card = math.floor((available_grid_h - gap_y * (rows - 1)) / rows)
+        local max_w_by_height = math.floor(max_h_per_card / ratio)
+        card_w = math.max(36, math.min(max_w_by_width, max_w_by_height))
+        card_h = math.max(36, math.floor(card_w * ratio))
 
-        if left_widget then
-            table.insert(hgroup, HorizontalSpan:new{ width = left_padding })
-            table.insert(hgroup, left_widget)
-            table.insert(hgroup, HorizontalSpan:new{ width = spacing })
-        else
-            table.insert(hgroup, HorizontalSpan:new{ width = side_slot })
+        local slot_to_index = {}
+        for index, item in ipairs(self.cards) do
+            local slot = tonumber(item.grid_slot)
+            if slot and slot >= 1 and slot <= 16 then slot_to_index[slot] = index end
         end
 
-        table.insert(hgroup, main_back_widget)
-        table.insert(hgroup, HorizontalSpan:new{ width = spacing })
-        table.insert(hgroup, control_box)
-        table.insert(hgroup, HorizontalSpan:new{ width = right_padding })
-        image_widget = hgroup
+        grid = VerticalGroup:new{ align = "center" }
+        for row = 1, rows do
+            local row_widget = HorizontalGroup:new{ align = "center" }
+            for column = 1, columns do
+                local slot = (row - 1) * columns + column
+                local card_index = slot_to_index[slot]
+                if card_index then
+                    table.insert(row_widget, makeCardVisual(card_index, card_w, card_h))
+                else
+                    local placeholder = FrameContainer:new{
+                        width = card_w,
+                        height = card_h,
+                        bordersize = 1,
+                        radius = getTarotBaseButtonRadius(),
+                        padding = 0,
+                        background = Blitbuffer.COLOR_WHITE,
+                        CenterContainer:new{
+                            dimen = Geom:new{ w = card_w, h = card_h },
+                            TextWidget:new{
+                                text = "",
+                                face = Font:getFace("x_smallinfofont"),
+                            },
+                        },
+                    }
+                    table.insert(row_widget, TappableImageContainer:new{
+                        content = placeholder,
+                        callback = function() tapEmptySlot(slot) end,
+                    })
+                end
+                if column < columns then table.insert(row_widget, HorizontalSpan:new{ width = gap_x }) end
+            end
+            table.insert(grid, CenterContainer:new{
+                dimen = Geom:new{ w = iw, h = card_h },
+                row_widget,
+            })
+            if row < rows then table.insert(grid, VerticalSpan:new{ width = gap_y }) end
+        end
     end
 
-    local count_w
-    if self.allow_add_card then
-        count_w = TextWidget:new{
-            text = string.format(
-                self.plugin:getTranslation("drawn_card_count"),
-                #self.cards,
-                self.max_cards
-            ),
-            face = Font:getFace("smallinfofont"),
-            bold = true,
-            max_width = iw,
-            alignment = "center",
-        }
-    end
-
-    local btn_exit = makeTransparentTextButton{
-        text     = self.plugin:getTranslation("exit"),
-        width    = math.floor(iw * 0.40),
-        callback = function()
-            UIManager:close(self)
-            UIManager:setDirty(nil, "full")
-        end,
+    local grid_area = self.is_daily and grid or CenterContainer:new{
+        dimen = Geom:new{ w = iw, h = available_grid_h },
+        grid,
     }
 
-    local content = VerticalGroup:new{
-        align = "center",
-        header_w,
+    self[1] = makeFullscreenScaffold{
+        layout = layout,
+        header = header_w,
+        body = grid_area,
+        footer = footer,
+        footer_gap = grid_footer_gap,
     }
 
-    if count_w then
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-        table.insert(content, count_w)
+    if not self.is_daily and self.show_opening_hint == true then
+        UIManager:scheduleIn(0.1, function()
+            self.plugin:showHiddenCardRevealHint()
+        end)
     end
-
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_large })
-    table.insert(content, image_widget)
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-    -- Usa exatamente o mesmo divisor visual do cabeçalho antes de Sair.
-    table.insert(content, makeTarotDivider(iw))
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-    table.insert(content, btn_exit)
-
-    self[1] = makeFullscreenFrame(content, layout)
-
-    -- A instrução de revelar a carta é um aviso descartável, não conteúdo fixo.
-    UIManager:scheduleIn(0.1, function()
-        self.plugin:showHiddenCardRevealHint()
-    end)
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -5102,19 +5644,22 @@ local TarotHomeDialog = InputContainer:extend{
 }
 
 function TarotHomeDialog:init()
-    local sw  = Screen:getWidth()
-    local sh  = Screen:getHeight()
-    -- A Home precisa pintar a tela inteira em qualquer dispositivo suportado
-    -- pelo KOReader. Por isso usamos diretamente as dimensões da tela como
-    -- área externa e calculamos apenas uma área interna segura para o conteúdo.
-    local outer_pad = Size.padding.default
-    local inner_w = sw - outer_pad * 2
-    if inner_w < math.floor(sw * 0.72) then
-        inner_w = math.floor(sw * 0.72)
-    end
-    local iw = math.floor(inner_w * 0.92)
+    local layout = getFullscreenLayout(0.92)
+    local iw = layout.content_w
     local tile_gap = Size.span.horizontal_default
     local tile_button_w = math.floor((iw - tile_gap) / 2)
+    local home_button_radius = math.max(getTarotButtonRadius(), math.floor(layout.safe_h * 0.018))
+
+    -- Ao tocar num botão da Home, alguns aparelhos e-ink deixam o feedback de
+    -- toque quadrado preso atrás da próxima tela. O pequeno agendamento abaixo
+    -- dá tempo para o botão arredondado redesenhar antes de abrir o submenu.
+    local function runHomeAction(action)
+        setTarotDirty(self.plugin or self, "partial")
+        UIManager:scheduleIn(0.05, function()
+            if action then action() end
+            setTarotDirty(self.plugin or self, "partial")
+        end)
+    end
 
     local daily_data = self.plugin:getDailyCardData()
     local daily_card = daily_data.card
@@ -5124,8 +5669,9 @@ function TarotHomeDialog:init()
         is_reversed = daily_data.is_reversed,
     }}
 
-    local home_title = daily_is_lenormand and "Lenormand" or "Tarot"
-    local header_w = makeSectionHeader(home_title, iw)
+    local home_title = daily_is_lenormand
+        and self.plugin:getTranslation("lenormand_deck")
+        or self.plugin:getTranslation("tarot_deck")
 
     local daily_title_w = TextWidget:new{
         text      = "— " .. self.plugin:getTranslation("daily_card") .. " —",
@@ -5137,22 +5683,45 @@ function TarotHomeDialog:init()
 
     local card_w
     local card_h
-    if daily_card.symbol then
-        card_w = math.floor(sw * 0.24)
-        if card_w > 170 then card_w = 170 end
-        if card_w < 120 then card_w = 120 end
-        card_h = card_w
-    else
-        card_w = math.floor(sw * 0.20)
-        if card_w > 150 then card_w = 150 end
-        if card_w < 95 then card_w = 95 end
-        card_h = math.floor(card_w * (439 / 250))
+    local is_square_card = daily_card.symbol ~= nil
+    local ratio = is_square_card and 1 or (439 / 250)
+
+    -- Tamanho adaptativo e conservador para a Carta Diária da Home.
+    -- Evitamos medir TextWidget/VerticalGroup extras aqui porque alguns builds
+    -- de KOReader/e-ink são sensíveis a medições antecipadas durante a abertura.
+    -- Em vez disso, usamos a área segura da tela e reservamos uma faixa para
+    -- cabeçalho, nome da carta e rodapé. Assim a imagem cresce em telas altas,
+    -- mas continua segura em Kindle Basic 2022 e janelas pequenas.
+    local reserved_h = math.floor(layout.safe_h * 0.46)
+    if reserved_h < 300 then reserved_h = 300 end
+    if reserved_h > math.floor(layout.safe_h * 0.58) then
+        reserved_h = math.floor(layout.safe_h * 0.58)
     end
 
-    -- Na Home, a Carta Diária mantém 2/3 do tamanho usado na versão anterior.
-    -- Isso equivale a reduzir em 1/3 as dimensões atuais, preservando a proporção.
-    card_w = math.floor(card_w * 4 / 3)
-    card_h = math.floor(card_h * 4 / 3)
+    local max_card_h = layout.safe_h - reserved_h
+    if max_card_h < math.floor(layout.safe_h * 0.30) then
+        max_card_h = math.floor(layout.safe_h * 0.30)
+    end
+    if max_card_h > math.floor(layout.safe_h * 0.52) then
+        max_card_h = math.floor(layout.safe_h * 0.52)
+    end
+
+    local max_card_w = math.floor(iw * (is_square_card and 0.74 or 0.52))
+    local by_height_w = math.floor(max_card_h / ratio)
+    card_w = math.min(max_card_w, by_height_w)
+
+    local min_card_w = is_square_card and 92 or 74
+    if card_w < min_card_w then card_w = min_card_w end
+
+    local hard_max_w = is_square_card and 340 or 260
+    if card_w > hard_max_w then card_w = hard_max_w end
+
+    card_h = math.floor(card_w * ratio)
+    if card_h > max_card_h then
+        local scale = max_card_h / card_h
+        card_w = math.max(48, math.floor(card_w * scale))
+        card_h = math.max(48, math.floor(card_h * scale))
+    end
 
     local daily_image
     if daily_data.is_revealed then
@@ -5208,18 +5777,20 @@ function TarotHomeDialog:init()
                     is_daily = true,
                     deck_is_lenormand = daily_is_lenormand,
                 })
-                UIManager:setDirty(nil, "full")
+                setTarotDirty(self.plugin or self)
             end,
         }
     else
         daily_button = makeRoundedButton{
             text   = self.plugin:getTranslation("reveal_daily_card"),
             width  = math.floor(iw * 0.72),
+            radius = home_button_radius,
+            bordersize = 1,
             callback = function()
                 self.plugin:markDailyCardRevealed(daily_data)
                 UIManager:close(self)
                 UIManager:show(TarotHomeDialog:new{ plugin = self.plugin })
-                UIManager:setDirty(nil, "full")
+                setTarotDirty(self.plugin or self)
             end,
         }
     end
@@ -5227,30 +5798,33 @@ function TarotHomeDialog:init()
     local btn_spreads = makeRoundedButton{
         text   = self.plugin:getTranslation("spreads"),
         width  = tile_button_w,
+        radius = home_button_radius,
+        bordersize = 1,
         callback = function()
-            self.plugin:showSpreadsMenu()
+            runHomeAction(function() self.plugin:showSpreadsMenu() end)
         end,
     }
 
     local btn_journal = makeRoundedButton{
         text   = self.plugin:getTranslation("journal"),
         width  = tile_button_w,
+        radius = home_button_radius,
+        bordersize = 1,
         callback = function()
-            self.plugin:showSavedReadingsMenu()
+            runHomeAction(function() self.plugin:showSavedReadingsMenu() end)
         end,
     }
 
     local btn_book = makeRoundedButton{
         text   = self.plugin:getTranslation("card_book"),
         width  = iw,
+        radius = home_button_radius,
+        bordersize = 1,
         callback = function()
-            self.plugin:showCardBook()
+            runHomeAction(function() self.plugin:showCardBook() end)
         end,
     }
 
-    -- O acesso a "Sobre" já existe dentro de Configurações. Na Home, o
-    -- rodapé usa esse espaço para o atalho de Configuração, enquanto o Livro
-    -- de Cartas passa a ocupar sozinho toda a segunda linha.
     local btn_settings = makeTransparentTextButton{
         text        = self.plugin:getTranslation("configuration"),
         width       = math.floor(iw * 0.38),
@@ -5264,41 +5838,12 @@ function TarotHomeDialog:init()
         width       = math.floor(iw * 0.38),
         callback = function()
             UIManager:close(self)
-            UIManager:setDirty(nil, "full")
+            setTarotDirty(self.plugin or self)
         end,
     }
 
-    local actions_row_1 = HorizontalGroup:new{
+    local body = VerticalGroup:new{
         align = "center",
-        btn_spreads,
-        HorizontalSpan:new{ width = tile_gap },
-        btn_journal,
-    }
-
-    local actions_row_2 = HorizontalGroup:new{
-        align = "center",
-        btn_book,
-    }
-
-    local footer_row = HorizontalGroup:new{
-        align = "center",
-        btn_settings,
-        HorizontalSpan:new{ width = math.floor(iw * 0.08) },
-        btn_close,
-    }
-
-    local separator = TextWidget:new{
-        text      = "─ ─ ─ ─ ─ ─ ─ ─",
-        face      = Font:getFace("x_smallinfofont"),
-        fgcolor   = Blitbuffer.gray(0.55),
-        max_width = iw,
-        alignment = "center",
-    }
-
-    local content = VerticalGroup:new{
-        align = "center",
-        header_w,
-        VerticalSpan:new{ width = Size.span.vertical_default },
         daily_title_w,
         VerticalSpan:new{ width = Size.span.vertical_small },
         daily_image,
@@ -5306,40 +5851,36 @@ function TarotHomeDialog:init()
         daily_name_w,
     }
 
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_small })
+    local footer = VerticalGroup:new{ align = "center" }
+    table.insert(footer, daily_button)
+    table.insert(footer, VerticalSpan:new{ width = Size.span.vertical_default })
+    table.insert(footer, makeTarotDivider(iw))
+    table.insert(footer, VerticalSpan:new{ width = Size.span.vertical_default })
+    table.insert(footer, HorizontalGroup:new{
+        align = "center",
+        btn_spreads,
+        HorizontalSpan:new{ width = tile_gap },
+        btn_journal,
+    })
+    table.insert(footer, VerticalSpan:new{ width = Size.span.vertical_default })
+    table.insert(footer, btn_book)
+    table.insert(footer, VerticalSpan:new{ width = Size.span.vertical_default })
+    table.insert(footer, makeTarotDivider(iw))
+    table.insert(footer, VerticalSpan:new{ width = Size.span.vertical_default })
+    table.insert(footer, HorizontalGroup:new{
+        align = "center",
+        btn_settings,
+        HorizontalSpan:new{ width = math.floor(iw * 0.08) },
+        btn_close,
+    })
 
-    table.insert(content, daily_button)
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-    table.insert(content, separator)
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-    table.insert(content, actions_row_1)
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-    table.insert(content, actions_row_2)
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_large })
-    table.insert(content, separator)
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-    table.insert(content, footer_row)
-
-    local centered_content = CenterContainer:new{
-        dimen = {
-            w = sw - outer_pad * 2,
-            h = sh - outer_pad * 2,
-        },
-        content,
+    self[1] = makeFullscreenScaffold{
+        layout = layout,
+        title = home_title,
+        body = body,
+        footer = footer,
+        footer_gap = Size.span.vertical_small,
     }
-
-    local fullscreen_frame = FrameContainer:new{
-        width      = sw,
-        height     = sh,
-        background = Blitbuffer.COLOR_WHITE,
-        bordersize = 0,
-        radius     = 0,
-        padding    = outer_pad,
-        margin     = 0,
-        centered_content,
-    }
-
-    self[1] = fullscreen_frame
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -5349,17 +5890,33 @@ local SettingsDialog = InputContainer:extend{
     plugin = nil,
     page = 1,
     parent_dialog = nil,
+    home_needs_refresh = false,
 }
+
+-- Fecha as Configurações e, quando uma opção que afeta a Home foi alterada,
+-- reconstrói a Home ao fundo. Isso evita que a Carta Diária continue mostrando
+-- Tarot/Lenormand antigo depois de mudar "Apenas Tarot" ou "Apenas Lenormand".
+function SettingsDialog:closeAndMaybeRefreshHome()
+    UIManager:close(self)
+
+    if self.home_needs_refresh and self.parent_dialog then
+        UIManager:close(self.parent_dialog)
+        UIManager:show(TarotHomeDialog:new{ plugin = self.plugin })
+    end
+
+    setTarotDirty(self.plugin or self)
+end
 
 function SettingsDialog:init()
     local layout = getFullscreenLayout()
     local iw = layout.content_w
-    local page_count = 4
+    local page_count = 5
     self.page = tonumber(self.page) or 1
     if self.page < 1 then self.page = 1 end
     if self.page > page_count then self.page = page_count end
 
     local page_titles = {
+        self.plugin:getTranslation("refresh_mode"),
         self.plugin:getTranslation("daily_card"),
         self.plugin:getTranslation("tarot_deck"),
         self.plugin:getTranslation("reading_display"),
@@ -5379,21 +5936,55 @@ function SettingsDialog:init()
             plugin = self.plugin,
             page = page or self.page,
             parent_dialog = self.parent_dialog,
+            home_needs_refresh = self.home_needs_refresh == true,
         })
-        UIManager:setDirty(nil, "full")
+        setTarotDirty(self.plugin or self)
     end
 
     local rows = VerticalGroup:new{ align = "center" }
 
     if self.page == 1 then
+        local function refreshModeButton(mode, label_key)
+            local mark = self.plugin.screen_refresh_mode == mode and "☑" or "☐"
+            return makeRoundedButton{
+                text = "  " .. mark .. "  " .. self.plugin:getTranslation(label_key),
+                width = card_inner_w,
+                callback = function()
+                    self.plugin:setScreenRefreshMode(mode)
+                    reopen(1)
+                end,
+            }
+        end
+
+        local refresh_body = VerticalGroup:new{
+            align = "center",
+            refreshModeButton("smooth", "refresh_mode_smooth"),
+            VerticalSpan:new{ width = Size.span.vertical_small },
+            refreshModeButton("standard", "refresh_mode_standard"),
+            VerticalSpan:new{ width = Size.span.vertical_small },
+            refreshModeButton("clean", "refresh_mode_clean"),
+            VerticalSpan:new{ width = Size.span.vertical_default },
+            makeMutedText(self.plugin:getTranslation("refresh_mode_hint"), card_inner_w),
+        }
+        table.insert(rows, makeSettingsCard(
+            self.plugin:getTranslation("refresh_mode"),
+            refresh_body,
+            card_w
+        ))
+
+
+    elseif self.page == 2 then
         local function dailyDeckButton(mode, label_key)
             local mark = self.plugin.daily_card_deck_mode == mode and "☑" or "☐"
             return makeRoundedButton{
                 text = "  " .. mark .. "  " .. self.plugin:getTranslation(label_key),
                 width = card_inner_w,
                 callback = function()
+                    if self.plugin.daily_card_deck_mode ~= mode then
+                        self.home_needs_refresh = true
+                    end
                     self.plugin:setDailyCardDeckMode(mode)
-                    reopen(1)
+                    reopen(2)
                 end,
             }
         end
@@ -5411,14 +6002,16 @@ function SettingsDialog:init()
             card_w
         ))
 
-    elseif self.page == 2 then
+
+
+    elseif self.page == 3 then
         local rev_mark = self.plugin.allow_reversed and "☑" or "☐"
         local btn_rev = makeRoundedButton{
             text = "  " .. rev_mark .. "  " .. self.plugin:getTranslation("allow_reversed_desc"),
             width = card_inner_w,
             callback = function()
                 self.plugin:toggleReversed()
-                reopen(2)
+                reopen(3)
             end,
         }
         local maj_mark = self.plugin.major_only and "☑" or "☐"
@@ -5427,7 +6020,7 @@ function SettingsDialog:init()
             width = card_inner_w,
             callback = function()
                 self.plugin:toggleMajorOnly()
-                reopen(2)
+                reopen(3)
             end,
         }
         local tarot_options_body = VerticalGroup:new{
@@ -5442,7 +6035,9 @@ function SettingsDialog:init()
             card_w
         ))
 
-    elseif self.page == 3 then
+
+
+    elseif self.page == 4 then
         local function modeButton(mode, label_key)
             local mark = self.plugin.spread_meaning_mode == mode and "☑" or "☐"
             return makeRoundedButton{
@@ -5450,7 +6045,7 @@ function SettingsDialog:init()
                 width = card_inner_w,
                 callback = function()
                     self.plugin:setSpreadMeaningMode(mode)
-                    reopen(3)
+                    reopen(4)
                 end,
             }
         end
@@ -5476,7 +6071,7 @@ function SettingsDialog:init()
                 width = math.floor(card_inner_w * 0.31),
                 callback = function()
                     self.plugin:setMeaningTextSize(size)
-                    reopen(3)
+                    reopen(4)
                 end,
             }
         end
@@ -5502,7 +6097,7 @@ function SettingsDialog:init()
             width = card_inner_w,
             callback = function()
                 self.plugin:toggleShowReversedLabel()
-                reopen(3)
+                reopen(4)
             end,
         })
         table.insert(display_controls, VerticalSpan:new{ width = Size.span.vertical_default })
@@ -5512,7 +6107,7 @@ function SettingsDialog:init()
             width = card_inner_w,
             callback = function()
                 self.plugin:toggleViewInBookButton()
-                reopen(3)
+                reopen(4)
             end,
         })
         table.insert(rows, makeSettingsCard(
@@ -5521,6 +6116,8 @@ function SettingsDialog:init()
             card_w
         ))
 
+
+
     else
         local auto_mark = self.plugin.auto_save_spreads and "☑" or "☐"
         local btn_auto_save = makeRoundedButton{
@@ -5528,7 +6125,7 @@ function SettingsDialog:init()
             width = card_inner_w,
             callback = function()
                 self.plugin:toggleAutoSaveSpreads()
-                reopen(4)
+                reopen(5)
             end,
         }
         local warning_disabled_mark = self.plugin.disable_unsaved_close_warning and "☑" or "☐"
@@ -5538,7 +6135,7 @@ function SettingsDialog:init()
             width = card_inner_w,
             callback = function()
                 self.plugin:toggleUnsavedCloseWarning()
-                reopen(4)
+                reopen(5)
             end,
         }
         local journal_body = VerticalGroup:new{
@@ -5595,14 +6192,14 @@ function SettingsDialog:init()
                                     ),
                                 })
                                 self.plugin:refreshMenu()
-                                UIManager:setDirty(nil, "full")
+                                setTarotDirty(self.plugin or self)
                             end,
                         }
                         UIManager:show(second_confirm)
                     end,
                 }
                 UIManager:show(first_confirm)
-                UIManager:setDirty(nil, "full")
+                setTarotDirty(self.plugin or self)
             end,
         }
         table.insert(rows, makeSettingsCard(
@@ -5620,11 +6217,9 @@ function SettingsDialog:init()
                 self.plugin:showAboutDialog()
             end,
         })
-    end
 
-    table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_large })
-    table.insert(rows, makeTarotDivider(iw))
-    table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_default })
+
+    end
 
     local page_counter = TextWidget:new{
         text = string.format(self.plugin:getTranslation("settings_page"), self.page, page_count),
@@ -5651,25 +6246,26 @@ function SettingsDialog:init()
             callback = function() reopen(self.page + 1) end,
         },
     }
-    table.insert(rows, nav_row)
-    table.insert(rows, VerticalSpan:new{ width = Size.span.vertical_default })
 
-    table.insert(rows, makeTransparentTextButton{
-        text = self.plugin:getTranslation("close"),
-        width = math.floor(iw * 0.40),
-        callback = function()
-            UIManager:close(self)
-            UIManager:setDirty(nil, "full")
-        end,
+    local footer = makeFullscreenFooter(iw, VerticalGroup:new{
+        align = "center",
+        nav_row,
+        VerticalSpan:new{ width = Size.span.vertical_default },
+        makeTransparentTextButton{
+            text = self.plugin:getTranslation("close"),
+            width = math.floor(iw * 0.40),
+            callback = function()
+                self:closeAndMaybeRefreshHome()
+            end,
+        },
     })
 
-    local content = VerticalGroup:new{
-        align = "center",
-        header_w,
-        VerticalSpan:new{ width = Size.span.vertical_large },
-        rows,
+    self[1] = makeFullscreenScaffold{
+        layout = layout,
+        header = header_w,
+        body = rows,
+        footer = footer,
     }
-    self[1] = makeFullscreenFrame(content, layout)
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -5827,7 +6423,7 @@ function CardBookDialog:init()
     -- Navegação entre cartas
     local nav_row
     if #self.card_list > 1 then
-        local btn_prev = Button:new{
+        local btn_prev = makeRoundedButton{
             text     = self.plugin:getTranslation("prev"),
             width    = math.floor(iw * 0.30),
             radius   = getTarotButtonRadius(),
@@ -5841,7 +6437,7 @@ function CardBookDialog:init()
                         current_index = self.current_index - 1,
                         parent_callback = self.parent_callback,
                     })
-                    UIManager:setDirty(nil, "full")
+                    setTarotDirty(self.plugin or self)
                 end
             end,
         }
@@ -5854,7 +6450,7 @@ function CardBookDialog:init()
             alignment = "center",
         }
         
-        local btn_next = Button:new{
+        local btn_next = makeRoundedButton{
             text     = self.plugin:getTranslation("next"),
             width    = math.floor(iw * 0.30),
             radius   = getTarotButtonRadius(),
@@ -5868,7 +6464,7 @@ function CardBookDialog:init()
                         current_index = self.current_index + 1,
                         parent_callback = self.parent_callback,
                     })
-                    UIManager:setDirty(nil, "full")
+                    setTarotDirty(self.plugin or self)
                 end
             end,
         }
@@ -5892,39 +6488,39 @@ function CardBookDialog:init()
             if self.parent_callback then
                 self.parent_callback()
             end
-            UIManager:setDirty(nil, "full")
+            setTarotDirty(self.plugin or self)
         end,
     }
 
-    -- Montagem final do conteúdo
-    local content = VerticalGroup:new{
+    -- Montagem final: título em cima; carta/significados no centro;
+    -- navegação e voltar sempre no rodapé.
+    local body = VerticalGroup:new{
         align = "center",
-        header_w,
-        VerticalSpan:new{ width = Size.span.vertical_large },
         image_info_row,
         VerticalSpan:new{ width = Size.span.vertical_large },
         upright_section,   -- ← agora alinhado à esquerda dentro do grupo
     }
 
     if reversed_section then
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-        table.insert(content, divider)
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-        table.insert(content, reversed_section)
+        table.insert(body, VerticalSpan:new{ width = Size.span.vertical_default })
+        table.insert(body, divider)
+        table.insert(body, VerticalSpan:new{ width = Size.span.vertical_default })
+        table.insert(body, reversed_section)
     end
 
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_large })
-    table.insert(content, divider)
-    table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
-
+    local footer_content = VerticalGroup:new{ align = "center" }
     if nav_row then
-        table.insert(content, nav_row)
-        table.insert(content, VerticalSpan:new{ width = Size.span.vertical_default })
+        table.insert(footer_content, nav_row)
+        table.insert(footer_content, VerticalSpan:new{ width = Size.span.vertical_default })
     end
+    table.insert(footer_content, btn_back)
 
-    table.insert(content, btn_back)
-
-    self[1] = makeFullscreenFrame(content, layout)
+    self[1] = makeFullscreenScaffold{
+        layout = layout,
+        header = header_w,
+        body = body,
+        footer = makeFullscreenFooter(iw, footer_content),
+    }
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -6033,7 +6629,7 @@ function CardBookMenu:openBookDeck(use_lenormand)
         plugin = self.plugin,
         book_use_lenormand = use_lenormand,
     })
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function CardBookMenu:init()
@@ -6048,23 +6644,26 @@ function CardBookMenu:init()
 
     local header_w = makeSectionHeader(self.plugin:getTranslation("card_book"), iw)
     local column_gap = Size.span.horizontal_default
+    local deck_card_w = math.floor(iw * 0.92)
+    local deck_card_inner_w = deck_card_w - Size.padding.default * 2
+    local selector_w = math.floor((deck_card_inner_w - column_gap) / 2)
     local column_w = math.floor((iw - column_gap) / 2)
 
-    -- Seletor contextual Tarot | Lenormand. Os círculos mantêm a seleção clara
-    -- mesmo em telas monocromáticas, sem depender de cores ou animações.
-    local btn_tarot_tab = Button:new{
-        text = (self.book_use_lenormand and "○ Tarot" or "● Tarot"),
-        width = column_w,
-        radius = getTarotButtonRadius(),
+    -- Seletor contextual Tarot | Lenormand. Agora fica dentro do mesmo box de
+    -- Tiragens, separando visualmente a escolha do baralho das ações do Livro.
+    local btn_tarot_tab = makeRoundedButton{
+        text = (self.book_use_lenormand and "○ " or "● ")
+            .. self.plugin:getTranslation("tarot_deck"),
+        width = selector_w,
         callback = function()
             self:openBookDeck(false)
         end,
     }
 
-    local btn_lenormand_tab = Button:new{
-        text = (self.book_use_lenormand and "● Lenormand" or "○ Lenormand"),
-        width = column_w,
-        radius = getTarotButtonRadius(),
+    local btn_lenormand_tab = makeRoundedButton{
+        text = (self.book_use_lenormand and "● " or "○ ")
+            .. self.plugin:getTranslation("lenormand_deck"),
+        width = selector_w,
         callback = function()
             self:openBookDeck(true)
         end,
@@ -6076,6 +6675,12 @@ function CardBookMenu:init()
         HorizontalSpan:new{ width = column_gap },
         btn_lenormand_tab,
     }
+
+    local deck_box = makeSettingsCard(
+        self.plugin:getTranslation("deck_type"),
+        deck_selector,
+        deck_card_w
+    )
 
     -- A busca usa diretamente o baralho da aba ativa, eliminando a antiga tela
     -- intermediária de escolha de baralho.
@@ -6091,7 +6696,7 @@ function CardBookMenu:init()
 
     if self.book_use_lenormand then
         -- Lenormand possui uma única coleção completa de 36 cartas.
-        local btn_all_lenormand = Button:new{
+        local btn_all_lenormand = makeRoundedButton{
             text = self.plugin:getTranslation("all_cards"),
             width = iw,
             radius = getTarotButtonRadius(),
@@ -6107,7 +6712,7 @@ function CardBookMenu:init()
     else
         -- Tarot usa no máximo duas colunas para evitar textos comprimidos em
         -- Kindles e celulares estreitos.
-        local btn_all_tarot = Button:new{
+        local btn_all_tarot = makeRoundedButton{
             text = self.plugin:getTranslation("all_cards"),
             width = column_w,
             radius = getTarotButtonRadius(),
@@ -6117,7 +6722,7 @@ function CardBookMenu:init()
             end,
         }
 
-        local btn_major = Button:new{
+        local btn_major = makeRoundedButton{
             text = self.plugin:getTranslation("major_arcana"),
             width = column_w,
             radius = getTarotButtonRadius(),
@@ -6148,7 +6753,7 @@ function CardBookMenu:init()
             major_group,
         }
 
-        local btn_minor = Button:new{
+        local btn_minor = makeRoundedButton{
             text = self.plugin:getTranslation("minor_arcana"),
             width = iw,
             radius = getTarotButtonRadius(),
@@ -6170,26 +6775,25 @@ function CardBookMenu:init()
         width = math.floor(iw * 0.40),
         callback = function()
             UIManager:close(self)
-            UIManager:setDirty(nil, "full")
+            setTarotDirty(self.plugin or self)
         end,
     }
 
-    local content = VerticalGroup:new{
+    local body = VerticalGroup:new{
         align = "center",
-        header_w,
-        VerticalSpan:new{ width = Size.span.vertical_large },
-        deck_selector,
+        deck_box,
         VerticalSpan:new{ width = Size.span.vertical_large },
         btn_search,
         VerticalSpan:new{ width = Size.span.vertical_large },
         deck_content,
-        VerticalSpan:new{ width = Size.span.vertical_large },
-        makeTarotDivider(iw),
-        VerticalSpan:new{ width = Size.span.vertical_default },
-        btn_close,
     }
 
-    self[1] = makeFullscreenFrame(content, layout)
+    self[1] = makeFullscreenScaffold{
+        layout = layout,
+        header = header_w,
+        body = body,
+        footer = makeFullscreenFooter(iw, btn_close),
+    }
 end
 
 function CardBookMenu:showSearchInput(deck)
@@ -6245,7 +6849,7 @@ function CardBookMenu:showSearchInput(deck)
     }
 
     UIManager:show(search_input)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function CardBookMenu:showNoSearchResults()
@@ -6257,14 +6861,12 @@ function CardBookMenu:showNoSearchResults()
         width = math.floor(iw * 0.40),
         callback = function()
             UIManager:close(self.no_results_dialog)
-            UIManager:setDirty(nil, "full")
+            setTarotDirty(self.plugin or self)
         end,
     }
 
-    local content = VerticalGroup:new{
+    local body = VerticalGroup:new{
         align = "center",
-        makeSectionHeader(self:getBookSearchTitle(), iw),
-        VerticalSpan:new{ width = Size.span.vertical_large },
         TextWidget:new{
             text = self.plugin:getTranslation("no_results"),
             face = Font:getFace("cfont"),
@@ -6272,15 +6874,16 @@ function CardBookMenu:showNoSearchResults()
             max_width = iw,
             alignment = "center",
         },
-        VerticalSpan:new{ width = Size.span.vertical_large },
-        makeTarotDivider(iw),
-        VerticalSpan:new{ width = Size.span.vertical_default },
-        btn_back,
     }
 
-    self.no_results_dialog = makeFullscreenFrame(content, layout)
+    self.no_results_dialog = makeFullscreenScaffold{
+        layout = layout,
+        title = self:getBookSearchTitle(),
+        body = body,
+        footer = makeFullscreenFooter(iw, btn_back),
+    }
     UIManager:show(self.no_results_dialog)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function CardBookMenu:showMinorArcanaMenu()
@@ -6328,7 +6931,7 @@ function CardBookMenu:showMinorArcanaMenu()
                 })
             end,
         })
-        UIManager:setDirty(nil, "full")
+        setTarotDirty(self.plugin or self)
     end
 
     function MinorArcanaMenu:getSuitCards(suit)
@@ -6342,7 +6945,7 @@ function CardBookMenu:showMinorArcanaMenu()
     end
 
     function MinorArcanaMenu:makeSuitGroup(suit)
-        local btn_suit = Button:new{
+        local btn_suit = makeRoundedButton{
             text = suit.symbol .. " " .. suit.name,
             width = column_w,
             radius = getTarotButtonRadius(),
@@ -6362,7 +6965,7 @@ function CardBookMenu:showMinorArcanaMenu()
     end
 
     function MinorArcanaMenu:init()
-        local btn_all_minor = Button:new{
+        local btn_all_minor = makeRoundedButton{
             text = self.plugin:getTranslation("all_cards"),
             width = iw,
             radius = getTarotButtonRadius(),
@@ -6395,14 +6998,12 @@ function CardBookMenu:showMinorArcanaMenu()
                     plugin = self.plugin,
                     book_use_lenormand = false,
                 })
-                UIManager:setDirty(nil, "full")
+                setTarotDirty(self.plugin or self)
             end,
         }
 
-        local content = VerticalGroup:new{
+        local body = VerticalGroup:new{
             align = "center",
-            makeSectionHeader(self.plugin:getTranslation("minor_arcana"), iw),
-            VerticalSpan:new{ width = Size.span.vertical_small },
             self:makeCountLabel(56, iw),
             VerticalSpan:new{ width = Size.span.vertical_large },
             btn_all_minor,
@@ -6412,19 +7013,20 @@ function CardBookMenu:showMinorArcanaMenu()
             row1,
             VerticalSpan:new{ width = Size.span.vertical_large },
             row2,
-            VerticalSpan:new{ width = Size.span.vertical_large },
-            makeTarotDivider(iw),
-            VerticalSpan:new{ width = Size.span.vertical_default },
-            btn_back,
         }
 
-        self[1] = makeFullscreenFrame(content, layout)
+        self[1] = makeFullscreenScaffold{
+            layout = layout,
+            title = self.plugin:getTranslation("minor_arcana"),
+            body = body,
+            footer = makeFullscreenFooter(iw, btn_back),
+        }
     end
 
     UIManager:show(MinorArcanaMenu:new{
         plugin = self.plugin,
     })
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function CardBookMenu:showCardList(cards)
@@ -6441,7 +7043,7 @@ function CardBookMenu:showCardList(cards)
             })
         end,
     })
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -6459,7 +7061,7 @@ end
 
 function TarotPlugin:showHome()
     UIManager:show(TarotHomeDialog:new{ plugin = self })
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:showPhysicalDeckSelector()
@@ -6483,7 +7085,7 @@ function TarotPlugin:showPhysicalDeckSelector()
         self:showPhysicalDeckReverseHint()
     end
 
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:showSpreadsMenu()
@@ -6504,7 +7106,7 @@ function TarotPlugin:showSpreadsMenu()
         local function reopen()
             UIManager:close(self)
             self.plugin:showSpreadsMenu()
-            UIManager:setDirty(nil, "full")
+            setTarotDirty(self.plugin or self)
         end
 
         -- Bolinhas preenchida/vazia deixam o estado claro em telas monocromáticas
@@ -6571,32 +7173,32 @@ function TarotPlugin:showSpreadsMenu()
             is_enter_default = true,
             callback = function()
                 UIManager:close(self)
-                UIManager:setDirty(nil, "full")
+                setTarotDirty(self.plugin or self)
             end,
         }
 
-        local content = VerticalGroup:new{
+        local body = VerticalGroup:new{
             align = "center",
-            makeSectionHeader(self.plugin:getTranslation("spreads"), iw),
-            VerticalSpan:new{ width = Size.span.vertical_large },
             deck_box,
-            -- Espaço extra entre o seletor de baralho e as ações principais.
-            -- A soma usa medidas nativas do KOReader e continua adaptativa ao DPI.
-            VerticalSpan:new{
-                width = Size.span.vertical_large + Size.span.vertical_default,
-            },
-            actions_row,
-            VerticalSpan:new{ width = Size.span.vertical_large },
-            makeTarotDivider(iw),
-            VerticalSpan:new{ width = Size.span.vertical_default },
-            btn_close,
         }
 
-        self[1] = makeFullscreenFrame(content, layout)
+        local footer = makeFullscreenFooter(iw, VerticalGroup:new{
+            align = "center",
+            actions_row,
+            VerticalSpan:new{ width = Size.span.vertical_default },
+            btn_close,
+        })
+
+        self[1] = makeFullscreenScaffold{
+            layout = layout,
+            title = self.plugin:getTranslation("spreads"),
+            body = body,
+            footer = footer,
+        }
     end
 
     UIManager:show(SpreadsDialog:new{ plugin = self })
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:showSettings(parent_dialog)
@@ -6604,7 +7206,7 @@ function TarotPlugin:showSettings(parent_dialog)
         plugin = self,
         parent_dialog = parent_dialog,
     })
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:showAboutDialog()
@@ -6624,30 +7226,24 @@ function TarotPlugin:showAboutDialog()
         width    = math.floor(iw * 0.40),
         callback = function()
             UIManager:close(self.about_dialog)
-            UIManager:setDirty(nil, "full")
+            setTarotDirty(self.plugin or self)
         end,
     }
 
-    local content = VerticalGroup:new{
-        align = "center",
-        makeSectionHeader(self:getTranslation("about"), iw),
-        VerticalSpan:new{ width = Size.span.vertical_large },
-        textbox,
-        VerticalSpan:new{ width = Size.span.vertical_large },
-        makeTarotDivider(iw),
-        VerticalSpan:new{ width = Size.span.vertical_default },
-        btn_close,
+    self.about_dialog = makeFullscreenScaffold{
+        layout = layout,
+        title = self:getTranslation("about"),
+        body = textbox,
+        footer = makeFullscreenFooter(iw, btn_close),
     }
 
-    self.about_dialog = makeFullscreenFrame(content, layout)
-
     UIManager:show(self.about_dialog)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:showCardBook()
     UIManager:show(CardBookMenu:new{ plugin = self })
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:showCardInBook(card, deck_is_lenormand)
@@ -6667,22 +7263,22 @@ function TarotPlugin:showCardInBook(card, deck_is_lenormand)
         card_list = deck,
         current_index = index,
         parent_callback = function()
-            UIManager:setDirty(nil, "full")
+            setTarotDirty(self.plugin or self)
         end,
     })
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:showDrawCards()
     local deck_is_lenormand = self.use_lenormand == true
-    local cards = self:drawUniqueCards(1)
+    -- A tiragem começa com a grade 4×4 vazia. Cada toque num espaço livre
+    -- sorteia e posiciona uma carta diretamente naquele local.
+    local cards = {}
 
     local on_new_func = function()
         self:showDrawCards()
     end
 
-    -- Abre imediatamente a Carta Oculta. O sorteio é local e rápido, portanto
-    -- não há necessidade de exibir uma mensagem intermediária de carregamento.
     UIManager:show(HiddenCardDialog:new{
         plugin = self,
         cards = cards,
@@ -6690,25 +7286,11 @@ function TarotPlugin:showDrawCards()
         is_daily = false,
         title_label = self:getTranslation("draw_cards"),
         allow_add_card = true,
-        max_cards = 10,
+        max_cards = 16,
         deck_is_lenormand = deck_is_lenormand,
-        on_reveal = function()
-            UIManager:show(CardDialog:new{
-                cards = cards,
-                current_index = 1,
-                -- Com mais de uma carta, o CardDialog mantém sua revelação
-                -- sequencial já conhecida; com uma carta, abre normalmente.
-                revealed_count = #cards > 1 and 1 or nil,
-                plugin = self,
-                title_label = self:getTranslation("draw_cards"),
-                on_new = on_new_func,
-                is_daily = false,
-                deck_is_lenormand = deck_is_lenormand,
-            })
-            UIManager:setDirty(nil, "full")
-        end,
+        show_opening_hint = true,
     })
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
 end
 
 function TarotPlugin:getCurrentDateStr()
@@ -6804,7 +7386,7 @@ end
 function TarotPlugin:showDailyCard()
     local loading = InfoMessage:new{ text = self:getTranslation("loading") }
     UIManager:show(loading)
-    UIManager:setDirty(nil, "full")
+    setTarotDirty(self.plugin or self)
     
     UIManager:scheduleIn(0.3, function()
         local daily_data = self:getDailyCardData()
@@ -6834,7 +7416,7 @@ function TarotPlugin:showDailyCard()
                         is_daily = true,
                         deck_is_lenormand = daily_data.is_lenormand,
                     })
-                    UIManager:setDirty(nil, "full")
+                    setTarotDirty(self.plugin or self)
                 end,
             }
             UIManager:show(hidden_dlg)
@@ -6850,7 +7432,7 @@ function TarotPlugin:showDailyCard()
             }
             UIManager:show(dlg)
         end
-        UIManager:setDirty(nil, "full")
+        setTarotDirty(self.plugin or self)
     end)
 end
 
