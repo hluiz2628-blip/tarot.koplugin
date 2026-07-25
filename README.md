@@ -14,6 +14,7 @@ Draw cards, reveal meanings, save reflections, and browse the card book directly
 * Readings with up to 16 cards
 * Physical Deck mode
 * Card Book with meanings
+* Use book highlights as personal card meanings
 * Reflection Journal
 * Adaptive fullscreen layout
 * E-ink friendly refresh options
