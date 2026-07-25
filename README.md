@@ -32,7 +32,7 @@ Then restart KOReader and open the plugin from the tools menu.
 
 ## Version
 
-**Arcana - 5.1.0**
+**Arcana - 5.5.3**
 
 ## Cards credits
 
