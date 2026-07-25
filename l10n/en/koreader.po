@@ -1,0 +1,3890 @@
+# en translations for Tarot KOReader.
+# Copyright (C) 2026 Tarot KOReader contributors
+# This file is distributed under the same license as the Tarot KOReader project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Tarot KOReader 5.5.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-25 00:00-0300\n"
+"PO-Revision-Date: 2026-07-25 00:00-0300\n"
+"Last-Translator: \n"
+"Language: en\n"
+"Language-Team: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: custom Lua string extractor\n"
+""
+
+#: tarot_strings.lua:5 _meta.lua:20
+msgid "Tarot Reading"
+msgstr "Tarot Reading"
+
+#: tarot_strings.lua:6
+msgid "Tarot Home"
+msgstr "Tarot Home"
+
+#: tarot_strings.lua:7 tarot_strings.lua:121
+msgid "Spreads"
+msgstr "Spreads"
+
+#: tarot_strings.lua:8
+msgid "Open spreads"
+msgstr "Open spreads"
+
+#: tarot_strings.lua:9
+msgid "Draw cards"
+msgstr "Draw cards"
+
+#: tarot_strings.lua:10
+msgid "Draw one more card"
+msgstr "Draw one more card"
+
+#: tarot_strings.lua:11
+msgid "Remove last card"
+msgstr "Remove last card"
+
+#: tarot_strings.lua:12
+#, lua-format
+msgid "Cards drawn: %d of %d"
+msgstr "Cards drawn: %d of %d"
+
+#: tarot_strings.lua:13
+msgid "Physical deck"
+msgstr "Physical deck"
+
+#: tarot_strings.lua:14
+msgid "Select up to 16 cards"
+msgstr "Select up to 16 cards"
+
+#: tarot_strings.lua:15
+msgid "Select at least one card."
+msgstr "Select at least one card."
+
+#: tarot_strings.lua:16
+msgid "You can select up to 16 cards."
+msgstr "You can select up to 16 cards."
+
+#: tarot_strings.lua:17
+msgid "Press and hold a card in the list to reverse it."
+msgstr "Press and hold a card in the list to reverse it."
+
+#: tarot_strings.lua:18
+msgid "Click the card beside it to access it."
+msgstr "Click the card beside it to access it."
+
+#: tarot_strings.lua:19
+msgid "Do not show this message again"
+msgstr "Do not show this message again"
+
+#: tarot_strings.lua:20
+msgid "Done"
+msgstr "Done"
+
+#: tarot_strings.lua:21
+msgid "Daily Card"
+msgstr "Daily Card"
+
+#: tarot_strings.lua:22
+msgid "Daily Card deck"
+msgstr "Daily Card deck"
+
+#: tarot_strings.lua:23
+msgid "Show Tarot only"
+msgstr "Show Tarot only"
+
+#: tarot_strings.lua:24
+msgid "Show Lenormand only"
+msgstr "Show Lenormand only"
+
+#: tarot_strings.lua:25
+msgid "Show either one"
+msgstr "Show either one"
+
+#: tarot_strings.lua:26
+msgid "Daily Card name"
+msgstr "Daily Card name"
+
+#: tarot_strings.lua:27
+msgid "Hide card name"
+msgstr "Hide card name"
+
+#: tarot_strings.lua:28
+msgid "When enabled, the Home screen hides the revealed Daily Card name."
+msgstr "When enabled, the Home screen hides the revealed Daily Card name."
+
+#: tarot_strings.lua:29
+msgid "Daily card always revealed"
+msgstr "Daily card always revealed"
+
+#: tarot_strings.lua:30
+msgid "Reveal daily card"
+msgstr "Reveal daily card"
+
+#: tarot_strings.lua:31
+msgid "Daily card revealed"
+msgstr "Daily card revealed"
+
+#: tarot_strings.lua:32
+msgid "View meaning"
+msgstr "View meaning"
+
+#: tarot_strings.lua:33
+msgid "Draw a card"
+msgstr "Draw a card"
+
+#: tarot_strings.lua:34
+msgid "3 card spread"
+msgstr "3 card spread"
+
+#: tarot_strings.lua:35
+msgid "Card of the day"
+msgstr "Card of the day"
+
+#: tarot_strings.lua:36
+msgid "Settings"
+msgstr "Settings"
+
+#: tarot_strings.lua:37
+msgid "Config"
+msgstr "Config"
+
+#: tarot_strings.lua:38
+msgid "Close"
+msgstr "Close"
+
+#: tarot_strings.lua:39
+msgid "< Prev"
+msgstr "< Prev"
+
+#: tarot_strings.lua:40
+msgid "Next >"
+msgstr "Next >"
+
+#: tarot_strings.lua:41
+msgid "Language"
+msgstr "Language"
+
+#: tarot_strings.lua:42
+msgid "Português"
+msgstr "Português"
+
+#: tarot_strings.lua:43
+msgid "English"
+msgstr "English"
+
+#: tarot_strings.lua:44
+msgid "Upright"
+msgstr "Upright"
+
+#: tarot_strings.lua:45
+msgid "Reversed"
+msgstr "Reversed"
+
+#: tarot_strings.lua:46
+msgid "Shuffling the cards..."
+msgstr "Shuffling the cards..."
+
+#: tarot_strings.lua:47
+#, lua-format
+msgid "Card %d of %d"
+msgstr "Card %d of %d"
+
+#: tarot_strings.lua:48
+msgid "Reversed cards"
+msgstr "Reversed cards"
+
+#: tarot_strings.lua:49
+msgid "Allow cards to appear reversed"
+msgstr "Allow cards to appear reversed"
+
+#: tarot_strings.lua:50
+msgid "Major Arcana only"
+msgstr "Major Arcana only"
+
+#: tarot_strings.lua:51
+msgid "Draw only from the 22 Major Arcana"
+msgstr "Draw only from the 22 Major Arcana"
+
+#: tarot_strings.lua:52
+msgid "Reading display"
+msgstr "Reading display"
+
+#: tarot_strings.lua:53
+msgid "Disable Card Book meanings in spreads"
+msgstr "Disable Card Book meanings in spreads"
+
+#: tarot_strings.lua:54
+msgid "Disable \"view in book\" button"
+msgstr "Disable \"view in book\" button"
+
+#: tarot_strings.lua:55
+msgid "Save readings automatically"
+msgstr "Save readings automatically"
+
+#: tarot_strings.lua:56
+msgid "Disable close-without-saving question"
+msgstr "Disable close-without-saving question"
+
+#: tarot_strings.lua:57
+msgid "This reading has not been saved. Close without saving?"
+msgstr "This reading has not been saved. Close without saving?"
+
+#: tarot_strings.lua:58
+msgid "Continue reading"
+msgstr "Continue reading"
+
+#: tarot_strings.lua:59
+msgid "Close without saving"
+msgstr "Close without saving"
+
+#: tarot_strings.lua:60
+msgid "Saved automatically"
+msgstr "Saved automatically"
+
+#: tarot_strings.lua:61
+#, lua-format
+msgid "Automatic %s reading — %s"
+msgstr "Automatic %s reading — %s"
+
+#: tarot_strings.lua:62
+msgid "Show \"Reversed\" label"
+msgstr "Show \"Reversed\" label"
+
+#: tarot_strings.lua:63
+msgid "Cards always revealed in spreads"
+msgstr "Cards always revealed in spreads"
+
+#: tarot_strings.lua:64
+msgid "Show only Personal Meaning if available"
+msgstr "Show only Personal Meaning if available"
+
+#: tarot_strings.lua:65
+msgid "Meaning text size"
+msgstr "Meaning text size"
+
+#: tarot_strings.lua:66
+msgid "Compact"
+msgstr "Compact"
+
+#: tarot_strings.lua:67
+msgid "Standard"
+msgstr "Standard"
+
+#: tarot_strings.lua:68
+msgid "Large"
+msgstr "Large"
+
+#: tarot_strings.lua:69
+msgid "Meanings in readings"
+msgstr "Meanings in readings"
+
+#: tarot_strings.lua:70
+msgid "Full"
+msgstr "Full"
+
+#: tarot_strings.lua:71
+msgid "Summarized"
+msgstr "Summarized"
+
+#: tarot_strings.lua:72
+msgid "Hidden"
+msgstr "Hidden"
+
+#: tarot_strings.lua:73
+#, lua-format
+msgid "Page %d of %d"
+msgstr "Page %d of %d"
+
+#: tarot_strings.lua:74
+msgid "Journal and system"
+msgstr "Journal and system"
+
+#: tarot_strings.lua:75
+msgid "Screen refresh"
+msgstr "Screen refresh"
+
+#: tarot_strings.lua:76
+msgid "Update mode"
+msgstr "Update mode"
+
+#: tarot_strings.lua:77
+msgid "Balanced"
+msgstr "Balanced"
+
+#: tarot_strings.lua:78
+msgid "Fewer flashes"
+msgstr "Fewer flashes"
+
+#: tarot_strings.lua:79
+msgid "Cleaner screen"
+msgstr "Cleaner screen"
+
+#: tarot_strings.lua:80
+msgid ""
+"Fewer flashes reduces black/white blinking, but may leave more ghosting on e-i"
+"nk screens."
+msgstr ""
+"Fewer flashes reduces black/white blinking, but may leave more ghosting on e-i"
+"nk screens."
+
+#: tarot_strings.lua:81
+msgid "Major Arcana"
+msgstr "Major Arcana"
+
+#: tarot_strings.lua:82
+msgid "Minor Arcana"
+msgstr "Minor Arcana"
+
+#: tarot_strings.lua:83
+msgid "Deck Type"
+msgstr "Deck Type"
+
+#: tarot_strings.lua:84
+msgid "Choose between Tarot and Lenormand"
+msgstr "Choose between Tarot and Lenormand"
+
+#: tarot_strings.lua:85
+msgid "Tarot"
+msgstr "Tarot"
+
+#: tarot_strings.lua:86
+msgid "Lenormand"
+msgstr "Lenormand"
+
+#: tarot_strings.lua:87
+msgid "Lenormand Reading"
+msgstr "Lenormand Reading"
+
+#: tarot_strings.lua:88
+msgid "Lenormand Deck"
+msgstr "Lenormand Deck"
+
+#: tarot_strings.lua:89
+msgid "Save"
+msgstr "Save"
+
+#: tarot_strings.lua:90
+msgid "Record title"
+msgstr "Record title"
+
+#: tarot_strings.lua:91
+msgid "Ex: Daily reflection"
+msgstr "Ex: Daily reflection"
+
+#: tarot_strings.lua:92
+msgid "Reflection about the reading"
+msgstr "Reflection about the reading"
+
+#: tarot_strings.lua:93
+msgid "Ex: What I felt seeing these cards..."
+msgstr "Ex: What I felt seeing these cards..."
+
+#: tarot_strings.lua:94
+msgid "Spread saved successfully!"
+msgstr "Spread saved successfully!"
+
+#: tarot_strings.lua:95
+msgid "Error saving the spread."
+msgstr "Error saving the spread."
+
+#: tarot_strings.lua:96
+msgid "Journal"
+msgstr "Journal"
+
+#: tarot_strings.lua:97
+msgid "Reflection Journal"
+msgstr "Reflection Journal"
+
+#: tarot_strings.lua:98
+msgid "No journal entries found."
+msgstr "No journal entries found."
+
+#: tarot_strings.lua:99
+msgid "Save a spread, record the daily card, or create a free reflection."
+msgstr "Save a spread, record the daily card, or create a free reflection."
+
+#: tarot_strings.lua:100
+msgid "Open record"
+msgstr "Open record"
+
+#: tarot_strings.lua:101
+msgid "Move to trash"
+msgstr "Move to trash"
+
+#: tarot_strings.lua:102
+msgid "Move this record to the trash?"
+msgstr "Move this record to the trash?"
+
+#: tarot_strings.lua:103
+msgid "Record moved to the trash."
+msgstr "Record moved to the trash."
+
+#: tarot_strings.lua:104
+msgid "Error moving the record."
+msgstr "Error moving the record."
+
+#: tarot_strings.lua:105
+#, lua-format
+msgid "%d records"
+msgstr "%d records"
+
+#: tarot_strings.lua:106
+msgid "New reflection"
+msgstr "New reflection"
+
+#: tarot_strings.lua:107
+msgid "Search"
+msgstr "Search"
+
+#: tarot_strings.lua:108
+msgid "Filter"
+msgstr "Filter"
+
+#: tarot_strings.lua:109
+msgid "More"
+msgstr "More"
+
+#: tarot_strings.lua:110
+#, lua-format
+msgid "%d of %d"
+msgstr "%d of %d"
+
+#: tarot_strings.lua:111
+msgid "No journal entries match the current search or filters."
+msgstr "No journal entries match the current search or filters."
+
+#: tarot_strings.lua:112
+msgid "Clear search and filters"
+msgstr "Clear search and filters"
+
+#: tarot_strings.lua:113
+msgid "Clear search"
+msgstr "Clear search"
+
+#: tarot_strings.lua:114
+msgid "Search journal"
+msgstr "Search journal"
+
+#: tarot_strings.lua:115
+msgid "Title, reflection, card, or outcome"
+msgstr "Title, reflection, card, or outcome"
+
+#: tarot_strings.lua:116
+msgid "Journal filters"
+msgstr "Journal filters"
+
+#: tarot_strings.lua:117
+msgid "Apply"
+msgstr "Apply"
+
+#: tarot_strings.lua:118
+msgid "All"
+msgstr "All"
+
+#: tarot_strings.lua:119
+#, lua-format
+msgid "Deck: %s"
+msgstr "Deck: %s"
+
+#: tarot_strings.lua:120
+msgid "Entry types"
+msgstr "Entry types"
+
+#: tarot_strings.lua:122
+msgid "Daily cards"
+msgstr "Daily cards"
+
+#: tarot_strings.lua:123
+msgid "Free reflections"
+msgstr "Free reflections"
+
+#: tarot_strings.lua:124
+msgid "Old records"
+msgstr "Old records"
+
+#: tarot_strings.lua:125
+msgid "Favorites only"
+msgstr "Favorites only"
+
+#: tarot_strings.lua:126
+#, lua-format
+msgid "Order: %s"
+msgstr "Order: %s"
+
+#: tarot_strings.lua:127
+msgid "Newest first"
+msgstr "Newest first"
+
+#: tarot_strings.lua:128
+msgid "Oldest first"
+msgstr "Oldest first"
+
+#: tarot_strings.lua:129 tarot_strings.lua:198
+msgid "Title"
+msgstr "Title"
+
+#: tarot_strings.lua:130
+msgid "Last edited"
+msgstr "Last edited"
+
+#: tarot_strings.lua:131
+msgid "Select at least one entry type."
+msgstr "Select at least one entry type."
+
+#: tarot_strings.lua:132
+msgid "Go to month"
+msgstr "Go to month"
+
+#: tarot_strings.lua:133
+msgid "Month"
+msgstr "Month"
+
+#: tarot_strings.lua:134
+msgid "YYYY-MM, for example 2026-07"
+msgstr "YYYY-MM, for example 2026-07"
+
+#: tarot_strings.lua:135
+msgid "Use the YYYY-MM format."
+msgstr "Use the YYYY-MM format."
+
+#: tarot_strings.lua:136
+msgid "Clear month filter"
+msgstr "Clear month filter"
+
+#: tarot_strings.lua:137
+msgid "Journal summary"
+msgstr "Journal summary"
+
+#: tarot_strings.lua:138
+msgid "Trash"
+msgstr "Trash"
+
+#: tarot_strings.lua:139
+msgid "Journal Trash"
+msgstr "Journal Trash"
+
+#: tarot_strings.lua:140
+msgid "The journal trash is empty."
+msgstr "The journal trash is empty."
+
+#: tarot_strings.lua:141 tarot_strings.lua:201
+msgid "Restore"
+msgstr "Restore"
+
+#: tarot_strings.lua:142
+msgid "Record restored."
+msgstr "Record restored."
+
+#: tarot_strings.lua:143
+msgid "Delete permanently"
+msgstr "Delete permanently"
+
+#: tarot_strings.lua:144
+msgid "Permanently delete this record?"
+msgstr "Permanently delete this record?"
+
+#: tarot_strings.lua:145
+msgid "Record permanently deleted."
+msgstr "Record permanently deleted."
+
+#: tarot_strings.lua:146
+msgid "Export journal"
+msgstr "Export journal"
+
+#: tarot_strings.lua:147
+#, lua-format
+msgid ""
+"Journal exported to:\n"
+"%s"
+msgstr ""
+"Journal exported to:\n"
+"%s"
+
+#: tarot_strings.lua:148
+msgid "Error exporting the journal."
+msgstr "Error exporting the journal."
+
+#: tarot_strings.lua:149
+msgid "Create backup"
+msgstr "Create backup"
+
+#: tarot_strings.lua:150
+#, lua-format
+msgid ""
+"Backup created at:\n"
+"%s"
+msgstr ""
+"Backup created at:\n"
+"%s"
+
+#: tarot_strings.lua:151
+msgid "Error creating the backup."
+msgstr "Error creating the backup."
+
+#: tarot_strings.lua:152
+msgid "Restore backup"
+msgstr "Restore backup"
+
+#: tarot_strings.lua:153
+msgid "No journal backups found."
+msgstr "No journal backups found."
+
+#: tarot_strings.lua:154
+msgid "Backup restored. Existing records were preserved."
+msgstr "Backup restored. Existing records were preserved."
+
+#: tarot_strings.lua:155
+msgid "Reflection title"
+msgstr "Reflection title"
+
+#: tarot_strings.lua:156
+msgid "What is this reflection about?"
+msgstr "What is this reflection about?"
+
+#: tarot_strings.lua:157
+msgid "Reflection"
+msgstr "Reflection"
+
+#: tarot_strings.lua:158
+msgid "Write your reflection..."
+msgstr "Write your reflection..."
+
+#: tarot_strings.lua:159
+msgid "Save reflection"
+msgstr "Save reflection"
+
+#: tarot_strings.lua:160
+msgid "Edit"
+msgstr "Edit"
+
+#: tarot_strings.lua:161
+msgid "Edit title"
+msgstr "Edit title"
+
+#: tarot_strings.lua:162
+msgid "Edit reflection"
+msgstr "Edit reflection"
+
+#: tarot_strings.lua:163
+msgid "Add outcome"
+msgstr "Add outcome"
+
+#: tarot_strings.lua:164
+msgid "Edit outcome"
+msgstr "Edit outcome"
+
+#: tarot_strings.lua:165 tarot_strings.lua:243
+msgid "Outcome"
+msgstr "Outcome"
+
+#: tarot_strings.lua:166
+msgid "What happened after this reflection?"
+msgstr "What happened after this reflection?"
+
+#: tarot_strings.lua:167
+msgid "Favorite"
+msgstr "Favorite"
+
+#: tarot_strings.lua:168
+msgid "Remove favorite"
+msgstr "Remove favorite"
+
+#: tarot_strings.lua:169
+msgid "View cards and meanings"
+msgstr "View cards and meanings"
+
+#: tarot_strings.lua:170
+msgid "Back to journal"
+msgstr "Back to journal"
+
+#: tarot_strings.lua:171
+msgid "Add to journal"
+msgstr "Add to journal"
+
+#: tarot_strings.lua:172
+msgid "MY REFLECTION"
+msgstr "MY REFLECTION"
+
+#: tarot_strings.lua:173
+msgid "OUTCOME"
+msgstr "OUTCOME"
+
+#: tarot_strings.lua:174
+msgid "CARDS"
+msgstr "CARDS"
+
+#: tarot_strings.lua:175
+msgid "Created on"
+msgstr "Created on"
+
+#: tarot_strings.lua:176
+msgid "Updated on"
+msgstr "Updated on"
+
+#: tarot_strings.lua:177
+msgid "Type"
+msgstr "Type"
+
+#: tarot_strings.lua:178
+msgid "Spread"
+msgstr "Spread"
+
+#: tarot_strings.lua:179
+msgid "Daily card"
+msgstr "Daily card"
+
+#: tarot_strings.lua:180
+msgid "Free reflection"
+msgstr "Free reflection"
+
+#: tarot_strings.lua:181
+msgid "Old record"
+msgstr "Old record"
+
+#: tarot_strings.lua:182
+msgid "1 card"
+msgstr "1 card"
+
+#: tarot_strings.lua:183
+msgid "3 cards"
+msgstr "3 cards"
+
+#: tarot_strings.lua:184 tarot_strings.lua:220
+#, lua-format
+msgid "%d cards"
+msgstr "%d cards"
+
+#: tarot_strings.lua:185
+msgid "Untitled reflection"
+msgstr "Untitled reflection"
+
+#: tarot_strings.lua:186
+msgid "No reflection text."
+msgstr "No reflection text."
+
+#: tarot_strings.lua:187
+msgid "Error saving the journal record."
+msgstr "Error saving the journal record."
+
+#: tarot_strings.lua:188
+msgid "Journal record saved."
+msgstr "Journal record saved."
+
+#: tarot_strings.lua:189
+msgid ""
+"Old records are read-only, but they can be searched, opened, exported, or move"
+"d to the trash."
+msgstr ""
+"Old records are read-only, but they can be searched, opened, exported, or move"
+"d to the trash."
+
+#: tarot_strings.lua:190
+#, lua-format
+msgid "Total records: %d"
+msgstr "Total records: %d"
+
+#: tarot_strings.lua:191
+#, lua-format
+msgid "Tarot: %d"
+msgstr "Tarot: %d"
+
+#: tarot_strings.lua:192
+#, lua-format
+msgid "Lenormand: %d"
+msgstr "Lenormand: %d"
+
+#: tarot_strings.lua:193
+#, lua-format
+msgid "This month: %d"
+msgstr "This month: %d"
+
+#: tarot_strings.lua:194
+#, lua-format
+msgid "Favorites: %d"
+msgstr "Favorites: %d"
+
+#: tarot_strings.lua:195
+#, lua-format
+msgid "Most frequent card: %s (%d)"
+msgstr "Most frequent card: %s (%d)"
+
+#: tarot_strings.lua:196
+msgid "Most frequent card: —"
+msgstr "Most frequent card: —"
+
+#: tarot_strings.lua:197
+msgid "Saved on"
+msgstr "Saved on"
+
+#: tarot_strings.lua:199
+msgid "Note"
+msgstr "Note"
+
+#: tarot_strings.lua:200
+msgid "Position"
+msgstr "Position"
+
+#: tarot_strings.lua:202
+msgid "Erase all plugin data"
+msgstr "Erase all plugin data"
+
+#: tarot_strings.lua:203
+msgid "ATTENTION: EVERYTHING will be DELETED. Continue?"
+msgstr "ATTENTION: EVERYTHING will be DELETED. Continue?"
+
+#: tarot_strings.lua:204
+msgid "This action cannot be undone. Continue?"
+msgstr "This action cannot be undone. Continue?"
+
+#: tarot_strings.lua:205
+msgid "All plugin data was deleted. The app is now reset."
+msgstr "All plugin data was deleted. The app is now reset."
+
+#: tarot_strings.lua:206
+msgid "The reset could not be completed. Some data could not be deleted."
+msgstr "The reset could not be completed. Some data could not be deleted."
+
+#: tarot_strings.lua:207
+msgid "Yes"
+msgstr "Yes"
+
+#: tarot_strings.lua:208
+msgid "No"
+msgstr "No"
+
+#: tarot_strings.lua:209
+msgid "Confirm"
+msgstr "Confirm"
+
+#: tarot_strings.lua:210
+msgid "Cancel"
+msgstr "Cancel"
+
+#: tarot_strings.lua:211
+msgid "Reset"
+msgstr "Reset"
+
+#: tarot_strings.lua:212
+msgid "Card Book"
+msgstr "Card Book"
+
+#: tarot_strings.lua:213
+msgid "Major Arcana (22)"
+msgstr "Major Arcana (22)"
+
+#: tarot_strings.lua:214
+msgid "Minor Arcana (56)"
+msgstr "Minor Arcana (56)"
+
+#: tarot_strings.lua:215
+msgid "Lenormand Deck (36)"
+msgstr "Lenormand Deck (36)"
+
+#: tarot_strings.lua:216
+msgid "View All Cards"
+msgstr "View All Cards"
+
+#: tarot_strings.lua:217
+msgid "Search Card"
+msgstr "Search Card"
+
+#: tarot_strings.lua:218
+msgid "Search Tarot"
+msgstr "Search Tarot"
+
+#: tarot_strings.lua:219
+msgid "Search Lenormand"
+msgstr "Search Lenormand"
+
+#: tarot_strings.lua:221
+msgid "Type a card name or keyword"
+msgstr "Type a card name or keyword"
+
+#: tarot_strings.lua:222
+msgid "Enter a search term."
+msgstr "Enter a search term."
+
+#: tarot_strings.lua:223
+msgid "Meaning"
+msgstr "Meaning"
+
+#: tarot_strings.lua:224
+msgid "Reversed Meaning"
+msgstr "Reversed Meaning"
+
+#: tarot_strings.lua:225
+msgid "Number"
+msgstr "Number"
+
+#: tarot_strings.lua:226
+msgid "Arcana"
+msgstr "Arcana"
+
+#: tarot_strings.lua:227
+msgid "Filter Cards"
+msgstr "Filter Cards"
+
+#: tarot_strings.lua:228
+msgid "No cards found."
+msgstr "No cards found."
+
+#: tarot_strings.lua:229
+msgid "Back"
+msgstr "Back"
+
+#: tarot_strings.lua:230 tarot_cards.lua:211
+msgid "Wands"
+msgstr "Wands"
+
+#: tarot_strings.lua:231 tarot_cards.lua:212
+msgid "Cups"
+msgstr "Cups"
+
+#: tarot_strings.lua:232 tarot_cards.lua:213
+msgid "Swords"
+msgstr "Swords"
+
+#: tarot_strings.lua:233 tarot_cards.lua:214
+msgid "Pentacles"
+msgstr "Pentacles"
+
+#: tarot_strings.lua:234
+msgid "Hidden Card"
+msgstr "Hidden Card"
+
+#: tarot_strings.lua:235
+msgid "Name position"
+msgstr "Name position"
+
+#: tarot_strings.lua:236
+msgid "Choose position name"
+msgstr "Choose position name"
+
+#: tarot_strings.lua:237
+msgid "Past"
+msgstr "Past"
+
+#: tarot_strings.lua:238
+msgid "Present"
+msgstr "Present"
+
+#: tarot_strings.lua:239
+msgid "Future"
+msgstr "Future"
+
+#: tarot_strings.lua:240
+msgid "Situation"
+msgstr "Situation"
+
+#: tarot_strings.lua:241
+msgid "Obstacle"
+msgstr "Obstacle"
+
+#: tarot_strings.lua:242
+msgid "Advice"
+msgstr "Advice"
+
+#: tarot_strings.lua:244
+msgid "Custom name"
+msgstr "Custom name"
+
+#: tarot_strings.lua:245
+msgid "Type the position name"
+msgstr "Type the position name"
+
+#: tarot_strings.lua:246
+msgid "Remove name"
+msgstr "Remove name"
+
+#: tarot_strings.lua:247
+msgid "Move"
+msgstr "Move"
+
+#: tarot_strings.lua:248
+msgid "Delete"
+msgstr "Delete"
+
+#: tarot_strings.lua:249
+msgid "Undo"
+msgstr "Undo"
+
+#: tarot_strings.lua:250
+msgid "Hide"
+msgstr "Hide"
+
+#: tarot_strings.lua:251
+msgid "Tap another location to move"
+msgstr "Tap another location to move"
+
+#: tarot_strings.lua:252
+msgid "click on the card"
+msgstr "click on the card"
+
+#: tarot_strings.lua:253
+msgid "Exit"
+msgstr "Exit"
+
+#: tarot_strings.lua:254
+msgid "Reveal"
+msgstr "Reveal"
+
+#: tarot_strings.lua:255
+msgid "Reveal next card"
+msgstr "Reveal next card"
+
+#: tarot_strings.lua:256
+msgid ""
+"Tap an empty space to add a card. Press and hold an empty space to name its po"
+"sition. Tap a hidden card to reveal it, and tap a revealed card to open its de"
+"tails. Press and hold a card to name its position, move, delete, undo, or hide"
+" it."
+msgstr ""
+"Tap an empty space to add a card. Press and hold an empty space to name its po"
+"sition. Tap a hidden card to reveal it, and tap a revealed card to open its de"
+"tails. Press and hold a card to name its position, move, delete, undo, or hide"
+" it."
+
+#: tarot_strings.lua:257
+msgid "Click the next card to reveal it. Press and hold to reveal all remaining cards."
+msgstr "Click the next card to reveal it. Press and hold to reveal all remaining cards."
+
+#: tarot_strings.lua:258
+msgid "Reveal all remaining cards?"
+msgstr "Reveal all remaining cards?"
+
+#: tarot_strings.lua:259
+#, lua-format
+msgid "Revealed %d of %d"
+msgstr "Revealed %d of %d"
+
+#: tarot_strings.lua:260
+msgid "About"
+msgstr "About"
+
+#: tarot_strings.lua:261
+msgid "About Tarot and Lenormand"
+msgstr "About Tarot and Lenormand"
+
+#: tarot_strings.lua:262
+msgid ""
+"Tarot is a deck of 78 cards, divided into Major Arcana (22) and Minor Arcana ("
+"56), used for reflection and self-knowledge. The Lenormand deck has 36 cards w"
+"ith direct symbolism for practical guidance.\n"
+"\n"
+"Credits for the free card images:\n"
+"• Lenormand Cards by Yve Lepkowski (https://stolen-thyme.com/)\n"
+"• Tarot Cards by Luciella Elisabeth Scarlett (https://luciellaes.itch.io/)"
+msgstr ""
+"Tarot is a deck of 78 cards, divided into Major Arcana (22) and Minor Arcana ("
+"56), used for reflection and self-knowledge. The Lenormand deck has 36 cards w"
+"ith direct symbolism for practical guidance.\n"
+"\n"
+"Credits for the free card images:\n"
+"• Lenormand Cards by Yve Lepkowski (https://stolen-thyme.com/)\n"
+"• Tarot Cards by Luciella Elisabeth Scarlett (https://luciellaes.itch.io/)"
+
+#: tarot_strings.lua:267
+msgid "view in book"
+msgstr "view in book"
+
+#: tarot_strings.lua:268
+msgid "Keywords"
+msgstr "Keywords"
+
+#: tarot_strings.lua:269
+msgid "Planet / Sign"
+msgstr "Planet / Sign"
+
+#: tarot_strings.lua:270
+msgid "Timing"
+msgstr "Timing"
+
+#: tarot_strings.lua:271
+#, lua-format
+msgid "Card %d — %s (%s)"
+msgstr "Card %d — %s (%s)"
+
+#: tarot_strings.lua:272
+msgid "Add meaning to card"
+msgstr "Add meaning to card"
+
+#: tarot_strings.lua:273
+msgid "Add highlighted text"
+msgstr "Add highlighted text"
+
+#: tarot_strings.lua:274
+msgid "Choose the deck"
+msgstr "Choose the deck"
+
+#: tarot_strings.lua:275
+msgid "Choose a Tarot card"
+msgstr "Choose a Tarot card"
+
+#: tarot_strings.lua:276
+msgid "Choose a Lenormand card"
+msgstr "Choose a Lenormand card"
+
+#: tarot_strings.lua:277
+msgid "Choose the meaning type"
+msgstr "Choose the meaning type"
+
+#: tarot_strings.lua:278
+msgid "Upright meaning"
+msgstr "Upright meaning"
+
+#: tarot_strings.lua:279
+msgid "Reversed meaning"
+msgstr "Reversed meaning"
+
+#: tarot_strings.lua:280
+msgid "Personal Meaning"
+msgstr "Personal Meaning"
+
+#: tarot_strings.lua:282
+msgid "Edit Personal Meanings"
+msgstr "Edit Personal Meanings"
+
+#: tarot_strings.lua:283
+msgid ""
+"You can highlight passages in books and add those highlights as Personal Meani"
+"ng for any card. This editor also lets you insert, edit, or remove Personal Me"
+"anings manually."
+msgstr ""
+"You can highlight passages in books and add those highlights as Personal Meani"
+"ng for any card. This editor also lets you insert, edit, or remove Personal Me"
+"anings manually."
+
+#: tarot_strings.lua:284
+msgid "Add Personal Meaning"
+msgstr "Add Personal Meaning"
+
+#: tarot_strings.lua:285
+msgid "Edit Personal Meaning"
+msgstr "Edit Personal Meaning"
+
+#: tarot_strings.lua:286
+msgid "Remove Personal Meaning"
+msgstr "Remove Personal Meaning"
+
+#: tarot_strings.lua:287
+msgid "Choose a Personal Meaning"
+msgstr "Choose a Personal Meaning"
+
+#: tarot_strings.lua:288
+msgid "No Personal Meanings yet."
+msgstr "No Personal Meanings yet."
+
+#: tarot_strings.lua:289
+msgid "Write the meaning here"
+msgstr "Write the meaning here"
+
+#: tarot_strings.lua:290
+msgid "Personal Meaning updated."
+msgstr "Personal Meaning updated."
+
+#: tarot_strings.lua:291
+msgid "Personal Meaning removed."
+msgstr "Personal Meaning removed."
+
+#: tarot_strings.lua:292
+msgid "Remove this Personal Meaning?"
+msgstr "Remove this Personal Meaning?"
+
+#: tarot_strings.lua:293
+msgid "Source"
+msgstr "Source"
+
+#: tarot_strings.lua:294
+msgid "Meaning added to the card."
+msgstr "Meaning added to the card."
+
+#: tarot_strings.lua:295
+msgid "No highlighted text was found."
+msgstr "No highlighted text was found."
+
+#: tarot_strings.lua:296
+msgid "Unknown book"
+msgstr "Unknown book"
+
+#: tarot_strings.lua:297 _meta.lua:21
+msgid ""
+"Draw Tarot and Lenormand cards for reflection, save readings, and browse the c"
+"omplete card book."
+msgstr ""
+"Draw Tarot and Lenormand cards for reflection, save readings, and browse the c"
+"omplete card book."
+
+#: tarot_cards.lua:9
+msgid "The Fool"
+msgstr "The Fool"
+
+#: tarot_cards.lua:10
+msgid "New beginning, spontaneity, faith, risk"
+msgstr "New beginning, spontaneity, faith, risk"
+
+#: tarot_cards.lua:11
+msgid "Uranus"
+msgstr "Uranus"
+
+#: tarot_cards.lua:12
+msgid "Immediate, unpredictable"
+msgstr "Immediate, unpredictable"
+
+#: tarot_cards.lua:13
+msgid ""
+"New beginnings. Spontaneity. Take a leap of faith. Venture without fear, the u"
+"niverse supports you."
+msgstr ""
+"New beginnings. Spontaneity. Take a leap of faith. Venture without fear, the u"
+"niverse supports you."
+
+#: tarot_cards.lua:14
+msgid ""
+"Recklessness. Lack of direction. Think before acting. Blind risk may bring con"
+"sequences."
+msgstr ""
+"Recklessness. Lack of direction. Think before acting. Blind risk may bring con"
+"sequences."
+
+#: tarot_cards.lua:18
+msgid "The Magician"
+msgstr "The Magician"
+
+#: tarot_cards.lua:19
+msgid "Power, skill, manifestation, focus"
+msgstr "Power, skill, manifestation, focus"
+
+#: tarot_cards.lua:20
+msgid "Mercury"
+msgstr "Mercury"
+
+#: tarot_cards.lua:21
+msgid "Fast, now is the time"
+msgstr "Fast, now is the time"
+
+#: tarot_cards.lua:22
+msgid ""
+"Personal power. Skill. You have everything you need. Manifest your desires wit"
+"h confidence."
+msgstr ""
+"Personal power. Skill. You have everything you need. Manifest your desires wit"
+"h confidence."
+
+#: tarot_cards.lua:23
+msgid "Manipulation. Wasted talent. Deceit. Beware of illusions of power."
+msgstr "Manipulation. Wasted talent. Deceit. Beware of illusions of power."
+
+#: tarot_cards.lua:27
+msgid "The High Priestess"
+msgstr "The High Priestess"
+
+#: tarot_cards.lua:28
+msgid "Intuition, mystery, subconscious, wisdom"
+msgstr "Intuition, mystery, subconscious, wisdom"
+
+#: tarot_cards.lua:29
+msgid "Moon"
+msgstr "Moon"
+
+#: tarot_cards.lua:30
+msgid "Lunar cycles, 28 days"
+msgstr "Lunar cycles, 28 days"
+
+#: tarot_cards.lua:31
+msgid ""
+"Intuition. Mystery. Trust your inner voice. Hidden knowledge reveals itself in"
+" silence."
+msgstr ""
+"Intuition. Mystery. Trust your inner voice. Hidden knowledge reveals itself in"
+" silence."
+
+#: tarot_cards.lua:32
+msgid ""
+"Secrets revealed. Intuitive disconnection. Silence broken. Listen to your inne"
+"r voice again."
+msgstr ""
+"Secrets revealed. Intuitive disconnection. Silence broken. Listen to your inne"
+"r voice again."
+
+#: tarot_cards.lua:36
+msgid "The Empress"
+msgstr "The Empress"
+
+#: tarot_cards.lua:37
+msgid "Abundance, fertility, nature, nurturing"
+msgstr "Abundance, fertility, nature, nurturing"
+
+#: tarot_cards.lua:38
+msgid "Venus"
+msgstr "Venus"
+
+#: tarot_cards.lua:39
+msgid "9 months, spring"
+msgstr "9 months, spring"
+
+#: tarot_cards.lua:40
+msgid "Abundance. Fertility. Nurture yourself. Nature flourishes around you."
+msgstr "Abundance. Fertility. Nurture yourself. Nature flourishes around you."
+
+#: tarot_cards.lua:41
+msgid "Neglect. Creative block. Dependence. Return to tending your inner garden."
+msgstr "Neglect. Creative block. Dependence. Return to tending your inner garden."
+
+#: tarot_cards.lua:45
+msgid "The Emperor"
+msgstr "The Emperor"
+
+#: tarot_cards.lua:46
+msgid "Authority, structure, leadership, stability"
+msgstr "Authority, structure, leadership, stability"
+
+#: tarot_cards.lua:47
+msgid "Aries"
+msgstr "Aries"
+
+#: tarot_cards.lua:48
+msgid "1 year, soon"
+msgstr "1 year, soon"
+
+#: tarot_cards.lua:49
+msgid "Authority. Structure. Take control. Firm leadership brings stability."
+msgstr "Authority. Structure. Take control. Firm leadership brings stability."
+
+#: tarot_cards.lua:50
+msgid "Tyranny. Rigidity. Lack of discipline. Excess control suffocates."
+msgstr "Tyranny. Rigidity. Lack of discipline. Excess control suffocates."
+
+#: tarot_cards.lua:54
+msgid "The Hierophant"
+msgstr "The Hierophant"
+
+#: tarot_cards.lua:55
+msgid "Tradition, wisdom, guidance, teaching"
+msgstr "Tradition, wisdom, guidance, teaching"
+
+#: tarot_cards.lua:56
+msgid "Taurus"
+msgstr "Taurus"
+
+#: tarot_cards.lua:57
+msgid "5 weeks, slow but steady"
+msgstr "5 weeks, slow but steady"
+
+#: tarot_cards.lua:58
+msgid "Tradition. Wisdom. Seek guidance. Masters appear when the student is ready."
+msgstr "Tradition. Wisdom. Seek guidance. Masters appear when the student is ready."
+
+#: tarot_cards.lua:59
+msgid ""
+"Rebellion. Dogma. Necessary questioning. Breaking with traditions can be liber"
+"ating."
+msgstr ""
+"Rebellion. Dogma. Necessary questioning. Breaking with traditions can be liber"
+"ating."
+
+#: tarot_cards.lua:63
+msgid "The Lovers"
+msgstr "The Lovers"
+
+#: tarot_cards.lua:64
+msgid "Love, choice, harmony, partnership"
+msgstr "Love, choice, harmony, partnership"
+
+#: tarot_cards.lua:65
+msgid "Gemini"
+msgstr "Gemini"
+
+#: tarot_cards.lua:66
+msgid "Imminent decision"
+msgstr "Imminent decision"
+
+#: tarot_cards.lua:67
+msgid "Love. Choice. Harmony in relationships. The heart knows the way."
+msgstr "Love. Choice. Harmony in relationships. The heart knows the way."
+
+#: tarot_cards.lua:68
+msgid "Conflict. Imbalance. Difficult decision. Avoid impulsive choices in love."
+msgstr "Conflict. Imbalance. Difficult decision. Avoid impulsive choices in love."
+
+#: tarot_cards.lua:72
+msgid "The Chariot"
+msgstr "The Chariot"
+
+#: tarot_cards.lua:73
+msgid "Victory, determination, control, progress"
+msgstr "Victory, determination, control, progress"
+
+#: tarot_cards.lua:74
+msgid "Cancer"
+msgstr "Cancer"
+
+#: tarot_cards.lua:75 tarot_cards.lua:288
+msgid "7 weeks"
+msgstr "7 weeks"
+
+#: tarot_cards.lua:76
+msgid ""
+"Victory. Determination. Move forward with confidence. Triumph awaits the perse"
+"verant."
+msgstr ""
+"Victory. Determination. Move forward with confidence. Triumph awaits the perse"
+"verant."
+
+#: tarot_cards.lua:77
+msgid ""
+"Lack of direction. Defeat. Loss of control. Reevaluate your route before proce"
+"eding."
+msgstr ""
+"Lack of direction. Defeat. Loss of control. Reevaluate your route before proce"
+"eding."
+
+#: tarot_cards.lua:81
+msgid "Strength"
+msgstr "Strength"
+
+#: tarot_cards.lua:82
+msgid "Courage, inner strength, compassion, mastery"
+msgstr "Courage, inner strength, compassion, mastery"
+
+#: tarot_cards.lua:83
+msgid "Leo"
+msgstr "Leo"
+
+#: tarot_cards.lua:84
+msgid "8 weeks"
+msgstr "8 weeks"
+
+#: tarot_cards.lua:85
+msgid "Courage. Inner strength. Master your impulses with kindness, not violence."
+msgstr "Courage. Inner strength. Master your impulses with kindness, not violence."
+
+#: tarot_cards.lua:86
+msgid ""
+"Weakness. Insecurity. Lack of self-control. True strength comes from vulnerabi"
+"lity."
+msgstr ""
+"Weakness. Insecurity. Lack of self-control. True strength comes from vulnerabi"
+"lity."
+
+#: tarot_cards.lua:90
+msgid "The Hermit"
+msgstr "The Hermit"
+
+#: tarot_cards.lua:91
+msgid "Introspection, solitude, wisdom, inner search"
+msgstr "Introspection, solitude, wisdom, inner search"
+
+#: tarot_cards.lua:92
+msgid "Virgo"
+msgstr "Virgo"
+
+#: tarot_cards.lua:93
+msgid "9 months, slow"
+msgstr "9 months, slow"
+
+#: tarot_cards.lua:94
+msgid "Introspection. Inner wisdom. Seek silence. The light you seek is within you."
+msgstr "Introspection. Inner wisdom. Seek silence. The light you seek is within you."
+
+#: tarot_cards.lua:95
+msgid ""
+"Isolation. Loneliness. Refusing to see the truth. Prolonged retreat becomes es"
+"cape."
+msgstr ""
+"Isolation. Loneliness. Refusing to see the truth. Prolonged retreat becomes es"
+"cape."
+
+#: tarot_cards.lua:99
+msgid "Wheel of Fortune"
+msgstr "Wheel of Fortune"
+
+#: tarot_cards.lua:100
+msgid "Change, destiny, cycles, luck"
+msgstr "Change, destiny, cycles, luck"
+
+#: tarot_cards.lua:101
+msgid "Jupiter"
+msgstr "Jupiter"
+
+#: tarot_cards.lua:102
+msgid "In motion, cyclical"
+msgstr "In motion, cyclical"
+
+#: tarot_cards.lua:103
+msgid "Change. Destiny. Luck is turning in your favor. Everything passes, cycles renew."
+msgstr "Change. Destiny. Luck is turning in your favor. Everything passes, cycles renew."
+
+#: tarot_cards.lua:104
+msgid ""
+"Bad luck. Resistance to change. Negative cycle. Accept that nothing is permane"
+"nt."
+msgstr ""
+"Bad luck. Resistance to change. Negative cycle. Accept that nothing is permane"
+"nt."
+
+#: tarot_cards.lua:108
+msgid "Justice"
+msgstr "Justice"
+
+#: tarot_cards.lua:109
+msgid "Balance, truth, law, cause and effect"
+msgstr "Balance, truth, law, cause and effect"
+
+#: tarot_cards.lua:110
+msgid "Libra"
+msgstr "Libra"
+
+#: tarot_cards.lua:111
+msgid "Under review, fair"
+msgstr "Under review, fair"
+
+#: tarot_cards.lua:112
+msgid "Balance. Truth. Justice will prevail. Reap what you have sown with serenity."
+msgstr "Balance. Truth. Justice will prevail. Reap what you have sown with serenity."
+
+#: tarot_cards.lua:113
+msgid "Injustice. Dishonesty. Consequences coming. The scales weigh against you now."
+msgstr "Injustice. Dishonesty. Consequences coming. The scales weigh against you now."
+
+#: tarot_cards.lua:117
+msgid "The Hanged Man"
+msgstr "The Hanged Man"
+
+#: tarot_cards.lua:118
+msgid "Sacrifice, suspension, new perspective, surrender"
+msgstr "Sacrifice, suspension, new perspective, surrender"
+
+#: tarot_cards.lua:119
+msgid "Neptune"
+msgstr "Neptune"
+
+#: tarot_cards.lua:120
+msgid "Indeterminate, pause"
+msgstr "Indeterminate, pause"
+
+#: tarot_cards.lua:121
+msgid "Sacrifice. New perspective. Let go, trust. Sometimes stopping is advancing."
+msgstr "Sacrifice. New perspective. Let go, trust. Sometimes stopping is advancing."
+
+#: tarot_cards.lua:122
+msgid "Stagnation. Procrastination. Resist change. The pause has become paralysis."
+msgstr "Stagnation. Procrastination. Resist change. The pause has become paralysis."
+
+#: tarot_cards.lua:126
+msgid "Death"
+msgstr "Death"
+
+#: tarot_cards.lua:127
+msgid "Transformation, ending, rebirth, transition"
+msgstr "Transformation, ending, rebirth, transition"
+
+#: tarot_cards.lua:128
+msgid "Scorpio"
+msgstr "Scorpio"
+
+#: tarot_cards.lua:129
+msgid "Autumn, shortly"
+msgstr "Autumn, shortly"
+
+#: tarot_cards.lua:130
+msgid ""
+"Transformation. End of a cycle. Rebirth near. The old dies so the new can be b"
+"orn."
+msgstr ""
+"Transformation. End of a cycle. Rebirth near. The old dies so the new can be b"
+"orn."
+
+#: tarot_cards.lua:131
+msgid ""
+"Resistance to change. Stagnation. Fear of endings. Let go of what no longer se"
+"rves."
+msgstr ""
+"Resistance to change. Stagnation. Fear of endings. Let go of what no longer se"
+"rves."
+
+#: tarot_cards.lua:135
+msgid "Temperance"
+msgstr "Temperance"
+
+#: tarot_cards.lua:136
+msgid "Patience, balance, moderation, harmony"
+msgstr "Patience, balance, moderation, harmony"
+
+#: tarot_cards.lua:137
+msgid "Sagittarius"
+msgstr "Sagittarius"
+
+#: tarot_cards.lua:138
+msgid "Patience, gradual"
+msgstr "Patience, gradual"
+
+#: tarot_cards.lua:139
+msgid "Patience. Moderation. Find balance. Water finds its level."
+msgstr "Patience. Moderation. Find balance. Water finds its level."
+
+#: tarot_cards.lua:140
+msgid "Excess. Impatience. Disharmony. Return to center, breathe deeply."
+msgstr "Excess. Impatience. Disharmony. Return to center, breathe deeply."
+
+#: tarot_cards.lua:144
+msgid "The Devil"
+msgstr "The Devil"
+
+#: tarot_cards.lua:145
+msgid "Temptation, attachment, shadow, materialism"
+msgstr "Temptation, attachment, shadow, materialism"
+
+#: tarot_cards.lua:146
+msgid "Capricorn"
+msgstr "Capricorn"
+
+#: tarot_cards.lua:147
+msgid "15 days"
+msgstr "15 days"
+
+#: tarot_cards.lua:148
+msgid ""
+"Temptation. Negative patterns. Free yourself from chains. You have the power t"
+"o break free."
+msgstr ""
+"Temptation. Negative patterns. Free yourself from chains. You have the power t"
+"o break free."
+
+#: tarot_cards.lua:149
+msgid "Liberation. Breaking addictions. Recovery. Light enters where darkness once was."
+msgstr "Liberation. Breaking addictions. Recovery. Light enters where darkness once was."
+
+#: tarot_cards.lua:153 tarot_cards.lua:833
+msgid "The Tower"
+msgstr "The Tower"
+
+#: tarot_cards.lua:154
+msgid "Revelation, upheaval, chaos, reconstruction"
+msgstr "Revelation, upheaval, chaos, reconstruction"
+
+#: tarot_cards.lua:155
+msgid "Mars"
+msgstr "Mars"
+
+#: tarot_cards.lua:156
+msgid "Sudden, unexpected"
+msgstr "Sudden, unexpected"
+
+#: tarot_cards.lua:157
+msgid "Sudden revelation. Rupture. Necessary reconstruction. What is false crumbles."
+msgstr "Sudden revelation. Rupture. Necessary reconstruction. What is false crumbles."
+
+#: tarot_cards.lua:158
+msgid "Avoiding disaster. Fear of change. Denial. The fall is inevitable, accept it."
+msgstr "Avoiding disaster. Fear of change. Denial. The fall is inevitable, accept it."
+
+#: tarot_cards.lua:162 tarot_cards.lua:812
+msgid "The Star"
+msgstr "The Star"
+
+#: tarot_cards.lua:163
+msgid "Hope, faith, inspiration, renewal"
+msgstr "Hope, faith, inspiration, renewal"
+
+#: tarot_cards.lua:164
+msgid "Aquarius"
+msgstr "Aquarius"
+
+#: tarot_cards.lua:165
+msgid "17 days"
+msgstr "17 days"
+
+#: tarot_cards.lua:166
+msgid ""
+"Hope. Faith. Follow your intuition. Light guides you in darkness. Trust the un"
+"iverse."
+msgstr ""
+"Hope. Faith. Follow your intuition. Light guides you in darkness. Trust the un"
+"iverse."
+
+#: tarot_cards.lua:167
+msgid ""
+"Hopelessness. Lack of faith. Spiritual disconnection. The light is there, you "
+"just don't see it."
+msgstr ""
+"Hopelessness. Lack of faith. Spiritual disconnection. The light is there, you "
+"just don't see it."
+
+#: tarot_cards.lua:171 tarot_cards.lua:924
+msgid "The Moon"
+msgstr "The Moon"
+
+#: tarot_cards.lua:172
+msgid "Illusion, intuition, fear, subconscious"
+msgstr "Illusion, intuition, fear, subconscious"
+
+#: tarot_cards.lua:173
+msgid "Pisces"
+msgstr "Pisces"
+
+#: tarot_cards.lua:174
+msgid "28 days, nocturnal"
+msgstr "28 days, nocturnal"
+
+#: tarot_cards.lua:175
+msgid ""
+"Illusion. Intuition. Not everything is as it seems. Walk carefully in the twil"
+"ight."
+msgstr ""
+"Illusion. Intuition. Not everything is as it seems. Walk carefully in the twil"
+"ight."
+
+#: tarot_cards.lua:176
+msgid "Confusion cleared. Fear overcome. Truth revealed. The fog is lifting."
+msgstr "Confusion cleared. Fear overcome. Truth revealed. The fog is lifting."
+
+#: tarot_cards.lua:180 tarot_cards.lua:917
+msgid "The Sun"
+msgstr "The Sun"
+
+#: tarot_cards.lua:181
+msgid "Joy, success, vitality, clarity"
+msgstr "Joy, success, vitality, clarity"
+
+#: tarot_cards.lua:182
+msgid "Sun"
+msgstr "Sun"
+
+#: tarot_cards.lua:183
+msgid "19 days, diurnal"
+msgstr "19 days, diurnal"
+
+#: tarot_cards.lua:184
+msgid "Joy. Success. Vitality. Everything is illuminated. Happiness overflows."
+msgstr "Joy. Success. Vitality. Everything is illuminated. Happiness overflows."
+
+#: tarot_cards.lua:185
+msgid "Temporary sadness. Delay. Lack of enthusiasm. The sun always shines again."
+msgstr "Temporary sadness. Delay. Lack of enthusiasm. The sun always shines again."
+
+#: tarot_cards.lua:189
+msgid "Judgement"
+msgstr "Judgement"
+
+#: tarot_cards.lua:190
+msgid "Renewal, awakening, forgiveness, calling"
+msgstr "Renewal, awakening, forgiveness, calling"
+
+#: tarot_cards.lua:191
+msgid "Pluto"
+msgstr "Pluto"
+
+#: tarot_cards.lua:192
+msgid "Renewal, awakening"
+msgstr "Renewal, awakening"
+
+#: tarot_cards.lua:193
+msgid "Renewal. Inner calling. Time to awaken. The past has been forgiven."
+msgstr "Renewal. Inner calling. Time to awaken. The past has been forgiven."
+
+#: tarot_cards.lua:194
+msgid "Self-criticism. Regret. Denial of the calling. Free yourself from guilt."
+msgstr "Self-criticism. Regret. Denial of the calling. Free yourself from guilt."
+
+#: tarot_cards.lua:198
+msgid "The World"
+msgstr "The World"
+
+#: tarot_cards.lua:199
+msgid "Completion, fulfillment, integration, success"
+msgstr "Completion, fulfillment, integration, success"
+
+#: tarot_cards.lua:200
+msgid "Saturn"
+msgstr "Saturn"
+
+#: tarot_cards.lua:201
+msgid "21 days/months, full cycle"
+msgstr "21 days/months, full cycle"
+
+#: tarot_cards.lua:202
+msgid ""
+"Completion. Fulfillment. Cycle successfully concluded. The universe celebrates"
+" with you."
+msgstr ""
+"Completion. Fulfillment. Cycle successfully concluded. The universe celebrates"
+" with you."
+
+#: tarot_cards.lua:203
+msgid "Incompleteness. Delay. Lack of closure. There is still one step to take."
+msgstr "Incompleteness. Delay. Lack of closure. There is still one step to take."
+
+#: tarot_cards.lua:218
+msgid "Ace"
+msgstr "Ace"
+
+#: tarot_cards.lua:219
+msgid "Two"
+msgstr "Two"
+
+#: tarot_cards.lua:220
+msgid "Three"
+msgstr "Three"
+
+#: tarot_cards.lua:221
+msgid "Four"
+msgstr "Four"
+
+#: tarot_cards.lua:222
+msgid "Five"
+msgstr "Five"
+
+#: tarot_cards.lua:223
+msgid "Six"
+msgstr "Six"
+
+#: tarot_cards.lua:224
+msgid "Seven"
+msgstr "Seven"
+
+#: tarot_cards.lua:225
+msgid "Eight"
+msgstr "Eight"
+
+#: tarot_cards.lua:226
+msgid "Nine"
+msgstr "Nine"
+
+#: tarot_cards.lua:227
+msgid "Ten"
+msgstr "Ten"
+
+#: tarot_cards.lua:228
+msgid "Page"
+msgstr "Page"
+
+#: tarot_cards.lua:229
+msgid "Knight"
+msgstr "Knight"
+
+#: tarot_cards.lua:230
+msgid "Queen"
+msgstr "Queen"
+
+#: tarot_cards.lua:231
+msgid "King"
+msgstr "King"
+
+#: tarot_cards.lua:238
+msgid "Ace of Wands"
+msgstr "Ace of Wands"
+
+#: tarot_cards.lua:239
+msgid "Inspiration, creativity, new beginning, energy"
+msgstr "Inspiration, creativity, new beginning, energy"
+
+#: tarot_cards.lua:240
+msgid "Fast (days)"
+msgstr "Fast (days)"
+
+#: tarot_cards.lua:241
+msgid ""
+"Creative inspiration. A new beginning full of energy. Seize the initial impuls"
+"e to start projects."
+msgstr ""
+"Creative inspiration. A new beginning full of energy. Seize the initial impuls"
+"e to start projects."
+
+#: tarot_cards.lua:242
+msgid ""
+"False start. Procrastination. Lack of motivation. Rekindle your passion before"
+" moving on."
+msgstr ""
+"False start. Procrastination. Lack of motivation. Rekindle your passion before"
+" moving on."
+
+#: tarot_cards.lua:246
+msgid "Two of Wands"
+msgstr "Two of Wands"
+
+#: tarot_cards.lua:247
+msgid "Planning, vision, decision, expansion"
+msgstr "Planning, vision, decision, expansion"
+
+#: tarot_cards.lua:248
+msgid "Weeks"
+msgstr "Weeks"
+
+#: tarot_cards.lua:249
+msgid ""
+"Planning. Looking ahead. You have the world in your hands, but you must choose"
+" the path."
+msgstr ""
+"Planning. Looking ahead. You have the world in your hands, but you must choose"
+" the path."
+
+#: tarot_cards.lua:250
+msgid ""
+"Fear of the unknown. Lack of planning. Letting go of the reins. Define your go"
+"als."
+msgstr ""
+"Fear of the unknown. Lack of planning. Letting go of the reins. Define your go"
+"als."
+
+#: tarot_cards.lua:254
+msgid "Three of Wands"
+msgstr "Three of Wands"
+
+#: tarot_cards.lua:255
+msgid "Expansion, progress, anticipation, trade"
+msgstr "Expansion, progress, anticipation, trade"
+
+#: tarot_cards.lua:256
+msgid "Soon"
+msgstr "Soon"
+
+#: tarot_cards.lua:257
+msgid ""
+"Expansion. Progress. Your plans are sailing. Await the return of the seeds you"
+" planted."
+msgstr ""
+"Expansion. Progress. Your plans are sailing. Await the return of the seeds you"
+" planted."
+
+#: tarot_cards.lua:258
+msgid "Unexpected obstacles. Delay. Frustration with results. Reassess your strategy."
+msgstr "Unexpected obstacles. Delay. Frustration with results. Reassess your strategy."
+
+#: tarot_cards.lua:262
+msgid "Four of Wands"
+msgstr "Four of Wands"
+
+#: tarot_cards.lua:263
+msgid "Celebration, home, harmony, stability"
+msgstr "Celebration, home, harmony, stability"
+
+#: tarot_cards.lua:264
+msgid "4 weeks"
+msgstr "4 weeks"
+
+#: tarot_cards.lua:265
+msgid ""
+"Celebration. Harmony at home. Shared achievements. A well-deserved rest after "
+"effort."
+msgstr ""
+"Celebration. Harmony at home. Shared achievements. A well-deserved rest after "
+"effort."
+
+#: tarot_cards.lua:266
+msgid "Lack of unity. Domestic instability. Postponed celebration. Recover simple joy."
+msgstr "Lack of unity. Domestic instability. Postponed celebration. Recover simple joy."
+
+#: tarot_cards.lua:270
+msgid "Five of Wands"
+msgstr "Five of Wands"
+
+#: tarot_cards.lua:271
+msgid "Competition, conflict, debate, growth"
+msgstr "Competition, conflict, debate, growth"
+
+#: tarot_cards.lua:272
+msgid "5 weeks"
+msgstr "5 weeks"
+
+#: tarot_cards.lua:273
+msgid "Healthy competition. Creative conflict. Different viewpoints enrich the search."
+msgstr "Healthy competition. Creative conflict. Different viewpoints enrich the search."
+
+#: tarot_cards.lua:274
+msgid ""
+"Internal quarrels. Avoiding confrontation. Energy drain. Seek cooperation inst"
+"ead of dispute."
+msgstr ""
+"Internal quarrels. Avoiding confrontation. Energy drain. Seek cooperation inst"
+"ead of dispute."
+
+#: tarot_cards.lua:278
+msgid "Six of Wands"
+msgstr "Six of Wands"
+
+#: tarot_cards.lua:279
+msgid "Victory, recognition, triumph, confidence"
+msgstr "Victory, recognition, triumph, confidence"
+
+#: tarot_cards.lua:280
+msgid "6 weeks"
+msgstr "6 weeks"
+
+#: tarot_cards.lua:281
+msgid "Victory. Public recognition. High self-esteem. Reap the laurels with humility."
+msgstr "Victory. Public recognition. High self-esteem. Reap the laurels with humility."
+
+#: tarot_cards.lua:282
+msgid "Inflated ego. Short-lived recognition. Envy. True victory is internal."
+msgstr "Inflated ego. Short-lived recognition. Envy. True victory is internal."
+
+#: tarot_cards.lua:286
+msgid "Seven of Wands"
+msgstr "Seven of Wands"
+
+#: tarot_cards.lua:287
+msgid "Defense, perseverance, courage, resistance"
+msgstr "Defense, perseverance, courage, resistance"
+
+#: tarot_cards.lua:289
+msgid ""
+"Defense of positions. Perseverance. Stand firm despite opposition. You have th"
+"e upper hand."
+msgstr ""
+"Defense of positions. Perseverance. Stand firm despite opposition. You have th"
+"e upper hand."
+
+#: tarot_cards.lua:290
+msgid "Exhaustion. Feeling cornered. Giving up. Reinforce your boundaries wisely."
+msgstr "Exhaustion. Feeling cornered. Giving up. Reinforce your boundaries wisely."
+
+#: tarot_cards.lua:294
+msgid "Eight of Wands"
+msgstr "Eight of Wands"
+
+#: tarot_cards.lua:295
+msgid "Speed, action, progress, communication"
+msgstr "Speed, action, progress, communication"
+
+#: tarot_cards.lua:296
+msgid "Very fast"
+msgstr "Very fast"
+
+#: tarot_cards.lua:297
+msgid ""
+"Swift movement. News arriving. Accelerated action. Take advantage of the tailw"
+"ind."
+msgstr ""
+"Swift movement. News arriving. Accelerated action. Take advantage of the tailw"
+"ind."
+
+#: tarot_cards.lua:298
+msgid "Delay. Lack of direction. Scattered energy. Wait for the right moment to act."
+msgstr "Delay. Lack of direction. Scattered energy. Wait for the right moment to act."
+
+#: tarot_cards.lua:302
+msgid "Nine of Wands"
+msgstr "Nine of Wands"
+
+#: tarot_cards.lua:303
+msgid "Resilience, persistence, last stand, fatigue"
+msgstr "Resilience, persistence, last stand, fatigue"
+
+#: tarot_cards.lua:304
+msgid "9 weeks"
+msgstr "9 weeks"
+
+#: tarot_cards.lua:305
+msgid ""
+"Resilience. Last battle. You are almost there, even if tired. Keep your guard "
+"up."
+msgstr ""
+"Resilience. Last battle. You are almost there, even if tired. Keep your guard "
+"up."
+
+#: tarot_cards.lua:306
+msgid ""
+"Stubbornness. Refusing help. Exhaustion. Let down your defense and allow yours"
+"elf to rest."
+msgstr ""
+"Stubbornness. Refusing help. Exhaustion. Let down your defense and allow yours"
+"elf to rest."
+
+#: tarot_cards.lua:310
+msgid "Ten of Wands"
+msgstr "Ten of Wands"
+
+#: tarot_cards.lua:311
+msgid "Overload, responsibility, burden, effort"
+msgstr "Overload, responsibility, burden, effort"
+
+#: tarot_cards.lua:312
+msgid "10 weeks, end of cycle"
+msgstr "10 weeks, end of cycle"
+
+#: tarot_cards.lua:313
+msgid ""
+"Overload. Heavy responsibilities. The burden is great, but the end is near. De"
+"legate tasks."
+msgstr ""
+"Overload. Heavy responsibilities. The burden is great, but the end is near. De"
+"legate tasks."
+
+#: tarot_cards.lua:314
+msgid ""
+"Inability to delegate. Burnout. Refusing help. Let go of what doesn't belong t"
+"o you."
+msgstr ""
+"Inability to delegate. Burnout. Refusing help. Let go of what doesn't belong t"
+"o you."
+
+#: tarot_cards.lua:318
+msgid "Page of Wands"
+msgstr "Page of Wands"
+
+#: tarot_cards.lua:319
+msgid "Enthusiasm, exploration, discovery, new idea"
+msgstr "Enthusiasm, exploration, discovery, new idea"
+
+#: tarot_cards.lua:320
+msgid "Youthful, fast"
+msgstr "Youthful, fast"
+
+#: tarot_cards.lua:321
+msgid ""
+"Enthusiasm. New ideas. A young messenger brings inspiration. Explore your curi"
+"osity without fear."
+msgstr ""
+"Enthusiasm. New ideas. A young messenger brings inspiration. Explore your curi"
+"osity without fear."
+
+#: tarot_cards.lua:322
+msgid "Lack of plans. Impulsiveness. Ideas without execution. Set goals before acting."
+msgstr "Lack of plans. Impulsiveness. Ideas without execution. Set goals before acting."
+
+#: tarot_cards.lua:326
+msgid "Knight of Wands"
+msgstr "Knight of Wands"
+
+#: tarot_cards.lua:327
+msgid "Action, passion, impulse, adventure"
+msgstr "Action, passion, impulse, adventure"
+
+#: tarot_cards.lua:328
+msgid "Immediate, intense"
+msgstr "Immediate, intense"
+
+#: tarot_cards.lua:329
+msgid ""
+"Passionate action. Courage to take risks. Go ahead boldly, but don't forget th"
+"e destination."
+msgstr ""
+"Passionate action. Courage to take risks. Go ahead boldly, but don't forget th"
+"e destination."
+
+#: tarot_cards.lua:330
+msgid ""
+"Impatience. Rushing without direction. Conflict. Slow down and choose the righ"
+"t path."
+msgstr ""
+"Impatience. Rushing without direction. Conflict. Slow down and choose the righ"
+"t path."
+
+#: tarot_cards.lua:334
+msgid "Queen of Wands"
+msgstr "Queen of Wands"
+
+#: tarot_cards.lua:335
+msgid "Charisma, leadership, warmth, confidence"
+msgstr "Charisma, leadership, warmth, confidence"
+
+#: tarot_cards.lua:336
+msgid "Summer, mature"
+msgstr "Summer, mature"
+
+#: tarot_cards.lua:337
+msgid ""
+"Warmth, determination and magnetism. Inspiring leadership. Use your charisma t"
+"o attract what you want."
+msgstr ""
+"Warmth, determination and magnetism. Inspiring leadership. Use your charisma t"
+"o attract what you want."
+
+#: tarot_cards.lua:338
+msgid "Jealousy. Insecurity. Explosive temper. The inner flame can burn those nearby."
+msgstr "Jealousy. Insecurity. Explosive temper. The inner flame can burn those nearby."
+
+#: tarot_cards.lua:342
+msgid "King of Wands"
+msgstr "King of Wands"
+
+#: tarot_cards.lua:343
+msgid "Vision, entrepreneurship, authority, honor"
+msgstr "Vision, entrepreneurship, authority, honor"
+
+#: tarot_cards.lua:344
+msgid "Long term, leadership"
+msgstr "Long term, leadership"
+
+#: tarot_cards.lua:345
+msgid ""
+"Entrepreneurial vision. Strong leadership. Take command with integrity and ins"
+"pire others."
+msgstr ""
+"Entrepreneurial vision. Strong leadership. Take command with integrity and ins"
+"pire others."
+
+#: tarot_cards.lua:346
+msgid ""
+"Authoritarianism. Empty promises. Lack of vision. Leading by fear builds nothi"
+"ng lasting."
+msgstr ""
+"Authoritarianism. Empty promises. Lack of vision. Leading by fear builds nothi"
+"ng lasting."
+
+#: tarot_cards.lua:352
+msgid "Ace of Cups"
+msgstr "Ace of Cups"
+
+#: tarot_cards.lua:353
+msgid "Love, emotion, intuition, new feeling"
+msgstr "Love, emotion, intuition, new feeling"
+
+#: tarot_cards.lua:354
+msgid "Lunar, emotional"
+msgstr "Lunar, emotional"
+
+#: tarot_cards.lua:355
+msgid ""
+"Overflowing love. New emotional cycle. Open yourself to deep feelings and true"
+" connections."
+msgstr ""
+"Overflowing love. New emotional cycle. Open yourself to deep feelings and true"
+" connections."
+
+#: tarot_cards.lua:356
+msgid ""
+"Repressed love. Emotional block. Inner emptiness. Allow yourself to feel in or"
+"der to heal."
+msgstr ""
+"Repressed love. Emotional block. Inner emptiness. Allow yourself to feel in or"
+"der to heal."
+
+#: tarot_cards.lua:360
+msgid "Two of Cups"
+msgstr "Two of Cups"
+
+#: tarot_cards.lua:361
+msgid "Union, partnership, commitment, attraction"
+msgstr "Union, partnership, commitment, attraction"
+
+#: tarot_cards.lua:362
+msgid "Meeting soon"
+msgstr "Meeting soon"
+
+#: tarot_cards.lua:363
+msgid ""
+"Union. Loving partnership. Soul meeting. Mutual respect and commitment strengt"
+"hen the bond."
+msgstr ""
+"Union. Loving partnership. Soul meeting. Mutual respect and commitment strengt"
+"hen the bond."
+
+#: tarot_cards.lua:364
+msgid ""
+"Disconnection. Quarrels. Emotional imbalance. A sincere conversation can resto"
+"re harmony."
+msgstr ""
+"Disconnection. Quarrels. Emotional imbalance. A sincere conversation can resto"
+"re harmony."
+
+#: tarot_cards.lua:368
+msgid "Three of Cups"
+msgstr "Three of Cups"
+
+#: tarot_cards.lua:369
+msgid "Friendship, celebration, community, joy"
+msgstr "Friendship, celebration, community, joy"
+
+#: tarot_cards.lua:370
+msgid "Social event"
+msgstr "Social event"
+
+#: tarot_cards.lua:371
+msgid ""
+"Friendship. Celebration. Shared joy. Gather with those you love and celebrate "
+"life."
+msgstr ""
+"Friendship. Celebration. Shared joy. Gather with those you love and celebrate "
+"life."
+
+#: tarot_cards.lua:372
+msgid ""
+"Gossip. Isolation. Excess partying. Beware of superficial friendships and hidd"
+"en resentments."
+msgstr ""
+"Gossip. Isolation. Excess partying. Beware of superficial friendships and hidd"
+"en resentments."
+
+#: tarot_cards.lua:376
+msgid "Four of Cups"
+msgstr "Four of Cups"
+
+#: tarot_cards.lua:377
+msgid "Contemplation, apathy, boredom, introspection"
+msgstr "Contemplation, apathy, boredom, introspection"
+
+#: tarot_cards.lua:378
+msgid "Stagnant"
+msgstr "Stagnant"
+
+#: tarot_cards.lua:379
+msgid ""
+"Contemplation. Apathy. New invitation ignored. Look beyond boredom to notice o"
+"pportunities."
+msgstr ""
+"Contemplation. Apathy. New invitation ignored. Look beyond boredom to notice o"
+"pportunities."
+
+#: tarot_cards.lua:380
+msgid ""
+"Awakening. Acceptance. New perspectives. Leave your comfort zone and seize the"
+" chance offered."
+msgstr ""
+"Awakening. Acceptance. New perspectives. Leave your comfort zone and seize the"
+" chance offered."
+
+#: tarot_cards.lua:384
+msgid "Five of Cups"
+msgstr "Five of Cups"
+
+#: tarot_cards.lua:385
+msgid "Grief, loss, regret, focus on negative"
+msgstr "Grief, loss, regret, focus on negative"
+
+#: tarot_cards.lua:386
+msgid "Recent past"
+msgstr "Recent past"
+
+#: tarot_cards.lua:387
+msgid "Grief. Loss. Focus on what is gone. Two cups still stand – look at what remains."
+msgstr "Grief. Loss. Focus on what is gone. Two cups still stand – look at what remains."
+
+#: tarot_cards.lua:388
+msgid "Overcoming. Recovery. Learning from pain. Accept the past and move forward."
+msgstr "Overcoming. Recovery. Learning from pain. Accept the past and move forward."
+
+#: tarot_cards.lua:392
+msgid "Six of Cups"
+msgstr "Six of Cups"
+
+#: tarot_cards.lua:393
+msgid "Nostalgia, memory, childhood, gift"
+msgstr "Nostalgia, memory, childhood, gift"
+
+#: tarot_cards.lua:394
+msgid "Revisiting the past"
+msgstr "Revisiting the past"
+
+#: tarot_cards.lua:395
+msgid ""
+"Nostalgia. Fond memories. Reunion with the past. Cherish your roots with affec"
+"tion."
+msgstr ""
+"Nostalgia. Fond memories. Reunion with the past. Cherish your roots with affec"
+"tion."
+
+#: tarot_cards.lua:396
+msgid "Clinging to the past. Immaturity. Inability to move on. Live the present."
+msgstr "Clinging to the past. Immaturity. Inability to move on. Live the present."
+
+#: tarot_cards.lua:400
+msgid "Seven of Cups"
+msgstr "Seven of Cups"
+
+#: tarot_cards.lua:401
+msgid "Illusion, choices, fantasy, dreams"
+msgstr "Illusion, choices, fantasy, dreams"
+
+#: tarot_cards.lua:402
+msgid "Confusing, indefinite"
+msgstr "Confusing, indefinite"
+
+#: tarot_cards.lua:403
+msgid ""
+"Illusions. Fantasies. Multiple options. Discernment is needed to choose the tr"
+"ue cup."
+msgstr ""
+"Illusions. Fantasies. Multiple options. Discernment is needed to choose the tr"
+"ue cup."
+
+#: tarot_cards.lua:404
+msgid "Clarity. Firm decision. End of illusions. Focus on what really matters."
+msgstr "Clarity. Firm decision. End of illusions. Focus on what really matters."
+
+#: tarot_cards.lua:408
+msgid "Eight of Cups"
+msgstr "Eight of Cups"
+
+#: tarot_cards.lua:409
+msgid "Withdrawal, search, disillusion, departure"
+msgstr "Withdrawal, search, disillusion, departure"
+
+#: tarot_cards.lua:410
+msgid "Emotional transition"
+msgstr "Emotional transition"
+
+#: tarot_cards.lua:411
+msgid ""
+"Withdrawal. Spiritual search. Leaving behind what doesn't fulfill. Follow your"
+" intuition."
+msgstr ""
+"Withdrawal. Spiritual search. Leaving behind what doesn't fulfill. Follow your"
+" intuition."
+
+#: tarot_cards.lua:412
+msgid ""
+"Fear of change. Staying out of convenience. Silent dissatisfaction. Courage to"
+" leave."
+msgstr ""
+"Fear of change. Staying out of convenience. Silent dissatisfaction. Courage to"
+" leave."
+
+#: tarot_cards.lua:416
+msgid "Nine of Cups"
+msgstr "Nine of Cups"
+
+#: tarot_cards.lua:417
+msgid "Wish fulfilled, satisfaction, contentment, luxury"
+msgstr "Wish fulfilled, satisfaction, contentment, luxury"
+
+#: tarot_cards.lua:418
+msgid "Soon fulfillment"
+msgstr "Soon fulfillment"
+
+#: tarot_cards.lua:419
+msgid ""
+"Wish fulfilled. Satisfaction. The “dream cup” is full. Enjoy emotional abundan"
+"ce."
+msgstr ""
+"Wish fulfilled. Satisfaction. The “dream cup” is full. Enjoy emotional abundan"
+"ce."
+
+#: tarot_cards.lua:420
+msgid ""
+"Dissatisfaction. Unmet desires. Empty materialism. True happiness lies in simp"
+"licity."
+msgstr ""
+"Dissatisfaction. Unmet desires. Empty materialism. True happiness lies in simp"
+"licity."
+
+#: tarot_cards.lua:424
+msgid "Ten of Cups"
+msgstr "Ten of Cups"
+
+#: tarot_cards.lua:425
+msgid "Happiness, family, harmony, blessing"
+msgstr "Happiness, family, harmony, blessing"
+
+#: tarot_cards.lua:426
+msgid "Happy ending"
+msgstr "Happy ending"
+
+#: tarot_cards.lua:427
+msgid ""
+"Full happiness. Family love. Lasting harmony. The heart overflows with shared "
+"joy."
+msgstr ""
+"Full happiness. Family love. Lasting harmony. The heart overflows with shared "
+"joy."
+
+#: tarot_cards.lua:428
+msgid ""
+"Family conflicts. Broken bonds. Idealization of happiness. Work on emotional c"
+"ommunication."
+msgstr ""
+"Family conflicts. Broken bonds. Idealization of happiness. Work on emotional c"
+"ommunication."
+
+#: tarot_cards.lua:432
+msgid "Page of Cups"
+msgstr "Page of Cups"
+
+#: tarot_cards.lua:433
+msgid "Sensitivity, creativity, message, intuition"
+msgstr "Sensitivity, creativity, message, intuition"
+
+#: tarot_cards.lua:434
+msgid "Emotional surprise"
+msgstr "Emotional surprise"
+
+#: tarot_cards.lua:435
+msgid "Creative sensitivity. Message of love. Open up to intuition and heart surprises."
+msgstr "Creative sensitivity. Message of love. Open up to intuition and heart surprises."
+
+#: tarot_cards.lua:436
+msgid ""
+"Emotional immaturity. Love disappointment. Childish jealousy. Put fantasy asid"
+"e and face reality."
+msgstr ""
+"Emotional immaturity. Love disappointment. Childish jealousy. Put fantasy asid"
+"e and face reality."
+
+#: tarot_cards.lua:440
+msgid "Knight of Cups"
+msgstr "Knight of Cups"
+
+#: tarot_cards.lua:441
+msgid "Romanticism, charm, proposal, idealism"
+msgstr "Romanticism, charm, proposal, idealism"
+
+#: tarot_cards.lua:442
+msgid "Invitation soon"
+msgstr "Invitation soon"
+
+#: tarot_cards.lua:443
+msgid ""
+"Romanticism. Charming proposal. Search for the beautiful and ideal. Follow you"
+"r heart with elegance."
+msgstr ""
+"Romanticism. Charming proposal. Search for the beautiful and ideal. Follow you"
+"r heart with elegance."
+
+#: tarot_cards.lua:444
+msgid ""
+"Love illusion. Empty promises. Excess of idealization. Keep your feet on the g"
+"round."
+msgstr ""
+"Love illusion. Empty promises. Excess of idealization. Keep your feet on the g"
+"round."
+
+#: tarot_cards.lua:448
+msgid "Queen of Cups"
+msgstr "Queen of Cups"
+
+#: tarot_cards.lua:449
+msgid "Empathy, intuition, care, compassion"
+msgstr "Empathy, intuition, care, compassion"
+
+#: tarot_cards.lua:450
+msgid "Lunar cycle, mature"
+msgstr "Lunar cycle, mature"
+
+#: tarot_cards.lua:451
+msgid ""
+"Deep intuition. Empathy. Emotional caregiver. Trust your ability to love and h"
+"eal."
+msgstr ""
+"Deep intuition. Empathy. Emotional caregiver. Trust your ability to love and h"
+"eal."
+
+#: tarot_cards.lua:452
+msgid ""
+"Emotional dependence. Exacerbated sensitivity. Emotional manipulation. Set hea"
+"lthy boundaries."
+msgstr ""
+"Emotional dependence. Exacerbated sensitivity. Emotional manipulation. Set hea"
+"lthy boundaries."
+
+#: tarot_cards.lua:456
+msgid "King of Cups"
+msgstr "King of Cups"
+
+#: tarot_cards.lua:457
+msgid "Emotional mastery, diplomacy, calm, wisdom"
+msgstr "Emotional mastery, diplomacy, calm, wisdom"
+
+#: tarot_cards.lua:458
+msgid "Emotional stability"
+msgstr "Emotional stability"
+
+#: tarot_cards.lua:459
+msgid ""
+"Emotional mastery. Mature compassion. Leadership with heart. Calm turbulent wa"
+"ters with wisdom."
+msgstr ""
+"Emotional mastery. Mature compassion. Leadership with heart. Calm turbulent wa"
+"ters with wisdom."
+
+#: tarot_cards.lua:460
+msgid ""
+"Coldness. Emotional repression. Manipulation. The repressed heart becomes a si"
+"lent tyrant."
+msgstr ""
+"Coldness. Emotional repression. Manipulation. The repressed heart becomes a si"
+"lent tyrant."
+
+#: tarot_cards.lua:466
+msgid "Ace of Swords"
+msgstr "Ace of Swords"
+
+#: tarot_cards.lua:467
+msgid "Clarity, truth, justice, sharp mind"
+msgstr "Clarity, truth, justice, sharp mind"
+
+#: tarot_cards.lua:468
+msgid "Quick decision"
+msgstr "Quick decision"
+
+#: tarot_cards.lua:469
+msgid ""
+"Mental clarity. Truth revealed. Sharp idea. Use the power of the word with jus"
+"tice."
+msgstr ""
+"Mental clarity. Truth revealed. Sharp idea. Use the power of the word with jus"
+"tice."
+
+#: tarot_cards.lua:470
+msgid "Confusion. Lies. Verbal abuse. Distorted truth hurts. Seek clean communication."
+msgstr "Confusion. Lies. Verbal abuse. Distorted truth hurts. Seek clean communication."
+
+#: tarot_cards.lua:474
+msgid "Two of Swords"
+msgstr "Two of Swords"
+
+#: tarot_cards.lua:475
+msgid "Impasse, difficult choice, denial, balance"
+msgstr "Impasse, difficult choice, denial, balance"
+
+#: tarot_cards.lua:476
+msgid "Stalled"
+msgstr "Stalled"
+
+#: tarot_cards.lua:477
+msgid ""
+"Difficult decision. Impasse. Precarious balance. Remove the blindfold and face"
+" the situation."
+msgstr ""
+"Difficult decision. Impasse. Precarious balance. Remove the blindfold and face"
+" the situation."
+
+#: tarot_cards.lua:478
+msgid ""
+"Postponed decision. Escape from truth. Internal conflict. Free yourself from p"
+"aralysis and choose."
+msgstr ""
+"Postponed decision. Escape from truth. Internal conflict. Free yourself from p"
+"aralysis and choose."
+
+#: tarot_cards.lua:482
+msgid "Three of Swords"
+msgstr "Three of Swords"
+
+#: tarot_cards.lua:483
+msgid "Pain, betrayal, sadness, heartbreak"
+msgstr "Pain, betrayal, sadness, heartbreak"
+
+#: tarot_cards.lua:484
+msgid "Recent pain"
+msgstr "Recent pain"
+
+#: tarot_cards.lua:485
+msgid ""
+"Emotional pain. Betrayal. Broken heart. Suffering is real, but it's the first "
+"step toward healing."
+msgstr ""
+"Emotional pain. Betrayal. Broken heart. Suffering is real, but it's the first "
+"step toward healing."
+
+#: tarot_cards.lua:486
+msgid ""
+"Slow recovery. Holding grudges. Difficulty forgiving. Free yourself from the p"
+"oison of resentment."
+msgstr ""
+"Slow recovery. Holding grudges. Difficulty forgiving. Free yourself from the p"
+"oison of resentment."
+
+#: tarot_cards.lua:490
+msgid "Four of Swords"
+msgstr "Four of Swords"
+
+#: tarot_cards.lua:491
+msgid "Rest, recovery, contemplation, pause"
+msgstr "Rest, recovery, contemplation, pause"
+
+#: tarot_cards.lua:492
+msgid "Necessary pause"
+msgstr "Necessary pause"
+
+#: tarot_cards.lua:493
+msgid "Mental rest. Retreat. Recovery. Step away from the noise and recharge your mind."
+msgstr "Mental rest. Retreat. Recovery. Step away from the noise and recharge your mind."
+
+#: tarot_cards.lua:494
+msgid ""
+"Insomnia. Mental exhaustion. Inability to relax. Excessive thinking makes you "
+"sick."
+msgstr ""
+"Insomnia. Mental exhaustion. Inability to relax. Excessive thinking makes you "
+"sick."
+
+#: tarot_cards.lua:498
+msgid "Five of Swords"
+msgstr "Five of Swords"
+
+#: tarot_cards.lua:499
+msgid "Conflict, defeat, hostility, hollow victory"
+msgstr "Conflict, defeat, hostility, hollow victory"
+
+#: tarot_cards.lua:500
+msgid "Current conflict"
+msgstr "Current conflict"
+
+#: tarot_cards.lua:501
+msgid ""
+"Conflict. Empty victory. Humiliation. Sometimes winning the battle means losin"
+"g the war."
+msgstr ""
+"Conflict. Empty victory. Humiliation. Sometimes winning the battle means losin"
+"g the war."
+
+#: tarot_cards.lua:502
+msgid "Reconciliation. Remorse. Putting pride aside. Seek peace instead of being right."
+msgstr "Reconciliation. Remorse. Putting pride aside. Seek peace instead of being right."
+
+#: tarot_cards.lua:506
+msgid "Six of Swords"
+msgstr "Six of Swords"
+
+#: tarot_cards.lua:507
+msgid "Transition, healing, journey, moving on"
+msgstr "Transition, healing, journey, moving on"
+
+#: tarot_cards.lua:508
+msgid "Gradual transition"
+msgstr "Gradual transition"
+
+#: tarot_cards.lua:509
+msgid ""
+"Smooth transition. Healing journey. Leaving turbulent waters behind. Toward ca"
+"lm waters."
+msgstr ""
+"Smooth transition. Healing journey. Leaving turbulent waters behind. Toward ca"
+"lm waters."
+
+#: tarot_cards.lua:510
+msgid ""
+"Resistance to change. Emotional baggage. Staying stuck in the problem. Release"
+" what you cannot carry."
+msgstr ""
+"Resistance to change. Emotional baggage. Staying stuck in the problem. Release"
+" what you cannot carry."
+
+#: tarot_cards.lua:514
+msgid "Seven of Swords"
+msgstr "Seven of Swords"
+
+#: tarot_cards.lua:515
+msgid "Strategy, deception, escape, cunning"
+msgstr "Strategy, deception, escape, cunning"
+
+#: tarot_cards.lua:516
+msgid "Fast, stealthy"
+msgstr "Fast, stealthy"
+
+#: tarot_cards.lua:517
+msgid ""
+"Strategy. Subtle escape. Not everything needs to be faced head-on. Act with in"
+"telligence."
+msgstr ""
+"Strategy. Subtle escape. Not everything needs to be faced head-on. Act with in"
+"telligence."
+
+#: tarot_cards.lua:518
+msgid "Deception. Theft. Lack of ethics. Lies have short legs. Act with honesty."
+msgstr "Deception. Theft. Lack of ethics. Lies have short legs. Act with honesty."
+
+#: tarot_cards.lua:522
+msgid "Eight of Swords"
+msgstr "Eight of Swords"
+
+#: tarot_cards.lua:523
+msgid "Imprisonment, self-sabotage, limitation, fear"
+msgstr "Imprisonment, self-sabotage, limitation, fear"
+
+#: tarot_cards.lua:524
+msgid "Mental prison, temporary"
+msgstr "Mental prison, temporary"
+
+#: tarot_cards.lua:525
+msgid ""
+"Feeling trapped. Self-sabotage. Imaginary limitations. The prison is mental – "
+"the key is within you."
+msgstr ""
+"Feeling trapped. Self-sabotage. Imaginary limitations. The prison is mental – "
+"the key is within you."
+
+#: tarot_cards.lua:526
+msgid ""
+"Liberation. New perspective. Overcoming limiting beliefs. Break the bonds and "
+"see the light."
+msgstr ""
+"Liberation. New perspective. Overcoming limiting beliefs. Break the bonds and "
+"see the light."
+
+#: tarot_cards.lua:530
+msgid "Nine of Swords"
+msgstr "Nine of Swords"
+
+#: tarot_cards.lua:531
+msgid "Anxiety, nightmare, worry, anguish"
+msgstr "Anxiety, nightmare, worry, anguish"
+
+#: tarot_cards.lua:532
+msgid "Nocturnal, insomnia"
+msgstr "Nocturnal, insomnia"
+
+#: tarot_cards.lua:533
+msgid ""
+"Anxiety. Nightmares. Nocturnal worries. The mind is its own tormentor. Seek to"
+" calm your thoughts."
+msgstr ""
+"Anxiety. Nightmares. Nocturnal worries. The mind is its own tormentor. Seek to"
+" calm your thoughts."
+
+#: tarot_cards.lua:534
+msgid ""
+"Recovery from anguish. Learning from pain. The worst is over. Take a deep brea"
+"th."
+msgstr ""
+"Recovery from anguish. Learning from pain. The worst is over. Take a deep brea"
+"th."
+
+#: tarot_cards.lua:538
+msgid "Ten of Swords"
+msgstr "Ten of Swords"
+
+#: tarot_cards.lua:539
+msgid "Painful ending, betrayal, crisis, rebirth"
+msgstr "Painful ending, betrayal, crisis, rebirth"
+
+#: tarot_cards.lua:540
+msgid "Rock bottom, new dawn"
+msgstr "Rock bottom, new dawn"
+
+#: tarot_cards.lua:541
+msgid ""
+"Painful ending. Final betrayal. Rock bottom. From this abyss one can only rise"
+" – dawn arrives."
+msgstr ""
+"Painful ending. Final betrayal. Rock bottom. From this abyss one can only rise"
+" – dawn arrives."
+
+#: tarot_cards.lua:542
+msgid ""
+"Recovery. Resistance. Avoiding the final collapse. Suffering can be transforme"
+"d into strength."
+msgstr ""
+"Recovery. Resistance. Avoiding the final collapse. Suffering can be transforme"
+"d into strength."
+
+#: tarot_cards.lua:546
+msgid "Page of Swords"
+msgstr "Page of Swords"
+
+#: tarot_cards.lua:547
+msgid "Curiosity, communication, ideas, vigilance"
+msgstr "Curiosity, communication, ideas, vigilance"
+
+#: tarot_cards.lua:548
+msgid "News shortly"
+msgstr "News shortly"
+
+#: tarot_cards.lua:549
+msgid ""
+"Intellectual curiosity. New ideas. Agile communication. Speak your truth, but "
+"with tact."
+msgstr ""
+"Intellectual curiosity. New ideas. Agile communication. Speak your truth, but "
+"with tact."
+
+#: tarot_cards.lua:550
+msgid ""
+"Gossip. Superficial thinking. Baseless criticism. Use your mind to build, not "
+"destroy."
+msgstr ""
+"Gossip. Superficial thinking. Baseless criticism. Use your mind to build, not "
+"destroy."
+
+#: tarot_cards.lua:554
+msgid "Knight of Swords"
+msgstr "Knight of Swords"
+
+#: tarot_cards.lua:555
+msgid "Swift action, impulse, determination, conflict"
+msgstr "Swift action, impulse, determination, conflict"
+
+#: tarot_cards.lua:556
+msgid "Now, urgent"
+msgstr "Now, urgent"
+
+#: tarot_cards.lua:557
+msgid ""
+"Impetuous action. Intellectual determination. Advance with momentum, but don't"
+" trample others."
+msgstr ""
+"Impetuous action. Intellectual determination. Advance with momentum, but don't"
+" trample others."
+
+#: tarot_cards.lua:558
+msgid ""
+"Blind impulsiveness. Unnecessary confrontation. Aggressiveness. Think before b"
+"randishing the sword."
+msgstr ""
+"Blind impulsiveness. Unnecessary confrontation. Aggressiveness. Think before b"
+"randishing the sword."
+
+#: tarot_cards.lua:562
+msgid "Queen of Swords"
+msgstr "Queen of Swords"
+
+#: tarot_cards.lua:563
+msgid "Rationality, independence, discernment, truth"
+msgstr "Rationality, independence, discernment, truth"
+
+#: tarot_cards.lua:564
+msgid "Mature decision"
+msgstr "Mature decision"
+
+#: tarot_cards.lua:565
+msgid ""
+"Clear rationality. Independence. Weighted justice. Make decisions with the min"
+"d, but without losing empathy."
+msgstr ""
+"Clear rationality. Independence. Weighted justice. Make decisions with the min"
+"d, but without losing empathy."
+
+#: tarot_cards.lua:566
+msgid ""
+"Emotional coldness. Bitterness. Harsh judgment. Reason without heart becomes c"
+"ruelty."
+msgstr ""
+"Emotional coldness. Bitterness. Harsh judgment. Reason without heart becomes c"
+"ruelty."
+
+#: tarot_cards.lua:570
+msgid "King of Swords"
+msgstr "King of Swords"
+
+#: tarot_cards.lua:571
+msgid "Intellectual authority, ethics, clarity, justice"
+msgstr "Intellectual authority, ethics, clarity, justice"
+
+#: tarot_cards.lua:572
+msgid "Legal authority, long term"
+msgstr "Legal authority, long term"
+
+#: tarot_cards.lua:573
+msgid ""
+"Intellectual authority. Ethics. Just and lucid leadership. Truth is your sharp"
+"est sword."
+msgstr ""
+"Intellectual authority. Ethics. Just and lucid leadership. Truth is your sharp"
+"est sword."
+
+#: tarot_cards.lua:574
+msgid ""
+"Mental tyranny. Manipulation of truth. Abuse of power. Intellect without moral"
+"s oppresses."
+msgstr ""
+"Mental tyranny. Manipulation of truth. Abuse of power. Intellect without moral"
+"s oppresses."
+
+#: tarot_cards.lua:580
+msgid "Ace of Pentacles"
+msgstr "Ace of Pentacles"
+
+#: tarot_cards.lua:581
+msgid "Opportunity, prosperity, new resource, security"
+msgstr "Opportunity, prosperity, new resource, security"
+
+#: tarot_cards.lua:582
+msgid "Material beginning"
+msgstr "Material beginning"
+
+#: tarot_cards.lua:583
+msgid "New material opportunity. Prosperity at hand. Get to work to reap solid fruits."
+msgstr "New material opportunity. Prosperity at hand. Get to work to reap solid fruits."
+
+#: tarot_cards.lua:584
+msgid ""
+"Missed opportunity. Greed. Financial delay. The foundation needs to be set bef"
+"ore growing."
+msgstr ""
+"Missed opportunity. Greed. Financial delay. The foundation needs to be set bef"
+"ore growing."
+
+#: tarot_cards.lua:588
+msgid "Two of Pentacles"
+msgstr "Two of Pentacles"
+
+#: tarot_cards.lua:589
+msgid "Balance, adaptation, juggling, priorities"
+msgstr "Balance, adaptation, juggling, priorities"
+
+#: tarot_cards.lua:590
+msgid "Fluctuating"
+msgstr "Fluctuating"
+
+#: tarot_cards.lua:591
+msgid ""
+"Financial balance. Juggling. Adapt to changes without losing control of your a"
+"ccounts."
+msgstr ""
+"Financial balance. Juggling. Adapt to changes without losing control of your a"
+"ccounts."
+
+#: tarot_cards.lua:592
+msgid ""
+"Disorganization. Debt overload. Inability to prioritize. Reorganize your finan"
+"ces."
+msgstr ""
+"Disorganization. Debt overload. Inability to prioritize. Reorganize your finan"
+"ces."
+
+#: tarot_cards.lua:596
+msgid "Three of Pentacles"
+msgstr "Three of Pentacles"
+
+#: tarot_cards.lua:597
+msgid "Teamwork, collaboration, mastery, skill"
+msgstr "Teamwork, collaboration, mastery, skill"
+
+#: tarot_cards.lua:598
+msgid "Project in progress"
+msgstr "Project in progress"
+
+#: tarot_cards.lua:599
+msgid ""
+"Teamwork. Mastery. Productive collaboration. Together, the result is greater t"
+"han the sum."
+msgstr ""
+"Teamwork. Mastery. Productive collaboration. Together, the result is greater t"
+"han the sum."
+
+#: tarot_cards.lua:600
+msgid ""
+"Lack of collaboration. Carelessness. Poor workmanship. Restore respect for exc"
+"ellence."
+msgstr ""
+"Lack of collaboration. Carelessness. Poor workmanship. Restore respect for exc"
+"ellence."
+
+#: tarot_cards.lua:604
+msgid "Four of Pentacles"
+msgstr "Four of Pentacles"
+
+#: tarot_cards.lua:605
+msgid "Security, attachment, saving, control"
+msgstr "Security, attachment, saving, control"
+
+#: tarot_cards.lua:606
+msgid "Stable, stagnant"
+msgstr "Stable, stagnant"
+
+#: tarot_cards.lua:607
+msgid ""
+"Material security. Attachment to possessions. Healthy saving, but without clos"
+"ing off to the new."
+msgstr ""
+"Material security. Attachment to possessions. Healthy saving, but without clos"
+"ing off to the new."
+
+#: tarot_cards.lua:608
+msgid ""
+"Miserliness. Fear of loss. Blocking abundance. Let go a little control to rece"
+"ive."
+msgstr ""
+"Miserliness. Fear of loss. Blocking abundance. Let go a little control to rece"
+"ive."
+
+#: tarot_cards.lua:612
+msgid "Five of Pentacles"
+msgstr "Five of Pentacles"
+
+#: tarot_cards.lua:613
+msgid "Hardship, scarcity, exclusion, aid"
+msgstr "Hardship, scarcity, exclusion, aid"
+
+#: tarot_cards.lua:614
+msgid "Difficult period"
+msgstr "Difficult period"
+
+#: tarot_cards.lua:615
+msgid ""
+"Material hardship. Feeling of exclusion. Help is closer than you think. Ask fo"
+"r assistance."
+msgstr ""
+"Material hardship. Feeling of exclusion. Help is closer than you think. Ask fo"
+"r assistance."
+
+#: tarot_cards.lua:616
+msgid ""
+"Financial recovery. End of scarcity. Re-inclusion. Light shines at the end of "
+"the tunnel."
+msgstr ""
+"Financial recovery. End of scarcity. Re-inclusion. Light shines at the end of "
+"the tunnel."
+
+#: tarot_cards.lua:620
+msgid "Six of Pentacles"
+msgstr "Six of Pentacles"
+
+#: tarot_cards.lua:621
+msgid "Generosity, sharing, charity, balance"
+msgstr "Generosity, sharing, charity, balance"
+
+#: tarot_cards.lua:622
+msgid "Give and receive"
+msgstr "Give and receive"
+
+#: tarot_cards.lua:623
+msgid ""
+"Generosity. Sharing. Giving and receiving in balance. Prosperity circulates wh"
+"en the hand opens."
+msgstr ""
+"Generosity. Sharing. Giving and receiving in balance. Prosperity circulates wh"
+"en the hand opens."
+
+#: tarot_cards.lua:624
+msgid ""
+"Self-interested charity. Debts. Imbalance in giving. Beware of those who only "
+"ask and never give back."
+msgstr ""
+"Self-interested charity. Debts. Imbalance in giving. Beware of those who only "
+"ask and never give back."
+
+#: tarot_cards.lua:628
+msgid "Seven of Pentacles"
+msgstr "Seven of Pentacles"
+
+#: tarot_cards.lua:629
+msgid "Patience, harvest, evaluation, investment"
+msgstr "Patience, harvest, evaluation, investment"
+
+#: tarot_cards.lua:630
+msgid "Long term"
+msgstr "Long term"
+
+#: tarot_cards.lua:631
+msgid ""
+"Patience. Harvest in progress. Evaluate if your efforts are yielding the expec"
+"ted fruits."
+msgstr ""
+"Patience. Harvest in progress. Evaluate if your efforts are yielding the expec"
+"ted fruits."
+
+#: tarot_cards.lua:632
+msgid ""
+"Impatience. Fruitless work. Frustration with results. Recalculate the route an"
+"d continue."
+msgstr ""
+"Impatience. Fruitless work. Frustration with results. Recalculate the route an"
+"d continue."
+
+#: tarot_cards.lua:636 main.lua:419
+msgid "Eight of Pentacles"
+msgstr "Eight of Pentacles"
+
+#: tarot_cards.lua:637
+msgid "Dedication, learning, improvement, work"
+msgstr "Dedication, learning, improvement, work"
+
+#: tarot_cards.lua:638
+msgid "Daily, constant"
+msgstr "Daily, constant"
+
+#: tarot_cards.lua:639
+msgid ""
+"Dedicated learning. Craftsmanship. Constant improvement. Mastery requires dail"
+"y practice."
+msgstr ""
+"Dedicated learning. Craftsmanship. Constant improvement. Mastery requires dail"
+"y practice."
+
+#: tarot_cards.lua:640
+msgid ""
+"Perfectionism. Monotonous work. Lack of motivation. Rekindle the pleasure in d"
+"oing."
+msgstr ""
+"Perfectionism. Monotonous work. Lack of motivation. Rekindle the pleasure in d"
+"oing."
+
+#: tarot_cards.lua:644
+msgid "Nine of Pentacles"
+msgstr "Nine of Pentacles"
+
+#: tarot_cards.lua:645
+msgid "Self-sufficiency, luxury, achievement, independence"
+msgstr "Self-sufficiency, luxury, achievement, independence"
+
+#: tarot_cards.lua:646
+msgid "Personal harvest"
+msgstr "Personal harvest"
+
+#: tarot_cards.lua:647
+msgid ""
+"Self-sufficiency. Personal luxury. Material achievement with independence. Enj"
+"oy what you have built."
+msgstr ""
+"Self-sufficiency. Personal luxury. Material achievement with independence. Enj"
+"oy what you have built."
+
+#: tarot_cards.lua:648
+msgid ""
+"Financial dependence. Empty ostentation. Material insecurity. Real value lies "
+"in who you are."
+msgstr ""
+"Financial dependence. Empty ostentation. Material insecurity. Real value lies "
+"in who you are."
+
+#: tarot_cards.lua:652
+msgid "Ten of Pentacles"
+msgstr "Ten of Pentacles"
+
+#: tarot_cards.lua:653
+msgid "Wealth, legacy, family, stability"
+msgstr "Wealth, legacy, family, stability"
+
+#: tarot_cards.lua:654
+msgid "Permanent, long term"
+msgstr "Permanent, long term"
+
+#: tarot_cards.lua:655
+msgid ""
+"Lasting wealth. Family legacy. Material and emotional security. Strong roots n"
+"ourish the future."
+msgstr ""
+"Lasting wealth. Family legacy. Material and emotional security. Strong roots n"
+"ourish the future."
+
+#: tarot_cards.lua:656
+msgid ""
+"Loss of inheritance. Family conflicts over money. Financial instability. Rebui"
+"ld the foundations."
+msgstr ""
+"Loss of inheritance. Family conflicts over money. Financial instability. Rebui"
+"ld the foundations."
+
+#: tarot_cards.lua:660
+msgid "Page of Pentacles"
+msgstr "Page of Pentacles"
+
+#: tarot_cards.lua:661
+msgid "Study, ambition, focus, new project"
+msgstr "Study, ambition, focus, new project"
+
+#: tarot_cards.lua:662
+msgid "Slow start"
+msgstr "Slow start"
+
+#: tarot_cards.lua:663
+msgid "Applied study. New skill. Constructive ambition. Start small, dream big."
+msgstr "Applied study. New skill. Constructive ambition. Start small, dream big."
+
+#: tarot_cards.lua:664
+msgid ""
+"Lack of focus. Slow progress. Premature abandonment. Persist in studies and wo"
+"rk."
+msgstr ""
+"Lack of focus. Slow progress. Premature abandonment. Persist in studies and wo"
+"rk."
+
+#: tarot_cards.lua:668
+msgid "Knight of Pentacles"
+msgstr "Knight of Pentacles"
+
+#: tarot_cards.lua:669
+msgid "Hard work, routine, patience, reliability"
+msgstr "Hard work, routine, patience, reliability"
+
+#: tarot_cards.lua:670
+msgid "Step by step"
+msgstr "Step by step"
+
+#: tarot_cards.lua:671
+msgid "Hard work. Reliable routine. Patience to build. Steady steps take you far."
+msgstr "Hard work. Reliable routine. Patience to build. Steady steps take you far."
+
+#: tarot_cards.lua:672
+msgid "Stagnation. Boredom. Lack of ambition. Move before inertia becomes permanent."
+msgstr "Stagnation. Boredom. Lack of ambition. Move before inertia becomes permanent."
+
+#: tarot_cards.lua:676
+msgid "Queen of Pentacles"
+msgstr "Queen of Pentacles"
+
+#: tarot_cards.lua:677
+msgid "Prosperity, practical care, home, security"
+msgstr "Prosperity, practical care, home, security"
+
+#: tarot_cards.lua:678
+msgid "Domestic cycle"
+msgstr "Domestic cycle"
+
+#: tarot_cards.lua:679
+msgid ""
+"Homely prosperity. Practical care. Generous mother. Your material security sus"
+"tains those you love."
+msgstr ""
+"Homely prosperity. Practical care. Generous mother. Your material security sus"
+"tains those you love."
+
+#: tarot_cards.lua:680
+msgid ""
+"Neglect of home. Selfish materialism. Work-home imbalance. Take care of your n"
+"est first."
+msgstr ""
+"Neglect of home. Selfish materialism. Work-home imbalance. Take care of your n"
+"est first."
+
+#: tarot_cards.lua:684
+msgid "King of Pentacles"
+msgstr "King of Pentacles"
+
+#: tarot_cards.lua:685
+msgid "Success, abundance, stability, business"
+msgstr "Success, abundance, stability, business"
+
+#: tarot_cards.lua:686
+msgid "Financial maturity"
+msgstr "Financial maturity"
+
+#: tarot_cards.lua:687
+msgid ""
+"Financial success. Prosperous leadership. Abundance with stability. Your busin"
+"ess acumen is a gift."
+msgstr ""
+"Financial success. Prosperous leadership. Abundance with stability. Your busin"
+"ess acumen is a gift."
+
+#: tarot_cards.lua:688
+msgid ""
+"Miserliness. Extreme materialism. Corruption. Wealth without purpose is empty "
+"and corrupts."
+msgstr ""
+"Miserliness. Extreme materialism. Corruption. Wealth without purpose is empty "
+"and corrupts."
+
+#: tarot_cards.lua:707
+msgid "The Rider"
+msgstr "The Rider"
+
+#: tarot_cards.lua:709
+msgid "News, message, visitor, swiftness"
+msgstr "News, message, visitor, swiftness"
+
+#: tarot_cards.lua:710
+msgid ""
+"News arriving. A visitor or important message. Swift movement and good tidings"
+" on the horizon."
+msgstr ""
+"News arriving. A visitor or important message. Swift movement and good tidings"
+" on the horizon."
+
+#: tarot_cards.lua:714
+msgid "The Clover"
+msgstr "The Clover"
+
+#: tarot_cards.lua:716
+msgid "Luck, opportunity, lightness, moment"
+msgstr "Luck, opportunity, lightness, moment"
+
+#: tarot_cards.lua:717
+msgid ""
+"Passing luck. Fleeting opportunity. Simple joy. Enjoy the present moment with "
+"lightness."
+msgstr ""
+"Passing luck. Fleeting opportunity. Simple joy. Enjoy the present moment with "
+"lightness."
+
+#: tarot_cards.lua:721
+msgid "The Ship"
+msgstr "The Ship"
+
+#: tarot_cards.lua:723
+msgid "Travel, change, adventure, movement"
+msgstr "Travel, change, adventure, movement"
+
+#: tarot_cards.lua:724
+msgid "Travel. Change of scenery. New horizons. Venture forth, the world awaits you."
+msgstr "Travel. Change of scenery. New horizons. Venture forth, the world awaits you."
+
+#: tarot_cards.lua:728
+msgid "The House"
+msgstr "The House"
+
+#: tarot_cards.lua:730
+msgid "Home, family, security, roots"
+msgstr "Home, family, security, roots"
+
+#: tarot_cards.lua:731
+msgid ""
+"Home. Family security. Firm roots. Care for your sacred space with love and de"
+"dication."
+msgstr ""
+"Home. Family security. Firm roots. Care for your sacred space with love and de"
+"dication."
+
+#: tarot_cards.lua:735
+msgid "The Tree"
+msgstr "The Tree"
+
+#: tarot_cards.lua:737
+msgid "Health, growth, nature, vitality"
+msgstr "Health, growth, nature, vitality"
+
+#: tarot_cards.lua:738
+msgid ""
+"Health. Personal growth. Connection with nature. Your roots are deep, your fru"
+"its will come."
+msgstr ""
+"Health. Personal growth. Connection with nature. Your roots are deep, your fru"
+"its will come."
+
+#: tarot_cards.lua:742
+msgid "The Clouds"
+msgstr "The Clouds"
+
+#: tarot_cards.lua:744
+msgid "Confusion, uncertainty, doubt, fog"
+msgstr "Confusion, uncertainty, doubt, fog"
+
+#: tarot_cards.lua:745
+msgid ""
+"Confusion. Temporary uncertainty. Lingering doubts. Clarity will come after th"
+"e storm passes."
+msgstr ""
+"Confusion. Temporary uncertainty. Lingering doubts. Clarity will come after th"
+"e storm passes."
+
+#: tarot_cards.lua:749
+msgid "The Snake"
+msgstr "The Snake"
+
+#: tarot_cards.lua:751
+msgid "Seduction, betrayal, manipulation, cunning"
+msgstr "Seduction, betrayal, manipulation, cunning"
+
+#: tarot_cards.lua:752
+msgid ""
+"Seduction. Betrayal or manipulation. Beware of false promises. Wisdom lies in "
+"seeing beyond appearances."
+msgstr ""
+"Seduction. Betrayal or manipulation. Beware of false promises. Wisdom lies in "
+"seeing beyond appearances."
+
+#: tarot_cards.lua:756
+msgid "The Coffin"
+msgstr "The Coffin"
+
+#: tarot_cards.lua:758
+msgid "Ending, transformation, loss, rebirth"
+msgstr "Ending, transformation, loss, rebirth"
+
+#: tarot_cards.lua:759
+msgid ""
+"End of a cycle. Deep transformation. Let the past rest. The new is born from w"
+"hat has gone."
+msgstr ""
+"End of a cycle. Deep transformation. Let the past rest. The new is born from w"
+"hat has gone."
+
+#: tarot_cards.lua:763
+msgid "The Bouquet"
+msgstr "The Bouquet"
+
+#: tarot_cards.lua:765
+msgid "Gift, compliment, beauty, gratitude"
+msgstr "Gift, compliment, beauty, gratitude"
+
+#: tarot_cards.lua:766
+msgid ""
+"Gift. Compliment. Recognition. The beauty of life reveals itself in small kind"
+"nesses."
+msgstr ""
+"Gift. Compliment. Recognition. The beauty of life reveals itself in small kind"
+"nesses."
+
+#: tarot_cards.lua:770
+msgid "The Scythe"
+msgstr "The Scythe"
+
+#: tarot_cards.lua:772
+msgid "Cut, decision, rupture, warning"
+msgstr "Cut, decision, rupture, warning"
+
+#: tarot_cards.lua:773
+msgid ""
+"Necessary cut. Drastic decision. Imminent rupture. Sometimes you must cut to h"
+"eal."
+msgstr ""
+"Necessary cut. Drastic decision. Imminent rupture. Sometimes you must cut to h"
+"eal."
+
+#: tarot_cards.lua:777
+msgid "The Whip"
+msgstr "The Whip"
+
+#: tarot_cards.lua:779
+msgid "Conflict, debate, passion, repetition"
+msgstr "Conflict, debate, passion, repetition"
+
+#: tarot_cards.lua:780
+msgid ""
+"Conflict. Heated discussions. Intense passion. Channel energy into productive "
+"actions."
+msgstr ""
+"Conflict. Heated discussions. Intense passion. Channel energy into productive "
+"actions."
+
+#: tarot_cards.lua:784
+msgid "The Birds"
+msgstr "The Birds"
+
+#: tarot_cards.lua:786
+msgid "Talk, gossip, communication, nervousness"
+msgstr "Talk, gossip, communication, nervousness"
+
+#: tarot_cards.lua:787
+msgid ""
+"Important conversations. Gossip or news. Communication in focus. Choose your w"
+"ords wisely."
+msgstr ""
+"Important conversations. Gossip or news. Communication in focus. Choose your w"
+"ords wisely."
+
+#: tarot_cards.lua:791
+msgid "The Child"
+msgstr "The Child"
+
+#: tarot_cards.lua:793
+msgid "Innocence, new start, purity, playfulness"
+msgstr "Innocence, new start, purity, playfulness"
+
+#: tarot_cards.lua:794
+msgid ""
+"Innocence. New beginning. Purity of intention. Embrace your inner child with t"
+"enderness."
+msgstr ""
+"Innocence. New beginning. Purity of intention. Embrace your inner child with t"
+"enderness."
+
+#: tarot_cards.lua:798
+msgid "The Fox"
+msgstr "The Fox"
+
+#: tarot_cards.lua:800
+msgid "Cunning, cleverness, deceit, adaptation"
+msgstr "Cunning, cleverness, deceit, adaptation"
+
+#: tarot_cards.lua:801
+msgid ""
+"Cunning. Cleverness. Beware of deception. Use your intelligence for good, not "
+"manipulation."
+msgstr ""
+"Cunning. Cleverness. Beware of deception. Use your intelligence for good, not "
+"manipulation."
+
+#: tarot_cards.lua:805
+msgid "The Bear"
+msgstr "The Bear"
+
+#: tarot_cards.lua:807
+msgid "Strength, protection, power, authority"
+msgstr "Strength, protection, power, authority"
+
+#: tarot_cards.lua:808
+msgid ""
+"Protective strength. Financial power. Natural authority. Leadership with gener"
+"osity brings prosperity."
+msgstr ""
+"Protective strength. Financial power. Natural authority. Leadership with gener"
+"osity brings prosperity."
+
+#: tarot_cards.lua:814
+msgid "Hope, clarity, purpose, light"
+msgstr "Hope, clarity, purpose, light"
+
+#: tarot_cards.lua:815
+msgid ""
+"Hope. Clarity of purpose. Follow your inner light. The universe conspires in y"
+"our favor."
+msgstr ""
+"Hope. Clarity of purpose. Follow your inner light. The universe conspires in y"
+"our favor."
+
+#: tarot_cards.lua:819
+msgid "The Stork"
+msgstr "The Stork"
+
+#: tarot_cards.lua:821
+msgid "Positive change, renewal, transition, blessing"
+msgstr "Positive change, renewal, transition, blessing"
+
+#: tarot_cards.lua:822
+msgid ""
+"Positive change. Renewal. Blessed transition. New energies arrive to transform"
+" your life."
+msgstr ""
+"Positive change. Renewal. Blessed transition. New energies arrive to transform"
+" your life."
+
+#: tarot_cards.lua:826
+msgid "The Dog"
+msgstr "The Dog"
+
+#: tarot_cards.lua:828
+msgid "Friendship, loyalty, companionship, trust"
+msgstr "Friendship, loyalty, companionship, trust"
+
+#: tarot_cards.lua:829
+msgid ""
+"Loyal friendship. Fidelity. Sincere companionship. Value those who walk beside"
+" you."
+msgstr ""
+"Loyal friendship. Fidelity. Sincere companionship. Value those who walk beside"
+" you."
+
+#: tarot_cards.lua:835
+msgid "Authority, structure, isolation, institution"
+msgstr "Authority, structure, isolation, institution"
+
+#: tarot_cards.lua:836
+msgid ""
+"Institutional authority. Protection. Solid structure. Build firm foundations f"
+"or the future."
+msgstr ""
+"Institutional authority. Protection. Solid structure. Build firm foundations f"
+"or the future."
+
+#: tarot_cards.lua:840
+msgid "The Garden"
+msgstr "The Garden"
+
+#: tarot_cards.lua:842
+msgid "Social life, community, meeting, public"
+msgstr "Social life, community, meeting, public"
+
+#: tarot_cards.lua:843
+msgid ""
+"Social life. Community. Public encounters. Open yourself to new connections an"
+"d environments."
+msgstr ""
+"Social life. Community. Public encounters. Open yourself to new connections an"
+"d environments."
+
+#: tarot_cards.lua:847
+msgid "The Mountain"
+msgstr "The Mountain"
+
+#: tarot_cards.lua:849
+msgid "Obstacle, challenge, blockage, persistence"
+msgstr "Obstacle, challenge, blockage, persistence"
+
+#: tarot_cards.lua:850
+msgid ""
+"Obstacle. Challenge to overcome. Temporary blockage. The view from the top jus"
+"tifies the climb."
+msgstr ""
+"Obstacle. Challenge to overcome. Temporary blockage. The view from the top jus"
+"tifies the climb."
+
+#: tarot_cards.lua:854
+msgid "The Crossroads"
+msgstr "The Crossroads"
+
+#: tarot_cards.lua:856
+msgid "Choice, decision, direction, alternative"
+msgstr "Choice, decision, direction, alternative"
+
+#: tarot_cards.lua:857
+msgid ""
+"Important choice. Crucial decision. Multiple paths. Follow your intuition at t"
+"he crossroads."
+msgstr ""
+"Important choice. Crucial decision. Multiple paths. Follow your intuition at t"
+"he crossroads."
+
+#: tarot_cards.lua:861
+msgid "The Mice"
+msgstr "The Mice"
+
+#: tarot_cards.lua:863
+msgid "Loss, wear, worry, corrosion"
+msgstr "Loss, wear, worry, corrosion"
+
+#: tarot_cards.lua:864
+msgid ""
+"Gradual loss. Wear and tear. Corroding worries. Attention to details that go u"
+"nnoticed."
+msgstr ""
+"Gradual loss. Wear and tear. Corroding worries. Attention to details that go u"
+"nnoticed."
+
+#: tarot_cards.lua:868
+msgid "The Heart"
+msgstr "The Heart"
+
+#: tarot_cards.lua:870
+msgid "Love, passion, affection, romance"
+msgstr "Love, passion, affection, romance"
+
+#: tarot_cards.lua:871
+msgid "True love. Passion. Deep affection. Open your heart without fear of being happy."
+msgstr "True love. Passion. Deep affection. Open your heart without fear of being happy."
+
+#: tarot_cards.lua:875
+msgid "The Ring"
+msgstr "The Ring"
+
+#: tarot_cards.lua:877
+msgid "Commitment, alliance, cycle, union"
+msgstr "Commitment, alliance, cycle, union"
+
+#: tarot_cards.lua:878
+msgid ""
+"Commitment. Alliance. Completed cycle. Honor your pacts and promises with inte"
+"grity."
+msgstr ""
+"Commitment. Alliance. Completed cycle. Honor your pacts and promises with inte"
+"grity."
+
+#: tarot_cards.lua:882
+msgid "The Book"
+msgstr "The Book"
+
+#: tarot_cards.lua:884
+msgid "Secret, knowledge, study, mystery"
+msgstr "Secret, knowledge, study, mystery"
+
+#: tarot_cards.lua:885
+msgid ""
+"Secret. Hidden knowledge. Mystery to be revealed. The answer lies between the "
+"lines."
+msgstr ""
+"Secret. Hidden knowledge. Mystery to be revealed. The answer lies between the "
+"lines."
+
+#: tarot_cards.lua:889
+msgid "The Letter"
+msgstr "The Letter"
+
+#: tarot_cards.lua:891
+msgid "Message, document, communication, news"
+msgstr "Message, document, communication, news"
+
+#: tarot_cards.lua:892
+msgid ""
+"Written message. Important document. Formal communication. News arriving on pa"
+"per."
+msgstr ""
+"Written message. Important document. Formal communication. News arriving on pa"
+"per."
+
+#: tarot_cards.lua:896
+msgid "The Gentleman"
+msgstr "The Gentleman"
+
+#: tarot_cards.lua:898
+msgid "Man, partner, action, yang"
+msgstr "Man, partner, action, yang"
+
+#: tarot_cards.lua:899
+msgid "Influential male figure. Partner or seeker. Yang force. Action and initiative."
+msgstr "Influential male figure. Partner or seeker. Yang force. Action and initiative."
+
+#: tarot_cards.lua:903
+msgid "The Lady"
+msgstr "The Lady"
+
+#: tarot_cards.lua:905
+msgid "Woman, partner, intuition, yin"
+msgstr "Woman, partner, intuition, yin"
+
+#: tarot_cards.lua:906
+msgid ""
+"Influential female figure. Partner or seeker. Yin force. Intuition and nurturi"
+"ng."
+msgstr ""
+"Influential female figure. Partner or seeker. Yin force. Intuition and nurturi"
+"ng."
+
+#: tarot_cards.lua:910
+msgid "The Lilies"
+msgstr "The Lilies"
+
+#: tarot_cards.lua:912
+msgid "Peace, harmony, wisdom, virtue"
+msgstr "Peace, harmony, wisdom, virtue"
+
+#: tarot_cards.lua:913
+msgid "Peace. Harmony. Mature wisdom. The virtue of patience blooms in your garden."
+msgstr "Peace. Harmony. Mature wisdom. The virtue of patience blooms in your garden."
+
+#: tarot_cards.lua:919
+msgid "Success, victory, energy, happiness"
+msgstr "Success, victory, energy, happiness"
+
+#: tarot_cards.lua:920
+msgid ""
+"Success. Victory. Full vital energy. Everything is illuminated, enjoy this mom"
+"ent."
+msgstr ""
+"Success. Victory. Full vital energy. Everything is illuminated, enjoy this mom"
+"ent."
+
+#: tarot_cards.lua:926
+msgid "Recognition, fame, creativity, intuition"
+msgstr "Recognition, fame, creativity, intuition"
+
+#: tarot_cards.lua:927
+msgid ""
+"Intuition. Recognition. Fame and creativity. Your talents are recognized under"
+" moonlight."
+msgstr ""
+"Intuition. Recognition. Fame and creativity. Your talents are recognized under"
+" moonlight."
+
+#: tarot_cards.lua:931
+msgid "The Key"
+msgstr "The Key"
+
+#: tarot_cards.lua:933
+msgid "Solution, opening, opportunity, answer"
+msgstr "Solution, opening, opportunity, answer"
+
+#: tarot_cards.lua:934
+msgid ""
+"Solution. Opening doors. Decisive opportunity. The answer you seek is within r"
+"each."
+msgstr ""
+"Solution. Opening doors. Decisive opportunity. The answer you seek is within r"
+"each."
+
+#: tarot_cards.lua:938
+msgid "The Fish"
+msgstr "The Fish"
+
+#: tarot_cards.lua:940
+msgid "Abundance, finances, flow, prosperity"
+msgstr "Abundance, finances, flow, prosperity"
+
+#: tarot_cards.lua:941
+msgid ""
+"Financial abundance. Prosperity. Flow of resources. Wealth flows like clean wa"
+"ter."
+msgstr ""
+"Financial abundance. Prosperity. Flow of resources. Wealth flows like clean wa"
+"ter."
+
+#: tarot_cards.lua:945
+msgid "The Anchor"
+msgstr "The Anchor"
+
+#: tarot_cards.lua:947
+msgid "Stability, security, work, steadfastness"
+msgstr "Stability, security, work, steadfastness"
+
+#: tarot_cards.lua:948
+msgid "Stability. Lasting security. Steady work. Build solid foundations for tomorrow."
+msgstr "Stability. Lasting security. Steady work. Build solid foundations for tomorrow."
+
+#: tarot_cards.lua:952
+msgid "The Cross"
+msgstr "The Cross"
+
+#: tarot_cards.lua:954
+msgid "Destiny, trial, burden, transcendence"
+msgstr "Destiny, trial, burden, transcendence"
+
+#: tarot_cards.lua:955
+msgid ""
+"Destiny. Necessary trial. Sacred burden. Suffering brings wisdom and transcend"
+"ence."
+msgstr ""
+"Destiny. Necessary trial. Sacred burden. Suffering brings wisdom and transcend"
+"ence."
