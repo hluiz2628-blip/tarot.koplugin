@@ -1,6 +1,7 @@
 -- ── dependências ──────────────────────────────────────────────────────────────
 local Blitbuffer       = require("ffi/blitbuffer")
 local Button           = require("ui/widget/button")
+local ButtonDialog     = require("ui/widget/buttondialog")
 local CenterContainer  = require("ui/widget/container/centercontainer")
 local CheckButton      = require("ui/widget/checkbutton")
 local ConfirmBox       = require("ui/widget/confirmbox")
@@ -18,6 +19,8 @@ local InputDialog      = require("ui/widget/inputdialog")
 local Menu             = require("ui/widget/menu")
 local OverlapGroup     = require("ui/widget/overlapgroup")
 local ReaderUI         = require("apps/reader/readerui")
+local ScrollTextWidget = require("ui/widget/scrolltextwidget")
+local ScrollableContainer = require("ui/widget/container/scrollablecontainer")
 local Screen           = require("device").screen
 local Size             = require("ui/size")
 local TextBoxWidget    = require("ui/widget/textboxwidget")
@@ -37,7 +40,8 @@ local util             = require("util")
 -- O inglês é o idioma-fonte. Todas as traduções ficam fora deste arquivo,
 -- em l10n/<idioma>/koreader.po. O carregamento pelo caminho absoluto evita
 -- diferenças no package.path entre o aplicativo de computador e o Kindle.
-local function loadPluginGetText()
+
+local function getCurrentPluginDirectory()
     local source = debug.getinfo(1, "S").source or ""
     if source:sub(1, 1) == "@" then
         source = source:sub(2)
@@ -45,268 +49,57 @@ local function loadPluginGetText()
 
     local plugin_dir = source:match("^(.*[/\\])[^/\\]+$")
     assert(plugin_dir, "tarot.koplugin: não foi possível localizar a pasta do plugin")
+    return plugin_dir
+end
 
-    local loader_path = plugin_dir .. "tarot_gettext.lua"
-    local loader, load_error = loadfile(loader_path)
-    assert(loader, "tarot.koplugin: falha ao abrir " .. loader_path .. ": " .. tostring(load_error))
+local PLUGIN_DIR = getCurrentPluginDirectory()
 
+-- Carrega arquivos próprios pelo caminho absoluto do plugin.
+-- Isso evita falhas no Kindle, onde package.path pode não incluir
+-- arquivos do plugin instalados manualmente.
+local function loadPluginLuaFile(relative_path)
+    local path = PLUGIN_DIR .. relative_path
+    local loader, load_error = loadfile(path)
+    assert(loader, "tarot.koplugin: falha ao abrir " .. path .. ": " .. tostring(load_error))
     return loader()
 end
 
-local T = loadPluginGetText()
+local T = loadPluginLuaFile("tarot_gettext.lua")
 
-local UI_TEXT = {
-    title = "Tarot Reading",
-    tarot_home = "Tarot Home",
-    spreads = "Spreads",
-    open_spreads = "Open spreads",
-    draw_cards = "Draw cards",
-    draw_one_more = "Draw one more card",
-    remove_last_card = "Remove last card",
-    drawn_card_count = "Cards drawn: %d of %d",
-    physical_deck = "Physical deck",
-    physical_deck_hint = "Select up to 16 cards",
-    physical_deck_empty = "Select at least one card.",
-    physical_deck_limit = "You can select up to 16 cards.",
-    physical_deck_reverse_hint = "Press and hold a card in the list to reverse it.",
-    card_dialog_navigation_hint = "Click the card beside it to access it.",
-    do_not_show_again = "Do not show this message again",
-    done = "Done",
-    daily_card = "Daily Card",
-    daily_card_deck_mode = "Daily Card deck",
-    daily_card_tarot_only = "Show Tarot only",
-    daily_card_lenormand_only = "Show Lenormand only",
-    daily_card_either = "Show either one",
-    reveal_daily_card = "Reveal daily card",
-    daily_card_revealed = "Daily card revealed",
-    open_daily_card = "View meaning",
-    draw_card = "Draw a card",
-    draw_three = "3 card spread",
-    draw_daily = "Card of the day",
-    settings = "Settings",
-    configuration = "Config",
-    close = "Close",
-    prev = "< Prev",
-    next = "Next >",
-    language = "Language",
-    portuguese = "Português",
-    english = "English",
-    upright = "Upright",
-    reversed = "Reversed",
-    loading = "Shuffling the cards...",
-    card_count = "Card %d of %d",
-    allow_reversed = "Reversed cards",
-    allow_reversed_desc = "Allow cards to appear reversed",
-    major_only = "Major Arcana only",
-    major_only_desc = "Draw only from the 22 Major Arcana",
-    reading_display = "Reading display",
-    disable_spread_meanings = "Disable Card Book meanings in spreads",
-    disable_view_in_book = "Disable \"view in book\" button",
-    auto_save_spreads = "Save readings automatically",
-    disable_unsaved_close_warning = "Disable close-without-saving question",
-    unsaved_close_warning = "This reading has not been saved. Close without saving?",
-    continue_reading = "Continue reading",
-    close_without_saving = "Close without saving",
-    saved_automatically = "Saved automatically",
-    automatic_reading_title = "Automatic %s reading — %s",
-    show_reversed_label = "Show \"Reversed\" label",
-    meaning_text_size = "Meaning text size",
-    text_size_compact = "Compact",
-    text_size_standard = "Standard",
-    text_size_large = "Large",
-    meaning_mode = "Meanings in readings",
-    meaning_mode_full = "Full",
-    meaning_mode_summary = "Summarized",
-    meaning_mode_hidden = "Hidden",
-    settings_page = "Page %d of %d",
-    journal_system = "Journal and system",
-    screen_refresh = "Screen refresh",
-    refresh_mode = "Update mode",
-    refresh_mode_standard = "Balanced",
-    refresh_mode_smooth = "Fewer flashes",
-    refresh_mode_clean = "Cleaner screen",
-    refresh_mode_hint = "Fewer flashes reduces black/white blinking, but may leave more ghosting on e-ink screens.",
-    major_arcana = "Major Arcana",
-    minor_arcana = "Minor Arcana",
-    deck_type = "Deck Type",
-    deck_type_desc = "Choose between Tarot and Lenormand",
-    tarot_deck = "Tarot",
-    lenormand_deck = "Lenormand",
-    lenormand_reading = "Lenormand Reading",
-    lenormand_title = "Lenormand Deck",
-    save = "Save",
-    save_title = "Record title",
-    save_title_hint = "Ex: Daily reflection",
-    save_note = "Reflection about the reading",
-    save_note_hint = "Ex: What I felt seeing these cards...",
-    save_success = "Spread saved successfully!",
-    save_error = "Error saving the spread.",
-    journal = "Journal",
-    saved_readings = "Reflection Journal",
-    no_saved = "No journal entries found.",
-    journal_empty_desc = "Save a spread, record the daily card, or create a free reflection.",
-    open_reading = "Open record",
-    delete_reading = "Move to trash",
-    delete_confirm = "Move this record to the trash?",
-    delete_success = "Record moved to the trash.",
-    delete_error = "Error moving the record.",
-    journal_records = "%d records",
-    new_reflection = "New reflection",
-    search = "Search",
-    filter = "Filter",
-    more = "More",
-    page_count = "%d of %d",
-    no_journal_results = "No journal entries match the current search or filters.",
-    clear_filters = "Clear search and filters",
-    clear_search = "Clear search",
-    journal_search_title = "Search journal",
-    journal_search_hint = "Title, reflection, card, or outcome",
-    journal_filter_title = "Journal filters",
-    apply = "Apply",
-    all = "All",
-    deck_filter = "Deck: %s",
-    entry_types = "Entry types",
-    spread_entries = "Spreads",
-    daily_entries = "Daily cards",
-    free_entries = "Free reflections",
-    legacy_entries = "Old records",
-    favorites_only = "Favorites only",
-    sort_order = "Order: %s",
-    newest_first = "Newest first",
-    oldest_first = "Oldest first",
-    title_order = "Title",
-    last_edited = "Last edited",
-    select_entry_type = "Select at least one entry type.",
-    go_to_month = "Go to month",
-    month_input_title = "Month",
-    month_input_hint = "YYYY-MM, for example 2026-07",
-    invalid_month = "Use the YYYY-MM format.",
-    clear_month = "Clear month filter",
-    journal_summary = "Journal summary",
-    trash = "Trash",
-    trash_title = "Journal Trash",
-    trash_empty = "The journal trash is empty.",
-    restore_entry = "Restore",
-    restore_success = "Record restored.",
-    delete_permanently = "Delete permanently",
-    delete_permanent_confirm = "Permanently delete this record?",
-    delete_permanent_success = "Record permanently deleted.",
-    export_journal = "Export journal",
-    export_success = "Journal exported to:\n%s",
-    export_error = "Error exporting the journal.",
-    create_backup = "Create backup",
-    backup_success = "Backup created at:\n%s",
-    backup_error = "Error creating the backup.",
-    restore_backup = "Restore backup",
-    no_backups = "No journal backups found.",
-    backup_restored = "Backup restored. Existing records were preserved.",
-    reflection_title = "Reflection title",
-    reflection_title_hint = "What is this reflection about?",
-    reflection_text = "Reflection",
-    reflection_text_hint = "Write your reflection...",
-    save_reflection = "Save reflection",
-    edit = "Edit",
-    edit_title = "Edit title",
-    edit_reflection = "Edit reflection",
-    add_outcome = "Add outcome",
-    edit_outcome = "Edit outcome",
-    outcome_text = "Outcome",
-    outcome_text_hint = "What happened after this reflection?",
-    favorite = "Favorite",
-    unfavorite = "Remove favorite",
-    view_cards = "View cards and meanings",
-    back_to_journal = "Back to journal",
-    add_to_journal = "Add to journal",
-    my_reflection = "MY REFLECTION",
-    outcome_label = "OUTCOME",
-    cards_label = "CARDS",
-    created_on = "Created on",
-    updated_on = "Updated on",
-    type_label = "Type",
-    spread_entry = "Spread",
-    daily_entry = "Daily card",
-    free_entry = "Free reflection",
-    legacy_entry = "Old record",
-    one_card_entry = "1 card",
-    three_card_entry = "3 cards",
-    card_total_entry = "%d cards",
-    untitled_reflection = "Untitled reflection",
-    no_reflection_text = "No reflection text.",
-    journal_save_error = "Error saving the journal record.",
-    journal_save_success = "Journal record saved.",
-    legacy_read_only = "Old records are read-only, but they can be searched, opened, exported, or moved to the trash.",
-    summary_total = "Total records: %d",
-    summary_tarot = "Tarot: %d",
-    summary_lenormand = "Lenormand: %d",
-    summary_this_month = "This month: %d",
-    summary_favorites = "Favorites: %d",
-    summary_most_frequent = "Most frequent card: %s (%d)",
-    summary_no_card = "Most frequent card: —",
-    saved_on = "Saved on",
-    title_label = "Title",
-    note_label = "Note",
-    card_position = "Position",
-    restore = "Restore",
-    restore_desc = "Erase all plugin data",
-    restore_confirm_first = "ATTENTION: EVERYTHING will be DELETED. Continue?",
-    restore_confirm_second = "This action cannot be undone. Continue?",
-    reset_success = "All plugin data was deleted. The app is now reset.",
-    reset_error = "The reset could not be completed. Some data could not be deleted.",
-    yes = "Yes",
-    no = "No",
-    confirm = "Confirm",
-    cancel = "Cancel",
-    reset_section = "Reset",
-    card_book = "Card Book",
-    major_arcana_list = "Major Arcana (22)",
-    minor_arcana_list = "Minor Arcana (56)",
-    lenormand_list = "Lenormand Deck (36)",
-    all_cards = "View All Cards",
-    search_card = "Search Card",
-    search_tarot = "Search Tarot",
-    search_lenormand = "Search Lenormand",
-    cards_count = "%d cards",
-    search_hint = "Type a card name or keyword",
-    search_empty = "Enter a search term.",
-    meaning_label = "Meaning",
-    reversed_meaning_label = "Reversed Meaning",
-    number_label = "Number",
-    arcana_label = "Arcana",
-    filter_title = "Filter Cards",
-    no_results = "No cards found.",
-    back = "Back",
-    suit_wands = "Wands",
-    suit_cups = "Cups",
-    suit_swords = "Swords",
-    suit_pentacles = "Pentacles",
-    hidden_card = "Hidden Card",
-    move_card = "Move",
-    delete_card = "Delete",
-    undo_action = "Undo",
-    turn_face_down = "Hide",
-    tap_another_location_to_move = "Tap another location to move",
-    click_on_card = "click on the card",
-    exit = "Exit",
-    reveal = "Reveal",
-    reveal_next = "Reveal next card",
-    click_card_to_reveal = "Tap an empty space to add a card. Tap a hidden card to reveal it, and tap a revealed card to open its details. Press and hold a card to show Move, Delete, and Undo. Revealed cards also show Hide.",
-    click_next_card_to_reveal = "Click the next card to reveal it. Press and hold to reveal all remaining cards.",
-    reveal_all_confirm = "Reveal all remaining cards?",
-    revealed_count = "Revealed %d of %d",
-    about = "About",
-    about_title = "About Tarot and Lenormand",
-    about_text = [[Tarot is a deck of 78 cards, divided into Major Arcana (22) and Minor Arcana (56), used for reflection and self-knowledge. The Lenormand deck has 36 cards with direct symbolism for practical guidance.
+-- Módulos próprios mantidos no mesmo diretório do main.lua para facilitar
+-- manutenção manual no Kindle. Apenas os catálogos de idioma ficam em l10n/.
+local UI_TEXT = loadPluginLuaFile("tarot_strings.lua")
+local CARD_DATA = loadPluginLuaFile("tarot_cards.lua")
 
-Credits for the free card images:
-• Lenormand Cards by Yve Lepkowski (https://stolen-thyme.com/)
-• Tarot Cards by Luciella Elisabeth Scarlett (https://luciellaes.itch.io/)]],
-    view_in_book = "view in book",
-    keywords_label = "Keywords",
-    planet_sign_label = "Planet / Sign",
-    timing_label = "Timing",
-    saved_card_line = "Card %d — %s (%s)",
-    plugin_description = "Draw Tarot and Lenormand cards for reflection, save readings, and browse the complete card book.",
-}
+local MAJOR_ARCANA  = CARD_DATA.MAJOR_ARCANA
+local MINOR_ARCANA  = CARD_DATA.MINOR_ARCANA
+local FULL_DECK     = CARD_DATA.FULL_DECK
+local LENORMAND_DECK = CARD_DATA.LENORMAND_DECK
+
+
+local function getPluginLanguageCode()
+    local language = tostring(T.requested_lang or T.current_lang or "C")
+    language = language:match("^([^:]+)") or language
+    language = language:gsub("%..*$", ""):gsub("@.*$", ""):gsub("-", "_"):lower()
+    return language
+end
+
+local function isPluginLanguageEnglish()
+    local language = getPluginLanguageCode()
+    return language == "" or language == "c" or language:match("^en") ~= nil
+end
+
+local function getTranslatedFallback(key)
+    if key == "refresh_mode_standard" then
+        local language = getPluginLanguageCode()
+        if language:match("^pt") then
+            return "Equilibrado"
+        elseif language:match("^zh") then
+            return "均衡"
+        end
+    end
+    return nil
+end
 
 -- Cria métricas reutilizáveis para telas fullscreen.
 -- O objetivo é evitar janelas centrais em dispositivos diferentes: Kindle,
@@ -623,7 +416,7 @@ local function getAdaptivePhysicalDeckItemsPerPage(layout, header_widget, style)
     local iw = layout.content_w
 
     local sample_row = Button:new{
-        text = "☑ 16  78. Eight of Pentacles — Reversed",
+        text = "☑ 16  78. " .. T("Eight of Pentacles") .. " — " .. T(UI_TEXT.reversed),
         width = iw,
         bordersize = 0,
         radius = 0,
@@ -652,9 +445,9 @@ local function getAdaptivePhysicalDeckItemsPerPage(layout, header_widget, style)
         VerticalSpan:new{ width = Size.span.vertical_small },
         HorizontalGroup:new{
             align = "center",
-            makeTransparentTextButton{ text = "Back", width = math.floor(iw * 0.38) },
+            makeTransparentTextButton{ text = T(UI_TEXT.back), width = math.floor(iw * 0.38) },
             HorizontalSpan:new{ width = math.floor(iw * 0.08) },
-            makeTransparentTextButton{ text = "Done", width = math.floor(iw * 0.38) },
+            makeTransparentTextButton{ text = T(UI_TEXT.done), width = math.floor(iw * 0.38) },
         },
     })
 
@@ -729,7 +522,17 @@ function FullscreenMenuDialog:init()
             if row_count <= 1 then
                 local spec = row[1]
                 if spec then
-                    if spec.label then
+                    if spec.widget then
+                        -- Permite inserir conteúdo informativo real dentro de
+                        -- menus fullscreen, como avisos com caixa de seleção.
+                        -- Quando spec.widget é função, ela recebe o diálogo do
+                        -- menu como parent, útil para CheckButton.
+                        local widget = spec.widget
+                        if type(widget) == "function" then
+                            widget = widget(self, iw, is_footer)
+                        end
+                        if widget then table.insert(target, widget) end
+                    elseif spec.label then
                         table.insert(target, TextWidget:new{
                             text = spec.text or "",
                             face = Font:getFace("smalltfont"),
@@ -791,960 +594,9 @@ function FullscreenMenuDialog:init()
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
--- ║                 SEÇÃO 2: CARTAS - ARCANOS MAIORES (22)                      ║
--- ╚══════════════════════════════════════════════════════════════════════════════╝
-local MAJOR_ARCANA = {
-    {
-        id = 0, roman = "0",
-        name = "The Fool",
-        keywords = "New beginning, spontaneity, faith, risk",
-        planet = "Uranus",
-        timing = "Immediate, unpredictable",
-        meaning = "New beginnings. Spontaneity. Take a leap of faith. Venture without fear, the universe supports you.",
-        reversed_meaning = "Recklessness. Lack of direction. Think before acting. Blind risk may bring consequences."
-    },
-    {
-        id = 1, roman = "I",
-        name = "The Magician",
-        keywords = "Power, skill, manifestation, focus",
-        planet = "Mercury",
-        timing = "Fast, now is the time",
-        meaning = "Personal power. Skill. You have everything you need. Manifest your desires with confidence.",
-        reversed_meaning = "Manipulation. Wasted talent. Deceit. Beware of illusions of power."
-    },
-    {
-        id = 2, roman = "II",
-        name = "The High Priestess",
-        keywords = "Intuition, mystery, subconscious, wisdom",
-        planet = "Moon",
-        timing = "Lunar cycles, 28 days",
-        meaning = "Intuition. Mystery. Trust your inner voice. Hidden knowledge reveals itself in silence.",
-        reversed_meaning = "Secrets revealed. Intuitive disconnection. Silence broken. Listen to your inner voice again."
-    },
-    {
-        id = 3, roman = "III",
-        name = "The Empress",
-        keywords = "Abundance, fertility, nature, nurturing",
-        planet = "Venus",
-        timing = "9 months, spring",
-        meaning = "Abundance. Fertility. Nurture yourself. Nature flourishes around you.",
-        reversed_meaning = "Neglect. Creative block. Dependence. Return to tending your inner garden."
-    },
-    {
-        id = 4, roman = "IV",
-        name = "The Emperor",
-        keywords = "Authority, structure, leadership, stability",
-        planet = "Aries",
-        timing = "1 year, soon",
-        meaning = "Authority. Structure. Take control. Firm leadership brings stability.",
-        reversed_meaning = "Tyranny. Rigidity. Lack of discipline. Excess control suffocates."
-    },
-    {
-        id = 5, roman = "V",
-        name = "The Hierophant",
-        keywords = "Tradition, wisdom, guidance, teaching",
-        planet = "Taurus",
-        timing = "5 weeks, slow but steady",
-        meaning = "Tradition. Wisdom. Seek guidance. Masters appear when the student is ready.",
-        reversed_meaning = "Rebellion. Dogma. Necessary questioning. Breaking with traditions can be liberating."
-    },
-    {
-        id = 6, roman = "VI",
-        name = "The Lovers",
-        keywords = "Love, choice, harmony, partnership",
-        planet = "Gemini",
-        timing = "Imminent decision",
-        meaning = "Love. Choice. Harmony in relationships. The heart knows the way.",
-        reversed_meaning = "Conflict. Imbalance. Difficult decision. Avoid impulsive choices in love."
-    },
-    {
-        id = 7, roman = "VII",
-        name = "The Chariot",
-        keywords = "Victory, determination, control, progress",
-        planet = "Cancer",
-        timing = "7 weeks",
-        meaning = "Victory. Determination. Move forward with confidence. Triumph awaits the perseverant.",
-        reversed_meaning = "Lack of direction. Defeat. Loss of control. Reevaluate your route before proceeding."
-    },
-    {
-        id = 8, roman = "VIII",
-        name = "Strength",
-        keywords = "Courage, inner strength, compassion, mastery",
-        planet = "Leo",
-        timing = "8 weeks",
-        meaning = "Courage. Inner strength. Master your impulses with kindness, not violence.",
-        reversed_meaning = "Weakness. Insecurity. Lack of self-control. True strength comes from vulnerability."
-    },
-    {
-        id = 9, roman = "IX",
-        name = "The Hermit",
-        keywords = "Introspection, solitude, wisdom, inner search",
-        planet = "Virgo",
-        timing = "9 months, slow",
-        meaning = "Introspection. Inner wisdom. Seek silence. The light you seek is within you.",
-        reversed_meaning = "Isolation. Loneliness. Refusing to see the truth. Prolonged retreat becomes escape."
-    },
-    {
-        id = 10, roman = "X",
-        name = "Wheel of Fortune",
-        keywords = "Change, destiny, cycles, luck",
-        planet = "Jupiter",
-        timing = "In motion, cyclical",
-        meaning = "Change. Destiny. Luck is turning in your favor. Everything passes, cycles renew.",
-        reversed_meaning = "Bad luck. Resistance to change. Negative cycle. Accept that nothing is permanent."
-    },
-    {
-        id = 11, roman = "XI",
-        name = "Justice",
-        keywords = "Balance, truth, law, cause and effect",
-        planet = "Libra",
-        timing = "Under review, fair",
-        meaning = "Balance. Truth. Justice will prevail. Reap what you have sown with serenity.",
-        reversed_meaning = "Injustice. Dishonesty. Consequences coming. The scales weigh against you now."
-    },
-    {
-        id = 12, roman = "XII",
-        name = "The Hanged Man",
-        keywords = "Sacrifice, suspension, new perspective, surrender",
-        planet = "Neptune",
-        timing = "Indeterminate, pause",
-        meaning = "Sacrifice. New perspective. Let go, trust. Sometimes stopping is advancing.",
-        reversed_meaning = "Stagnation. Procrastination. Resist change. The pause has become paralysis."
-    },
-    {
-        id = 13, roman = "XIII",
-        name = "Death",
-        keywords = "Transformation, ending, rebirth, transition",
-        planet = "Scorpio",
-        timing = "Autumn, shortly",
-        meaning = "Transformation. End of a cycle. Rebirth near. The old dies so the new can be born.",
-        reversed_meaning = "Resistance to change. Stagnation. Fear of endings. Let go of what no longer serves."
-    },
-    {
-        id = 14, roman = "XIV",
-        name = "Temperance",
-        keywords = "Patience, balance, moderation, harmony",
-        planet = "Sagittarius",
-        timing = "Patience, gradual",
-        meaning = "Patience. Moderation. Find balance. Water finds its level.",
-        reversed_meaning = "Excess. Impatience. Disharmony. Return to center, breathe deeply."
-    },
-    {
-        id = 15, roman = "XV",
-        name = "The Devil",
-        keywords = "Temptation, attachment, shadow, materialism",
-        planet = "Capricorn",
-        timing = "15 days",
-        meaning = "Temptation. Negative patterns. Free yourself from chains. You have the power to break free.",
-        reversed_meaning = "Liberation. Breaking addictions. Recovery. Light enters where darkness once was."
-    },
-    {
-        id = 16, roman = "XVI",
-        name = "The Tower",
-        keywords = "Revelation, upheaval, chaos, reconstruction",
-        planet = "Mars",
-        timing = "Sudden, unexpected",
-        meaning = "Sudden revelation. Rupture. Necessary reconstruction. What is false crumbles.",
-        reversed_meaning = "Avoiding disaster. Fear of change. Denial. The fall is inevitable, accept it."
-    },
-    {
-        id = 17, roman = "XVII",
-        name = "The Star",
-        keywords = "Hope, faith, inspiration, renewal",
-        planet = "Aquarius",
-        timing = "17 days",
-        meaning = "Hope. Faith. Follow your intuition. Light guides you in darkness. Trust the universe.",
-        reversed_meaning = "Hopelessness. Lack of faith. Spiritual disconnection. The light is there, you just don't see it."
-    },
-    {
-        id = 18, roman = "XVIII",
-        name = "The Moon",
-        keywords = "Illusion, intuition, fear, subconscious",
-        planet = "Pisces",
-        timing = "28 days, nocturnal",
-        meaning = "Illusion. Intuition. Not everything is as it seems. Walk carefully in the twilight.",
-        reversed_meaning = "Confusion cleared. Fear overcome. Truth revealed. The fog is lifting."
-    },
-    {
-        id = 19, roman = "XIX",
-        name = "The Sun",
-        keywords = "Joy, success, vitality, clarity",
-        planet = "Sun",
-        timing = "19 days, diurnal",
-        meaning = "Joy. Success. Vitality. Everything is illuminated. Happiness overflows.",
-        reversed_meaning = "Temporary sadness. Delay. Lack of enthusiasm. The sun always shines again."
-    },
-    {
-        id = 20, roman = "XX",
-        name = "Judgement",
-        keywords = "Renewal, awakening, forgiveness, calling",
-        planet = "Pluto",
-        timing = "Renewal, awakening",
-        meaning = "Renewal. Inner calling. Time to awaken. The past has been forgiven.",
-        reversed_meaning = "Self-criticism. Regret. Denial of the calling. Free yourself from guilt."
-    },
-    {
-        id = 21, roman = "XXI",
-        name = "The World",
-        keywords = "Completion, fulfillment, integration, success",
-        planet = "Saturn",
-        timing = "21 days/months, full cycle",
-        meaning = "Completion. Fulfillment. Cycle successfully concluded. The universe celebrates with you.",
-        reversed_meaning = "Incompleteness. Delay. Lack of closure. There is still one step to take."
-    },
-}
-
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
--- ║                 SEÇÃO 3: CARTAS - ARCANOS MENORES (56)                      ║
+-- ║             SEÇÕES 2–4: CARTAS MODULARIZADAS EM tarot_cards.lua    ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
-local suits = {
-    { name = "Wands", symbol = "♣" },
-    { name = "Cups", symbol = "♥" },
-    { name = "Swords", symbol = "♠" },
-    { name = "Pentacles", symbol = "♦" },
-}
-
-local ranks = {
-    { name = "Ace" },
-    { name = "Two" },
-    { name = "Three" },
-    { name = "Four" },
-    { name = "Five" },
-    { name = "Six" },
-    { name = "Seven" },
-    { name = "Eight" },
-    { name = "Nine" },
-    { name = "Ten" },
-    { name = "Page" },
-    { name = "Knight" },
-    { name = "Queen" },
-    { name = "King" },
-}
-
-local MINOR_ARCANA = {
-    -- ═══════════════════════  NAIPE DE PAUS (Wands) ═══════════════════════
-    {
-        id = 22, suit = suits[1], rank = ranks[1],
-        name = "Ace of Wands",
-        keywords = "Inspiration, creativity, new beginning, energy",
-        timing = "Fast (days)",
-        meaning = "Creative inspiration. A new beginning full of energy. Seize the initial impulse to start projects.",
-        reversed_meaning = "False start. Procrastination. Lack of motivation. Rekindle your passion before moving on."
-    },
-    {
-        id = 23, suit = suits[1], rank = ranks[2],
-        name = "Two of Wands",
-        keywords = "Planning, vision, decision, expansion",
-        timing = "Weeks",
-        meaning = "Planning. Looking ahead. You have the world in your hands, but you must choose the path.",
-        reversed_meaning = "Fear of the unknown. Lack of planning. Letting go of the reins. Define your goals."
-    },
-    {
-        id = 24, suit = suits[1], rank = ranks[3],
-        name = "Three of Wands",
-        keywords = "Expansion, progress, anticipation, trade",
-        timing = "Soon",
-        meaning = "Expansion. Progress. Your plans are sailing. Await the return of the seeds you planted.",
-        reversed_meaning = "Unexpected obstacles. Delay. Frustration with results. Reassess your strategy."
-    },
-    {
-        id = 25, suit = suits[1], rank = ranks[4],
-        name = "Four of Wands",
-        keywords = "Celebration, home, harmony, stability",
-        timing = "4 weeks",
-        meaning = "Celebration. Harmony at home. Shared achievements. A well-deserved rest after effort.",
-        reversed_meaning = "Lack of unity. Domestic instability. Postponed celebration. Recover simple joy."
-    },
-    {
-        id = 26, suit = suits[1], rank = ranks[5],
-        name = "Five of Wands",
-        keywords = "Competition, conflict, debate, growth",
-        timing = "5 weeks",
-        meaning = "Healthy competition. Creative conflict. Different viewpoints enrich the search.",
-        reversed_meaning = "Internal quarrels. Avoiding confrontation. Energy drain. Seek cooperation instead of dispute."
-    },
-    {
-        id = 27, suit = suits[1], rank = ranks[6],
-        name = "Six of Wands",
-        keywords = "Victory, recognition, triumph, confidence",
-        timing = "6 weeks",
-        meaning = "Victory. Public recognition. High self-esteem. Reap the laurels with humility.",
-        reversed_meaning = "Inflated ego. Short-lived recognition. Envy. True victory is internal."
-    },
-    {
-        id = 28, suit = suits[1], rank = ranks[7],
-        name = "Seven of Wands",
-        keywords = "Defense, perseverance, courage, resistance",
-        timing = "7 weeks",
-        meaning = "Defense of positions. Perseverance. Stand firm despite opposition. You have the upper hand.",
-        reversed_meaning = "Exhaustion. Feeling cornered. Giving up. Reinforce your boundaries wisely."
-    },
-    {
-        id = 29, suit = suits[1], rank = ranks[8],
-        name = "Eight of Wands",
-        keywords = "Speed, action, progress, communication",
-        timing = "Very fast",
-        meaning = "Swift movement. News arriving. Accelerated action. Take advantage of the tailwind.",
-        reversed_meaning = "Delay. Lack of direction. Scattered energy. Wait for the right moment to act."
-    },
-    {
-        id = 30, suit = suits[1], rank = ranks[9],
-        name = "Nine of Wands",
-        keywords = "Resilience, persistence, last stand, fatigue",
-        timing = "9 weeks",
-        meaning = "Resilience. Last battle. You are almost there, even if tired. Keep your guard up.",
-        reversed_meaning = "Stubbornness. Refusing help. Exhaustion. Let down your defense and allow yourself to rest."
-    },
-    {
-        id = 31, suit = suits[1], rank = ranks[10],
-        name = "Ten of Wands",
-        keywords = "Overload, responsibility, burden, effort",
-        timing = "10 weeks, end of cycle",
-        meaning = "Overload. Heavy responsibilities. The burden is great, but the end is near. Delegate tasks.",
-        reversed_meaning = "Inability to delegate. Burnout. Refusing help. Let go of what doesn't belong to you."
-    },
-    {
-        id = 32, suit = suits[1], rank = ranks[11],
-        name = "Page of Wands",
-        keywords = "Enthusiasm, exploration, discovery, new idea",
-        timing = "Youthful, fast",
-        meaning = "Enthusiasm. New ideas. A young messenger brings inspiration. Explore your curiosity without fear.",
-        reversed_meaning = "Lack of plans. Impulsiveness. Ideas without execution. Set goals before acting."
-    },
-    {
-        id = 33, suit = suits[1], rank = ranks[12],
-        name = "Knight of Wands",
-        keywords = "Action, passion, impulse, adventure",
-        timing = "Immediate, intense",
-        meaning = "Passionate action. Courage to take risks. Go ahead boldly, but don't forget the destination.",
-        reversed_meaning = "Impatience. Rushing without direction. Conflict. Slow down and choose the right path."
-    },
-    {
-        id = 34, suit = suits[1], rank = ranks[13],
-        name = "Queen of Wands",
-        keywords = "Charisma, leadership, warmth, confidence",
-        timing = "Summer, mature",
-        meaning = "Warmth, determination and magnetism. Inspiring leadership. Use your charisma to attract what you want.",
-        reversed_meaning = "Jealousy. Insecurity. Explosive temper. The inner flame can burn those nearby."
-    },
-    {
-        id = 35, suit = suits[1], rank = ranks[14],
-        name = "King of Wands",
-        keywords = "Vision, entrepreneurship, authority, honor",
-        timing = "Long term, leadership",
-        meaning = "Entrepreneurial vision. Strong leadership. Take command with integrity and inspire others.",
-        reversed_meaning = "Authoritarianism. Empty promises. Lack of vision. Leading by fear builds nothing lasting."
-    },
-
-    -- ═══════════════════════  NAIPE DE COPAS (Cups) ═══════════════════════
-    {
-        id = 36, suit = suits[2], rank = ranks[1],
-        name = "Ace of Cups",
-        keywords = "Love, emotion, intuition, new feeling",
-        timing = "Lunar, emotional",
-        meaning = "Overflowing love. New emotional cycle. Open yourself to deep feelings and true connections.",
-        reversed_meaning = "Repressed love. Emotional block. Inner emptiness. Allow yourself to feel in order to heal."
-    },
-    {
-        id = 37, suit = suits[2], rank = ranks[2],
-        name = "Two of Cups",
-        keywords = "Union, partnership, commitment, attraction",
-        timing = "Meeting soon",
-        meaning = "Union. Loving partnership. Soul meeting. Mutual respect and commitment strengthen the bond.",
-        reversed_meaning = "Disconnection. Quarrels. Emotional imbalance. A sincere conversation can restore harmony."
-    },
-    {
-        id = 38, suit = suits[2], rank = ranks[3],
-        name = "Three of Cups",
-        keywords = "Friendship, celebration, community, joy",
-        timing = "Social event",
-        meaning = "Friendship. Celebration. Shared joy. Gather with those you love and celebrate life.",
-        reversed_meaning = "Gossip. Isolation. Excess partying. Beware of superficial friendships and hidden resentments."
-    },
-    {
-        id = 39, suit = suits[2], rank = ranks[4],
-        name = "Four of Cups",
-        keywords = "Contemplation, apathy, boredom, introspection",
-        timing = "Stagnant",
-        meaning = "Contemplation. Apathy. New invitation ignored. Look beyond boredom to notice opportunities.",
-        reversed_meaning = "Awakening. Acceptance. New perspectives. Leave your comfort zone and seize the chance offered."
-    },
-    {
-        id = 40, suit = suits[2], rank = ranks[5],
-        name = "Five of Cups",
-        keywords = "Grief, loss, regret, focus on negative",
-        timing = "Recent past",
-        meaning = "Grief. Loss. Focus on what is gone. Two cups still stand – look at what remains.",
-        reversed_meaning = "Overcoming. Recovery. Learning from pain. Accept the past and move forward."
-    },
-    {
-        id = 41, suit = suits[2], rank = ranks[6],
-        name = "Six of Cups",
-        keywords = "Nostalgia, memory, childhood, gift",
-        timing = "Revisiting the past",
-        meaning = "Nostalgia. Fond memories. Reunion with the past. Cherish your roots with affection.",
-        reversed_meaning = "Clinging to the past. Immaturity. Inability to move on. Live the present."
-    },
-    {
-        id = 42, suit = suits[2], rank = ranks[7],
-        name = "Seven of Cups",
-        keywords = "Illusion, choices, fantasy, dreams",
-        timing = "Confusing, indefinite",
-        meaning = "Illusions. Fantasies. Multiple options. Discernment is needed to choose the true cup.",
-        reversed_meaning = "Clarity. Firm decision. End of illusions. Focus on what really matters."
-    },
-    {
-        id = 43, suit = suits[2], rank = ranks[8],
-        name = "Eight of Cups",
-        keywords = "Withdrawal, search, disillusion, departure",
-        timing = "Emotional transition",
-        meaning = "Withdrawal. Spiritual search. Leaving behind what doesn't fulfill. Follow your intuition.",
-        reversed_meaning = "Fear of change. Staying out of convenience. Silent dissatisfaction. Courage to leave."
-    },
-    {
-        id = 44, suit = suits[2], rank = ranks[9],
-        name = "Nine of Cups",
-        keywords = "Wish fulfilled, satisfaction, contentment, luxury",
-        timing = "Soon fulfillment",
-        meaning = "Wish fulfilled. Satisfaction. The “dream cup” is full. Enjoy emotional abundance.",
-        reversed_meaning = "Dissatisfaction. Unmet desires. Empty materialism. True happiness lies in simplicity."
-    },
-    {
-        id = 45, suit = suits[2], rank = ranks[10],
-        name = "Ten of Cups",
-        keywords = "Happiness, family, harmony, blessing",
-        timing = "Happy ending",
-        meaning = "Full happiness. Family love. Lasting harmony. The heart overflows with shared joy.",
-        reversed_meaning = "Family conflicts. Broken bonds. Idealization of happiness. Work on emotional communication."
-    },
-    {
-        id = 46, suit = suits[2], rank = ranks[11],
-        name = "Page of Cups",
-        keywords = "Sensitivity, creativity, message, intuition",
-        timing = "Emotional surprise",
-        meaning = "Creative sensitivity. Message of love. Open up to intuition and heart surprises.",
-        reversed_meaning = "Emotional immaturity. Love disappointment. Childish jealousy. Put fantasy aside and face reality."
-    },
-    {
-        id = 47, suit = suits[2], rank = ranks[12],
-        name = "Knight of Cups",
-        keywords = "Romanticism, charm, proposal, idealism",
-        timing = "Invitation soon",
-        meaning = "Romanticism. Charming proposal. Search for the beautiful and ideal. Follow your heart with elegance.",
-        reversed_meaning = "Love illusion. Empty promises. Excess of idealization. Keep your feet on the ground."
-    },
-    {
-        id = 48, suit = suits[2], rank = ranks[13],
-        name = "Queen of Cups",
-        keywords = "Empathy, intuition, care, compassion",
-        timing = "Lunar cycle, mature",
-        meaning = "Deep intuition. Empathy. Emotional caregiver. Trust your ability to love and heal.",
-        reversed_meaning = "Emotional dependence. Exacerbated sensitivity. Emotional manipulation. Set healthy boundaries."
-    },
-    {
-        id = 49, suit = suits[2], rank = ranks[14],
-        name = "King of Cups",
-        keywords = "Emotional mastery, diplomacy, calm, wisdom",
-        timing = "Emotional stability",
-        meaning = "Emotional mastery. Mature compassion. Leadership with heart. Calm turbulent waters with wisdom.",
-        reversed_meaning = "Coldness. Emotional repression. Manipulation. The repressed heart becomes a silent tyrant."
-    },
-
-    -- ═══════════════════════  NAIPE DE ESPADAS (Swords) ═══════════════════════
-    {
-        id = 50, suit = suits[3], rank = ranks[1],
-        name = "Ace of Swords",
-        keywords = "Clarity, truth, justice, sharp mind",
-        timing = "Quick decision",
-        meaning = "Mental clarity. Truth revealed. Sharp idea. Use the power of the word with justice.",
-        reversed_meaning = "Confusion. Lies. Verbal abuse. Distorted truth hurts. Seek clean communication."
-    },
-    {
-        id = 51, suit = suits[3], rank = ranks[2],
-        name = "Two of Swords",
-        keywords = "Impasse, difficult choice, denial, balance",
-        timing = "Stalled",
-        meaning = "Difficult decision. Impasse. Precarious balance. Remove the blindfold and face the situation.",
-        reversed_meaning = "Postponed decision. Escape from truth. Internal conflict. Free yourself from paralysis and choose."
-    },
-    {
-        id = 52, suit = suits[3], rank = ranks[3],
-        name = "Three of Swords",
-        keywords = "Pain, betrayal, sadness, heartbreak",
-        timing = "Recent pain",
-        meaning = "Emotional pain. Betrayal. Broken heart. Suffering is real, but it's the first step toward healing.",
-        reversed_meaning = "Slow recovery. Holding grudges. Difficulty forgiving. Free yourself from the poison of resentment."
-    },
-    {
-        id = 53, suit = suits[3], rank = ranks[4],
-        name = "Four of Swords",
-        keywords = "Rest, recovery, contemplation, pause",
-        timing = "Necessary pause",
-        meaning = "Mental rest. Retreat. Recovery. Step away from the noise and recharge your mind.",
-        reversed_meaning = "Insomnia. Mental exhaustion. Inability to relax. Excessive thinking makes you sick."
-    },
-    {
-        id = 54, suit = suits[3], rank = ranks[5],
-        name = "Five of Swords",
-        keywords = "Conflict, defeat, hostility, hollow victory",
-        timing = "Current conflict",
-        meaning = "Conflict. Empty victory. Humiliation. Sometimes winning the battle means losing the war.",
-        reversed_meaning = "Reconciliation. Remorse. Putting pride aside. Seek peace instead of being right."
-    },
-    {
-        id = 55, suit = suits[3], rank = ranks[6],
-        name = "Six of Swords",
-        keywords = "Transition, healing, journey, moving on",
-        timing = "Gradual transition",
-        meaning = "Smooth transition. Healing journey. Leaving turbulent waters behind. Toward calm waters.",
-        reversed_meaning = "Resistance to change. Emotional baggage. Staying stuck in the problem. Release what you cannot carry."
-    },
-    {
-        id = 56, suit = suits[3], rank = ranks[7],
-        name = "Seven of Swords",
-        keywords = "Strategy, deception, escape, cunning",
-        timing = "Fast, stealthy",
-        meaning = "Strategy. Subtle escape. Not everything needs to be faced head-on. Act with intelligence.",
-        reversed_meaning = "Deception. Theft. Lack of ethics. Lies have short legs. Act with honesty."
-    },
-    {
-        id = 57, suit = suits[3], rank = ranks[8],
-        name = "Eight of Swords",
-        keywords = "Imprisonment, self-sabotage, limitation, fear",
-        timing = "Mental prison, temporary",
-        meaning = "Feeling trapped. Self-sabotage. Imaginary limitations. The prison is mental – the key is within you.",
-        reversed_meaning = "Liberation. New perspective. Overcoming limiting beliefs. Break the bonds and see the light."
-    },
-    {
-        id = 58, suit = suits[3], rank = ranks[9],
-        name = "Nine of Swords",
-        keywords = "Anxiety, nightmare, worry, anguish",
-        timing = "Nocturnal, insomnia",
-        meaning = "Anxiety. Nightmares. Nocturnal worries. The mind is its own tormentor. Seek to calm your thoughts.",
-        reversed_meaning = "Recovery from anguish. Learning from pain. The worst is over. Take a deep breath."
-    },
-    {
-        id = 59, suit = suits[3], rank = ranks[10],
-        name = "Ten of Swords",
-        keywords = "Painful ending, betrayal, crisis, rebirth",
-        timing = "Rock bottom, new dawn",
-        meaning = "Painful ending. Final betrayal. Rock bottom. From this abyss one can only rise – dawn arrives.",
-        reversed_meaning = "Recovery. Resistance. Avoiding the final collapse. Suffering can be transformed into strength."
-    },
-    {
-        id = 60, suit = suits[3], rank = ranks[11],
-        name = "Page of Swords",
-        keywords = "Curiosity, communication, ideas, vigilance",
-        timing = "News shortly",
-        meaning = "Intellectual curiosity. New ideas. Agile communication. Speak your truth, but with tact.",
-        reversed_meaning = "Gossip. Superficial thinking. Baseless criticism. Use your mind to build, not destroy."
-    },
-    {
-        id = 61, suit = suits[3], rank = ranks[12],
-        name = "Knight of Swords",
-        keywords = "Swift action, impulse, determination, conflict",
-        timing = "Now, urgent",
-        meaning = "Impetuous action. Intellectual determination. Advance with momentum, but don't trample others.",
-        reversed_meaning = "Blind impulsiveness. Unnecessary confrontation. Aggressiveness. Think before brandishing the sword."
-    },
-    {
-        id = 62, suit = suits[3], rank = ranks[13],
-        name = "Queen of Swords",
-        keywords = "Rationality, independence, discernment, truth",
-        timing = "Mature decision",
-        meaning = "Clear rationality. Independence. Weighted justice. Make decisions with the mind, but without losing empathy.",
-        reversed_meaning = "Emotional coldness. Bitterness. Harsh judgment. Reason without heart becomes cruelty."
-    },
-    {
-        id = 63, suit = suits[3], rank = ranks[14],
-        name = "King of Swords",
-        keywords = "Intellectual authority, ethics, clarity, justice",
-        timing = "Legal authority, long term",
-        meaning = "Intellectual authority. Ethics. Just and lucid leadership. Truth is your sharpest sword.",
-        reversed_meaning = "Mental tyranny. Manipulation of truth. Abuse of power. Intellect without morals oppresses."
-    },
-
-    -- ═══════════════════════  NAIPE DE OUROS (Pentacles) ═══════════════════════
-    {
-        id = 64, suit = suits[4], rank = ranks[1],
-        name = "Ace of Pentacles",
-        keywords = "Opportunity, prosperity, new resource, security",
-        timing = "Material beginning",
-        meaning = "New material opportunity. Prosperity at hand. Get to work to reap solid fruits.",
-        reversed_meaning = "Missed opportunity. Greed. Financial delay. The foundation needs to be set before growing."
-    },
-    {
-        id = 65, suit = suits[4], rank = ranks[2],
-        name = "Two of Pentacles",
-        keywords = "Balance, adaptation, juggling, priorities",
-        timing = "Fluctuating",
-        meaning = "Financial balance. Juggling. Adapt to changes without losing control of your accounts.",
-        reversed_meaning = "Disorganization. Debt overload. Inability to prioritize. Reorganize your finances."
-    },
-    {
-        id = 66, suit = suits[4], rank = ranks[3],
-        name = "Three of Pentacles",
-        keywords = "Teamwork, collaboration, mastery, skill",
-        timing = "Project in progress",
-        meaning = "Teamwork. Mastery. Productive collaboration. Together, the result is greater than the sum.",
-        reversed_meaning = "Lack of collaboration. Carelessness. Poor workmanship. Restore respect for excellence."
-    },
-    {
-        id = 67, suit = suits[4], rank = ranks[4],
-        name = "Four of Pentacles",
-        keywords = "Security, attachment, saving, control",
-        timing = "Stable, stagnant",
-        meaning = "Material security. Attachment to possessions. Healthy saving, but without closing off to the new.",
-        reversed_meaning = "Miserliness. Fear of loss. Blocking abundance. Let go a little control to receive."
-    },
-    {
-        id = 68, suit = suits[4], rank = ranks[5],
-        name = "Five of Pentacles",
-        keywords = "Hardship, scarcity, exclusion, aid",
-        timing = "Difficult period",
-        meaning = "Material hardship. Feeling of exclusion. Help is closer than you think. Ask for assistance.",
-        reversed_meaning = "Financial recovery. End of scarcity. Re-inclusion. Light shines at the end of the tunnel."
-    },
-    {
-        id = 69, suit = suits[4], rank = ranks[6],
-        name = "Six of Pentacles",
-        keywords = "Generosity, sharing, charity, balance",
-        timing = "Give and receive",
-        meaning = "Generosity. Sharing. Giving and receiving in balance. Prosperity circulates when the hand opens.",
-        reversed_meaning = "Self-interested charity. Debts. Imbalance in giving. Beware of those who only ask and never give back."
-    },
-    {
-        id = 70, suit = suits[4], rank = ranks[7],
-        name = "Seven of Pentacles",
-        keywords = "Patience, harvest, evaluation, investment",
-        timing = "Long term",
-        meaning = "Patience. Harvest in progress. Evaluate if your efforts are yielding the expected fruits.",
-        reversed_meaning = "Impatience. Fruitless work. Frustration with results. Recalculate the route and continue."
-    },
-    {
-        id = 71, suit = suits[4], rank = ranks[8],
-        name = "Eight of Pentacles",
-        keywords = "Dedication, learning, improvement, work",
-        timing = "Daily, constant",
-        meaning = "Dedicated learning. Craftsmanship. Constant improvement. Mastery requires daily practice.",
-        reversed_meaning = "Perfectionism. Monotonous work. Lack of motivation. Rekindle the pleasure in doing."
-    },
-    {
-        id = 72, suit = suits[4], rank = ranks[9],
-        name = "Nine of Pentacles",
-        keywords = "Self-sufficiency, luxury, achievement, independence",
-        timing = "Personal harvest",
-        meaning = "Self-sufficiency. Personal luxury. Material achievement with independence. Enjoy what you have built.",
-        reversed_meaning = "Financial dependence. Empty ostentation. Material insecurity. Real value lies in who you are."
-    },
-    {
-        id = 73, suit = suits[4], rank = ranks[10],
-        name = "Ten of Pentacles",
-        keywords = "Wealth, legacy, family, stability",
-        timing = "Permanent, long term",
-        meaning = "Lasting wealth. Family legacy. Material and emotional security. Strong roots nourish the future.",
-        reversed_meaning = "Loss of inheritance. Family conflicts over money. Financial instability. Rebuild the foundations."
-    },
-    {
-        id = 74, suit = suits[4], rank = ranks[11],
-        name = "Page of Pentacles",
-        keywords = "Study, ambition, focus, new project",
-        timing = "Slow start",
-        meaning = "Applied study. New skill. Constructive ambition. Start small, dream big.",
-        reversed_meaning = "Lack of focus. Slow progress. Premature abandonment. Persist in studies and work."
-    },
-    {
-        id = 75, suit = suits[4], rank = ranks[12],
-        name = "Knight of Pentacles",
-        keywords = "Hard work, routine, patience, reliability",
-        timing = "Step by step",
-        meaning = "Hard work. Reliable routine. Patience to build. Steady steps take you far.",
-        reversed_meaning = "Stagnation. Boredom. Lack of ambition. Move before inertia becomes permanent."
-    },
-    {
-        id = 76, suit = suits[4], rank = ranks[13],
-        name = "Queen of Pentacles",
-        keywords = "Prosperity, practical care, home, security",
-        timing = "Domestic cycle",
-        meaning = "Homely prosperity. Practical care. Generous mother. Your material security sustains those you love.",
-        reversed_meaning = "Neglect of home. Selfish materialism. Work-home imbalance. Take care of your nest first."
-    },
-    {
-        id = 77, suit = suits[4], rank = ranks[14],
-        name = "King of Pentacles",
-        keywords = "Success, abundance, stability, business",
-        timing = "Financial maturity",
-        meaning = "Financial success. Prosperous leadership. Abundance with stability. Your business acumen is a gift.",
-        reversed_meaning = "Miserliness. Extreme materialism. Corruption. Wealth without purpose is empty and corrupts."
-    },
-}
-
--- Montagem final do baralho completo
-local FULL_DECK = {}
-for _, card in ipairs(MAJOR_ARCANA) do
-    table.insert(FULL_DECK, card)
-end
-for _, card in ipairs(MINOR_ARCANA) do
-    table.insert(FULL_DECK, card)
-end
-
--- ╔══════════════════════════════════════════════════════════════════════════════╗
--- ║                 SEÇÃO 4: CARTAS - LENORMAND (36)                             ║
--- ╚══════════════════════════════════════════════════════════════════════════════╝
-local LENORMAND_DECK = {
-    {
-        id = 1, number = 1,
-        name = "The Rider",
-        symbol = "♞",
-        keywords = "News, message, visitor, swiftness",
-        meaning = "News arriving. A visitor or important message. Swift movement and good tidings on the horizon."
-    },
-    {
-        id = 2, number = 2,
-        name = "The Clover",
-        symbol = "♣",
-        keywords = "Luck, opportunity, lightness, moment",
-        meaning = "Passing luck. Fleeting opportunity. Simple joy. Enjoy the present moment with lightness."
-    },
-    {
-        id = 3, number = 3,
-        name = "The Ship",
-        symbol = "⛵",
-        keywords = "Travel, change, adventure, movement",
-        meaning = "Travel. Change of scenery. New horizons. Venture forth, the world awaits you."
-    },
-    {
-        id = 4, number = 4,
-        name = "The House",
-        symbol = "⌂",
-        keywords = "Home, family, security, roots",
-        meaning = "Home. Family security. Firm roots. Care for your sacred space with love and dedication."
-    },
-    {
-        id = 5, number = 5,
-        name = "The Tree",
-        symbol = "♧",
-        keywords = "Health, growth, nature, vitality",
-        meaning = "Health. Personal growth. Connection with nature. Your roots are deep, your fruits will come."
-    },
-    {
-        id = 6, number = 6,
-        name = "The Clouds",
-        symbol = "☁",
-        keywords = "Confusion, uncertainty, doubt, fog",
-        meaning = "Confusion. Temporary uncertainty. Lingering doubts. Clarity will come after the storm passes."
-    },
-    {
-        id = 7, number = 7,
-        name = "The Snake",
-        symbol = "≈",
-        keywords = "Seduction, betrayal, manipulation, cunning",
-        meaning = "Seduction. Betrayal or manipulation. Beware of false promises. Wisdom lies in seeing beyond appearances."
-    },
-    {
-        id = 8, number = 8,
-        name = "The Coffin",
-        symbol = "⚰",
-        keywords = "Ending, transformation, loss, rebirth",
-        meaning = "End of a cycle. Deep transformation. Let the past rest. The new is born from what has gone."
-    },
-    {
-        id = 9, number = 9,
-        name = "The Bouquet",
-        symbol = "⚘",
-        keywords = "Gift, compliment, beauty, gratitude",
-        meaning = "Gift. Compliment. Recognition. The beauty of life reveals itself in small kindnesses."
-    },
-    {
-        id = 10, number = 10,
-        name = "The Scythe",
-        symbol = "⚔",
-        keywords = "Cut, decision, rupture, warning",
-        meaning = "Necessary cut. Drastic decision. Imminent rupture. Sometimes you must cut to heal."
-    },
-    {
-        id = 11, number = 11,
-        name = "The Whip",
-        symbol = "≈≈",
-        keywords = "Conflict, debate, passion, repetition",
-        meaning = "Conflict. Heated discussions. Intense passion. Channel energy into productive actions."
-    },
-    {
-        id = 12, number = 12,
-        name = "The Birds",
-        symbol = "♫",
-        keywords = "Talk, gossip, communication, nervousness",
-        meaning = "Important conversations. Gossip or news. Communication in focus. Choose your words wisely."
-    },
-    {
-        id = 13, number = 13,
-        name = "The Child",
-        symbol = "☺",
-        keywords = "Innocence, new start, purity, playfulness",
-        meaning = "Innocence. New beginning. Purity of intention. Embrace your inner child with tenderness."
-    },
-    {
-        id = 14, number = 14,
-        name = "The Fox",
-        symbol = "≈≈",
-        keywords = "Cunning, cleverness, deceit, adaptation",
-        meaning = "Cunning. Cleverness. Beware of deception. Use your intelligence for good, not manipulation."
-    },
-    {
-        id = 15, number = 15,
-        name = "The Bear",
-        symbol = "♚",
-        keywords = "Strength, protection, power, authority",
-        meaning = "Protective strength. Financial power. Natural authority. Leadership with generosity brings prosperity."
-    },
-    {
-        id = 16, number = 16,
-        name = "The Star",
-        symbol = "★",
-        keywords = "Hope, clarity, purpose, light",
-        meaning = "Hope. Clarity of purpose. Follow your inner light. The universe conspires in your favor."
-    },
-    {
-        id = 17, number = 17,
-        name = "The Stork",
-        symbol = "♆",
-        keywords = "Positive change, renewal, transition, blessing",
-        meaning = "Positive change. Renewal. Blessed transition. New energies arrive to transform your life."
-    },
-    {
-        id = 18, number = 18,
-        name = "The Dog",
-        symbol = "♉",
-        keywords = "Friendship, loyalty, companionship, trust",
-        meaning = "Loyal friendship. Fidelity. Sincere companionship. Value those who walk beside you."
-    },
-    {
-        id = 19, number = 19,
-        name = "The Tower",
-        symbol = "♜",
-        keywords = "Authority, structure, isolation, institution",
-        meaning = "Institutional authority. Protection. Solid structure. Build firm foundations for the future."
-    },
-    {
-        id = 20, number = 20,
-        name = "The Garden",
-        symbol = "❦",
-        keywords = "Social life, community, meeting, public",
-        meaning = "Social life. Community. Public encounters. Open yourself to new connections and environments."
-    },
-    {
-        id = 21, number = 21,
-        name = "The Mountain",
-        symbol = "▲",
-        keywords = "Obstacle, challenge, blockage, persistence",
-        meaning = "Obstacle. Challenge to overcome. Temporary blockage. The view from the top justifies the climb."
-    },
-    {
-        id = 22, number = 22,
-        name = "The Crossroads",
-        symbol = "⛗",
-        keywords = "Choice, decision, direction, alternative",
-        meaning = "Important choice. Crucial decision. Multiple paths. Follow your intuition at the crossroads."
-    },
-    {
-        id = 23, number = 23,
-        name = "The Mice",
-        symbol = "🐭",
-        keywords = "Loss, wear, worry, corrosion",
-        meaning = "Gradual loss. Wear and tear. Corroding worries. Attention to details that go unnoticed."
-    },
-    {
-        id = 24, number = 24,
-        name = "The Heart",
-        symbol = "♥",
-        keywords = "Love, passion, affection, romance",
-        meaning = "True love. Passion. Deep affection. Open your heart without fear of being happy."
-    },
-    {
-        id = 25, number = 25,
-        name = "The Ring",
-        symbol = "◎",
-        keywords = "Commitment, alliance, cycle, union",
-        meaning = "Commitment. Alliance. Completed cycle. Honor your pacts and promises with integrity."
-    },
-    {
-        id = 26, number = 26,
-        name = "The Book",
-        symbol = "▣",
-        keywords = "Secret, knowledge, study, mystery",
-        meaning = "Secret. Hidden knowledge. Mystery to be revealed. The answer lies between the lines."
-    },
-    {
-        id = 27, number = 27,
-        name = "The Letter",
-        symbol = "✉",
-        keywords = "Message, document, communication, news",
-        meaning = "Written message. Important document. Formal communication. News arriving on paper."
-    },
-    {
-        id = 28, number = 28,
-        name = "The Gentleman",
-        symbol = "♂",
-        keywords = "Man, partner, action, yang",
-        meaning = "Influential male figure. Partner or seeker. Yang force. Action and initiative."
-    },
-    {
-        id = 29, number = 29,
-        name = "The Lady",
-        symbol = "♀",
-        keywords = "Woman, partner, intuition, yin",
-        meaning = "Influential female figure. Partner or seeker. Yin force. Intuition and nurturing."
-    },
-    {
-        id = 30, number = 30,
-        name = "The Lilies",
-        symbol = "⚜",
-        keywords = "Peace, harmony, wisdom, virtue",
-        meaning = "Peace. Harmony. Mature wisdom. The virtue of patience blooms in your garden."
-    },
-    {
-        id = 31, number = 31,
-        name = "The Sun",
-        symbol = "☼",
-        keywords = "Success, victory, energy, happiness",
-        meaning = "Success. Victory. Full vital energy. Everything is illuminated, enjoy this moment."
-    },
-    {
-        id = 32, number = 32,
-        name = "The Moon",
-        symbol = "☽",
-        keywords = "Recognition, fame, creativity, intuition",
-        meaning = "Intuition. Recognition. Fame and creativity. Your talents are recognized under moonlight."
-    },
-    {
-        id = 33, number = 33,
-        name = "The Key",
-        symbol = "⚷",
-        keywords = "Solution, opening, opportunity, answer",
-        meaning = "Solution. Opening doors. Decisive opportunity. The answer you seek is within reach."
-    },
-    {
-        id = 34, number = 34,
-        name = "The Fish",
-        symbol = "♓",
-        keywords = "Abundance, finances, flow, prosperity",
-        meaning = "Financial abundance. Prosperity. Flow of resources. Wealth flows like clean water."
-    },
-    {
-        id = 35, number = 35,
-        name = "The Anchor",
-        symbol = "⚓",
-        keywords = "Stability, security, work, steadfastness",
-        meaning = "Stability. Lasting security. Steady work. Build solid foundations for tomorrow."
-    },
-    {
-        id = 36, number = 36,
-        name = "The Cross",
-        symbol = "✚",
-        keywords = "Destiny, trial, burden, transcendence",
-        meaning = "Destiny. Necessary trial. Sacred burden. Suffering brings wisdom and transcendence."
-    },
-}
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
 -- ║                  SEÇÃO 5: PLUGIN PRINCIPAL (TarotPlugin)                     ║
@@ -1785,6 +637,13 @@ end
 function TarotPlugin:init()
     seedRandomOnce()
 
+    -- Recarrega o catálogo ao abrir o plugin. Isso cobre o caso em que o
+    -- usuário troca o idioma do KOReader e reabre o plugin na mesma sessão.
+    if type(T.reload) == "function" then
+        T.reload()
+        self.fullname = T(UI_TEXT.title)
+    end
+
     self.ui.menu:registerToMainMenu(self)
     self.plugin_dir = self:getPluginDirectory()
     self.saves_dir = self.plugin_dir .. "/tiragens_salvas"
@@ -1792,6 +651,10 @@ function TarotPlugin:init()
     self.journal_trash_dir = self.journal_dir .. "/lixeira"
     self.journal_export_dir = self.journal_dir .. "/exportacoes"
     self.journal_backup_dir = self.journal_dir .. "/backups"
+    -- Significados pessoais adicionados a partir de grifos ficam em um único
+    -- arquivo simples na raiz do plugin. Assim evitamos criar mais pastas e
+    -- mantemos a instalação fácil de copiar no Kindle.
+    self.custom_meanings_path = self.plugin_dir .. "/significados_cartas.trcm"
     self.journal_state = {
         page = 1,
         query = "",
@@ -1821,6 +684,29 @@ function TarotPlugin:init()
         -- fica estável durante todo o dia e é independente das tiragens.
         self.daily_card_deck_mode = "either"
     end
+
+    self.hide_daily_card_name = G_reader_settings:readSetting("tarot_hide_daily_card_name")
+    if self.hide_daily_card_name == nil then
+        -- Em inglês, o nome pode aparecer diretamente na própria arte da carta.
+        -- Por isso, instalações novas em inglês ocultam o rótulo por padrão.
+        self.hide_daily_card_name = isPluginLanguageEnglish()
+    end
+
+    self.daily_card_always_revealed = G_reader_settings:readSetting("tarot_daily_card_always_revealed")
+    if self.daily_card_always_revealed == nil then
+        self.daily_card_always_revealed = false
+    end
+
+    self.spread_cards_always_revealed = G_reader_settings:readSetting("tarot_spread_cards_always_revealed")
+    if self.spread_cards_always_revealed == nil then
+        self.spread_cards_always_revealed = false
+    end
+
+    self.show_only_custom_meanings = G_reader_settings:readSetting("tarot_show_only_custom_meanings")
+    if self.show_only_custom_meanings == nil then
+        self.show_only_custom_meanings = false
+    end
+
     -- A antiga opção booleana de ocultar significados é migrada para um
     -- seletor com três estados: completo, resumido e oculto.
     local old_disable_meanings = G_reader_settings:readSetting("tarot_disable_spread_meanings")
@@ -1876,12 +762,22 @@ function TarotPlugin:init()
     -- próxima abertura do plugin.
     self.card_dialog_hint_shown_this_session = false
     self.physical_deck_hint_shown_this_session = false
-    self.hidden_card_reveal_hint_shown_this_session = false
     self.hidden_grid_hint_v2_shown_this_session = false
     self.next_card_reveal_hint_shown_this_session = false
     
     self:ensureSavesDir()
     self:ensureJournalDirs()
+
+    -- Integra o plugin ao menu de seleção/grifo do leitor quando esse módulo
+    -- estiver disponível. Em alguns ciclos de inicialização, o ReaderHighlight
+    -- ainda pode não estar pronto; nesse caso tentamos novamente no pós-init.
+    if not self:registerHighlightMeaningAction()
+        and self.ui
+        and type(self.ui.registerPostInitCallback) == "function" then
+        self.ui:registerPostInitCallback(function()
+            self:registerHighlightMeaningAction()
+        end)
+    end
 end
 
 function TarotPlugin:getTranslation(key)
@@ -1890,7 +786,64 @@ function TarotPlugin:getTranslation(key)
         logger.warn("tarot.koplugin: chave de tradução desconhecida:", tostring(key))
         return tostring(key)
     end
-    return T(msgid)
+    local translated = T(msgid)
+    if translated == msgid then
+        local fallback = getTranslatedFallback(key)
+        if fallback then
+            return fallback
+        end
+    end
+    return translated
+end
+
+-- Nomes predefinidos são salvos por identificador, e não pelo texto já
+-- traduzido. Assim, uma tiragem criada em português continua correta caso o
+-- idioma do KOReader seja alterado depois.
+local POSITION_NAME_PRESETS = {
+    { id = "past",      key = "position_past" },
+    { id = "present",   key = "position_present" },
+    { id = "future",    key = "position_future" },
+    { id = "situation", key = "position_situation" },
+    { id = "obstacle",  key = "position_obstacle" },
+    { id = "advice",    key = "position_advice" },
+    { id = "outcome",   key = "position_outcome" },
+}
+
+local POSITION_NAME_KEYS = {}
+for _, preset in ipairs(POSITION_NAME_PRESETS) do
+    POSITION_NAME_KEYS[preset.id] = preset.key
+end
+
+local function trimPositionName(text)
+    text = tostring(text or "")
+    return (text:gsub("^%s+", ""):gsub("%s+$", ""))
+end
+
+local function makeStoredPresetPositionName(id)
+    return "preset:" .. tostring(id or "")
+end
+
+local function makeStoredCustomPositionName(text)
+    return "custom:" .. trimPositionName(text)
+end
+
+local function getPositionNameDisplay(plugin, stored_name)
+    stored_name = trimPositionName(stored_name)
+    if stored_name == "" then return "" end
+
+    local preset_id = stored_name:match("^preset:(.+)$")
+    if preset_id and POSITION_NAME_KEYS[preset_id] then
+        return plugin:getTranslation(POSITION_NAME_KEYS[preset_id])
+    end
+
+    local custom_name = stored_name:match("^custom:(.*)$")
+    if custom_name ~= nil then
+        return trimPositionName(custom_name)
+    end
+
+    -- Compatibilidade com eventuais versões de teste que tenham salvo texto
+    -- simples antes da adoção dos prefixos preset:/custom:.
+    return stored_name
 end
 
 function TarotPlugin:refreshMenu()
@@ -1899,6 +852,7 @@ end
 
 function TarotPlugin:getPluginDirectory()
     if self.path then return self.path end
+    if PLUGIN_DIR then return PLUGIN_DIR end
     local source = debug.getinfo(1, "S").source
     if source and source:match("^@") then
         local dir = source:match("^@(.*/)main%.lua$") or source:match("^@(.*/)[^/]+$")
@@ -2047,6 +1001,43 @@ function TarotPlugin:setDailyCardDeckMode(mode)
     setTarotDirty(self.plugin or self)
 end
 
+function TarotPlugin:setHideDailyCardName(hide_name)
+    self.hide_daily_card_name = hide_name == true
+    G_reader_settings:saveSetting("tarot_hide_daily_card_name", self.hide_daily_card_name)
+    setTarotDirty(self.plugin or self)
+end
+
+function TarotPlugin:toggleHideDailyCardName()
+    self:setHideDailyCardName(not self.hide_daily_card_name)
+end
+
+function TarotPlugin:toggleDailyCardAlwaysRevealed()
+    self.daily_card_always_revealed = not self.daily_card_always_revealed
+    G_reader_settings:saveSetting(
+        "tarot_daily_card_always_revealed",
+        self.daily_card_always_revealed
+    )
+    setTarotDirty(self.plugin or self)
+end
+
+function TarotPlugin:toggleSpreadCardsAlwaysRevealed()
+    self.spread_cards_always_revealed = not self.spread_cards_always_revealed
+    G_reader_settings:saveSetting(
+        "tarot_spread_cards_always_revealed",
+        self.spread_cards_always_revealed
+    )
+    setTarotDirty(self.plugin or self)
+end
+
+function TarotPlugin:toggleShowOnlyCustomMeanings()
+    self.show_only_custom_meanings = not self.show_only_custom_meanings
+    G_reader_settings:saveSetting(
+        "tarot_show_only_custom_meanings",
+        self.show_only_custom_meanings
+    )
+    setTarotDirty(self.plugin or self)
+end
+
 -- Resolve o baralho da Carta Diária sem alterar o baralho escolhido para as
 -- tiragens. No modo "either", a escolha é sorteada uma única vez por data.
 function TarotPlugin:getDailyCardDeckChoice(today)
@@ -2133,10 +1124,30 @@ end
 
 -- Exibe uma orientação com caixa de seleção e um único botão "Confirmar".
 -- A preferência só é gravada quando o usuário marca explicitamente
--- "Não mostrar novamente" antes de confirmar. Sem essa marcação, o aviso
--- continuará aparecendo sempre que o mesmo passo for acessado novamente.
-function TarotPlugin:showDismissibleHint(setting_key, _session_field, message_key)
-    if G_reader_settings:readSetting(setting_key) == true then return end
+-- "Não mostrar novamente" antes de confirmar.
+--
+-- Quando session_field é informado, cada orientação aparece apenas uma vez
+-- por abertura do plugin. Quando session_field é nil, o aviso reaparece em
+-- novas entradas até que o usuário marque “Não mostrar novamente”.
+function TarotPlugin:showDismissibleHint(setting_key, session_field, message_key, after_close_callback)
+    local function runAfterClose()
+        if type(after_close_callback) == "function" then
+            UIManager:scheduleIn(0.1, after_close_callback)
+        end
+    end
+
+    if G_reader_settings:readSetting(setting_key) == true then
+        runAfterClose()
+        return
+    end
+    if session_field and self[session_field] == true then
+        runAfterClose()
+        return
+    end
+
+    if session_field then
+        self[session_field] = true
+    end
 
     local checkbox
     local hint = ConfirmBox:new{
@@ -2152,6 +1163,7 @@ function TarotPlugin:showDismissibleHint(setting_key, _session_field, message_ke
             if checkbox and checkbox.checked == true then
                 G_reader_settings:saveSetting(setting_key, true)
             end
+            runAfterClose()
         end,
     }
     checkbox = CheckButton:new{
@@ -2197,6 +1209,19 @@ function TarotPlugin:showNextCardRevealHint()
     )
 end
 
+function TarotPlugin:showCustomMeaningEditorHint(after_close_callback)
+    -- Este aviso é chamado quando o usuário entra no editor manual de
+    -- significados. Diferente dos avisos de uso da grade, ele NÃO deve ser
+    -- limitado a uma única vez por sessão: se o usuário não marcar
+    -- "Não mostrar novamente", precisa aparecer novamente na próxima entrada.
+    self:showDismissibleHint(
+        "tarot_custom_meaning_editor_hint_dismissed",
+        nil,
+        "custom_meaning_editor_hint",
+        after_close_callback
+    )
+end
+
 function TarotPlugin:restoreAll()
     -- Todas as chaves persistentes utilizadas pelo plugin, incluindo opções
     -- removidas em versões anteriores e avisos exibidos uma única vez.
@@ -2205,11 +1230,15 @@ function TarotPlugin:restoreAll()
         "tarot_major_only",
         "tarot_use_lenormand",
         "tarot_daily_deck_mode",
+        "tarot_hide_daily_card_name",
+        "tarot_daily_card_always_revealed",
         "tarot_daily_deck_choice_date",
         "tarot_daily_deck_choice_is_lenormand",
         "tarot_disable_spread_meanings",
         "tarot_spread_meaning_mode",
         "tarot_disable_view_in_book",
+        "tarot_spread_cards_always_revealed",
+        "tarot_show_only_custom_meanings",
         "tarot_auto_save_spreads",
         "tarot_disable_unsaved_close_warning",
         "tarot_show_reversed_label",
@@ -2222,6 +1251,7 @@ function TarotPlugin:restoreAll()
         "tarot_hidden_card_reveal_hint_dismissed",
         "tarot_hidden_grid_hint_v2_dismissed",
         "tarot_next_card_reveal_hint_dismissed",
+        "tarot_custom_meaning_editor_hint_dismissed",
         "tarot_daily_date",
         "tarot_daily_card_id",
         "tarot_daily_card_is_reversed",
@@ -2239,14 +1269,25 @@ function TarotPlugin:restoreAll()
         G_reader_settings:delSetting(key)
     end
 
-    -- Apaga por completo os dois diretórios gerados pelo plugin. Isso inclui
-    -- registros antigos e novos, lixeira, exportações e todos os backups.
+    -- Apaga por completo os diretórios e arquivos gerados pelo plugin. Isso
+    -- inclui registros antigos e novos, lixeira, exportações, backups e os
+    -- Significados Pessoais criados por grifos ou pelo editor manual.
     local ok = true
     if self.saves_dir and not self:clearDirectoryRecursive(self.saves_dir, false) then
         ok = false
     end
     if self.journal_dir and not self:clearDirectoryRecursive(self.journal_dir, false) then
         ok = false
+    end
+    local custom_attr = self.custom_meanings_path and lfs.attributes(self.custom_meanings_path)
+    if custom_attr then
+        if custom_attr.mode == "directory" then
+            if not self:clearDirectoryRecursive(self.custom_meanings_path, false) then
+                ok = false
+            end
+        elseif not os.remove(self.custom_meanings_path) then
+            ok = false
+        end
     end
 
     -- Recria somente as pastas vazias necessárias ao funcionamento normal.
@@ -2296,6 +1337,9 @@ function TarotPlugin:restoreAll()
     if not directoryIsEmpty(self.saves_dir) or not journal_root_clean then
         ok = false
     end
+    if self.custom_meanings_path and lfs.attributes(self.custom_meanings_path) then
+        ok = false
+    end
 
     -- Zera também todo estado mantido em memória na sessão atual.
     self.journal_state = {
@@ -2307,6 +1351,10 @@ function TarotPlugin:restoreAll()
     self.major_only = false
     self.use_lenormand = false
     self.daily_card_deck_mode = "either"
+    self.hide_daily_card_name = isPluginLanguageEnglish()
+    self.daily_card_always_revealed = false
+    self.spread_cards_always_revealed = false
+    self.show_only_custom_meanings = false
     self.spread_meaning_mode = "full"
     self.disable_spread_meanings = false
     self.disable_view_in_book = false
@@ -2317,9 +1365,9 @@ function TarotPlugin:restoreAll()
     self.hidden_card = true
     self.card_dialog_hint_shown_this_session = false
     self.physical_deck_hint_shown_this_session = false
-    self.hidden_card_reveal_hint_shown_this_session = false
     self.hidden_grid_hint_v2_shown_this_session = false
     self.next_card_reveal_hint_shown_this_session = false
+    self.screen_refresh_mode = "smooth"
 
     -- Descarta referências a telas e estados antigos para impedir que uma tela
     -- já aberta reapresente dados apagados depois da restauração.
@@ -2500,103 +1548,791 @@ end
 -- Os registros novos usam arquivos .trj de texto simples e não executável.
 -- O formato é deliberadamente pequeno e tolerante a caracteres especiais.
 -- Tiragens antigas em .txt continuam intactas e aparecem como registros antigos.
-local JOURNAL_MAGIC = "TAROT_JOURNAL_V1"
+local JOURNAL = loadPluginLuaFile("tarot_journal_utils.lua")
+local JOURNAL_MAGIC = JOURNAL.magic
+local journalTrim = JOURNAL.trim
+local journalEscape = JOURNAL.escape
+local journalUnescape = JOURNAL.unescape
+local journalReadAll = JOURNAL.readAll
+local journalWriteAll = JOURNAL.writeAll
+local journalCopyFile = JOURNAL.copyFile
+local journalUniquePath = JOURNAL.uniquePath
+local journalShallowCopy = JOURNAL.shallowCopy
+local journalSafeLower = JOURNAL.safeLower
+local journalPreview = JOURNAL.preview
 
-local function journalTrim(text)
-    text = tostring(text or "")
-    return (text:gsub("^%s+", ""):gsub("%s+$", ""))
+-- ╔══════════════════════════════════════════════════════════════════════════════╗
+-- ║      SEÇÃO 7.1: SIGNIFICADOS PESSOAIS A PARTIR DE GRIFOS                    ║
+-- ╚══════════════════════════════════════════════════════════════════════════════╝
+-- O arquivo fica fora de l10n porque não é tradução: é conteúdo pessoal do
+-- usuário. Cada linha é independente, escapada e tolerante a caracteres UTF-8.
+local CUSTOM_MEANINGS_MAGIC = "TAROT_CUSTOM_MEANINGS_V1"
+
+local function getDeckStorageId(deck_is_lenormand)
+    return deck_is_lenormand and "lenormand" or "tarot"
 end
 
-local function journalEscape(text)
-    text = tostring(text or "")
-    text = text:gsub("%%", "%%25")
-    text = text:gsub("\r", "%%0D")
-    text = text:gsub("\n", "%%0A")
-    text = text:gsub("\t", "%%09")
-    return text
+local function normalizeMeaningOrientation(orientation, deck_is_lenormand)
+    if deck_is_lenormand then return "upright" end
+    return orientation == "reversed" and "reversed" or "upright"
 end
 
-local function journalUnescape(text)
-    text = tostring(text or "")
-    text = text:gsub("%%09", "\t")
-    text = text:gsub("%%0A", "\n")
-    text = text:gsub("%%0D", "\r")
-    text = text:gsub("%%25", "%%")
-    return text
+local function titleCaseAsciiWord(word)
+    return word:gsub("^%l", string.upper)
 end
 
-local function journalReadAll(path)
-    local file = io.open(path, "rb")
-    if not file then return nil end
-    local content = file:read("*a")
-    file:close()
-    return content
+local function normalizeCustomMeaningSourceTitle(title)
+    title = journalTrim(tostring(title or ""):gsub("%z", ""))
+    if title == "" then return "" end
+
+    -- Quando o KOReader entrega caminho/arquivo em vez de metadado de título,
+    -- exibimos uma fonte humana: "nome_exemplo.epub" vira "Nome Exemplo".
+    title = title:match("([^/\\]+)$") or title
+    title = title:gsub("%.[A-Za-z0-9]+$", "")
+    title = title:gsub("[_%-]+", " ")
+    title = title:gsub("%s+", " ")
+    title = journalTrim(title)
+
+    -- Se o texto veio todo em minúsculas/slug, aplicamos título simples. Não
+    -- tentamos normalização Unicode pesada para não depender de libs extras.
+    if not title:find("%u") then
+        title = title:gsub("(%S+)", titleCaseAsciiWord)
+    end
+    return title
 end
 
-local function journalWriteAll(path, content)
-    local file, err = io.open(path, "wb")
-    if not file then return false, err end
-    file:write(content or "")
-    file:close()
+local function normalizeCustomMeaningAuthorName(author)
+    if type(author) == "table" then
+        local parts = {}
+        for _, value in ipairs(author) do
+            value = journalTrim(tostring(value or ""))
+            if value ~= "" then
+                table.insert(parts, value)
+            end
+        end
+        author = table.concat(parts, ", ")
+    end
+
+    author = journalTrim(tostring(author or ""):gsub("%z", ""))
+    author = author:gsub("%s+", " ")
+    return journalTrim(author)
+end
+
+local function formatCustomMeaningSourceTitle(title, author)
+    title = normalizeCustomMeaningSourceTitle(title)
+    author = normalizeCustomMeaningAuthorName(author)
+
+    if title == "" then
+        return ""
+    end
+    if author == "" or journalSafeLower(author) == journalSafeLower(title) then
+        return title
+    end
+
+    -- Exibição pedida: "Nome do Livro, Autor".
+    return title .. ", " .. author
+end
+
+function TarotPlugin:getCurrentBookTitleForMeaning()
+    local title = nil
+    local author = nil
+    local document = self.ui and self.ui.document
+    if document and type(document) == "table" then
+        if document.info and type(document.info) == "table" then
+            title = document.info.title or document.info.doc_title or document.info.name
+            author = document.info.author or document.info.authors
+                or document.info.creator or document.info.creators
+        end
+        title = title or document.title or document.file or document.filename
+        author = author or document.author or document.authors
+    end
+
+    if (not title or title == "") and self.ui then
+        title = self.ui.document_title or self.ui.filename
+    end
+
+    title = formatCustomMeaningSourceTitle(title, author)
+    if title == "" then
+        return self:getTranslation("unknown_book")
+    end
+    return title
+end
+
+function TarotPlugin:cleanHighlightMeaningText(selected_text)
+    if type(selected_text) == "table" then
+        selected_text = selected_text.text or selected_text[1] or ""
+    end
+    selected_text = tostring(selected_text or "")
+    if util and type(util.cleanupSelectedText) == "function" then
+        selected_text = util.cleanupSelectedText(selected_text)
+    end
+    selected_text = journalTrim(selected_text:gsub("%z", ""))
+    return selected_text
+end
+
+function TarotPlugin:readCustomMeanings()
+    local path = self.custom_meanings_path or (self:getPluginDirectory() .. "/significados_cartas.trcm")
+    local content = journalReadAll(path)
+    if not content or content:sub(1, #CUSTOM_MEANINGS_MAGIC) ~= CUSTOM_MEANINGS_MAGIC then
+        return {}
+    end
+
+    local entries = {}
+    local entry_index = 0
+    for line in content:gmatch("[^\n]+") do
+        local payload = line:match("^entry=(.*)$")
+        if payload then
+            local deck, card_id, orientation, created_at, source_title, text = payload:match("^([^|]*)|([^|]*)|([^|]*)|([^|]*)|([^|]*)|(.*)$")
+            card_id = tonumber(card_id)
+            if deck and card_id and orientation and text then
+                entry_index = entry_index + 1
+                table.insert(entries, {
+                    index = entry_index,
+                    deck = journalUnescape(deck),
+                    card_id = card_id,
+                    orientation = normalizeMeaningOrientation(journalUnescape(orientation), deck == "lenormand"),
+                    created_at = tonumber(journalUnescape(created_at)) or 0,
+                    source_title = normalizeCustomMeaningSourceTitle(journalUnescape(source_title or "")),
+                    text = journalUnescape(text or ""),
+                })
+            end
+        end
+    end
+    return entries
+end
+
+function TarotPlugin:getCustomMeaningsForCard(card, deck_is_lenormand, orientation)
+    local wanted_deck = getDeckStorageId(deck_is_lenormand)
+    local wanted_id = card and tonumber(card.id)
+    local wanted_orientation = normalizeMeaningOrientation(orientation, deck_is_lenormand)
+    local result = {}
+
+    if not wanted_id then return result end
+
+    for _, entry in ipairs(self:readCustomMeanings()) do
+        if entry.deck == wanted_deck
+            and tonumber(entry.card_id) == wanted_id
+            and entry.orientation == wanted_orientation
+            and journalTrim(entry.text) ~= "" then
+            table.insert(result, entry)
+        end
+    end
+
+    return result
+end
+
+function TarotPlugin:appendCustomMeaning(card, deck_is_lenormand, orientation, text, source_title)
+    text = self:cleanHighlightMeaningText(text)
+    if text == "" then
+        UIManager:show(InfoMessage:new{ text = self:getTranslation("highlight_meaning_empty") })
+        return false
+    end
+
+    local id = card and tonumber(card.id)
+    if not id then return false end
+
+    local path = self.custom_meanings_path or (self:getPluginDirectory() .. "/significados_cartas.trcm")
+    local existing = journalReadAll(path)
+    if not existing or existing:sub(1, #CUSTOM_MEANINGS_MAGIC) ~= CUSTOM_MEANINGS_MAGIC then
+        existing = CUSTOM_MEANINGS_MAGIC .. "\n"
+    end
+
+    local line = table.concat({
+        journalEscape(getDeckStorageId(deck_is_lenormand)),
+        journalEscape(tostring(id)),
+        journalEscape(normalizeMeaningOrientation(orientation, deck_is_lenormand)),
+        journalEscape(tostring(os.time())),
+        journalEscape(normalizeCustomMeaningSourceTitle(source_title or self:getCurrentBookTitleForMeaning())),
+        journalEscape(text),
+    }, "|")
+
+    local ok, err = journalWriteAll(path, existing .. "entry=" .. line .. "\n")
+    if not ok then
+        logger.warn("tarot.koplugin: erro ao salvar significado pessoal:", err)
+        UIManager:show(InfoMessage:new{ text = self:getTranslation("journal_save_error") })
+        return false
+    end
+
+    UIManager:show(InfoMessage:new{ text = self:getTranslation("highlight_meaning_saved") })
     return true
 end
 
-local function journalCopyFile(source, target)
-    local content = journalReadAll(source)
-    if content == nil then return false end
-    return journalWriteAll(target, content)
-end
-
-local function journalUniquePath(directory, filename)
-    local stem, extension = filename:match("^(.*)(%.[^%.]+)$")
-    stem = stem or filename
-    extension = extension or ""
-    local candidate = directory .. "/" .. filename
-    local counter = 2
-    while lfs.attributes(candidate) do
-        candidate = directory .. "/" .. stem .. "_" .. counter .. extension
-        counter = counter + 1
+function TarotPlugin:registerHighlightMeaningAction()
+    if self._tarot_highlight_meaning_registered then
+        return true
     end
-    return candidate
+
+    local highlight = self.ui and self.ui.highlight
+    if not highlight or type(highlight.addToHighlightDialog) ~= "function" then
+        return false
+    end
+
+    local plugin = self
+    highlight:addToHighlightDialog("04a_tarot_add_meaning", function(reader_highlight)
+        local selected_text = plugin:cleanHighlightMeaningText(reader_highlight and reader_highlight.selected_text)
+        return {
+            text = plugin:getTranslation("add_highlight_to_card_meaning"),
+            enabled = selected_text ~= "",
+            callback = function()
+                selected_text = plugin:cleanHighlightMeaningText(reader_highlight and reader_highlight.selected_text)
+                if selected_text == "" then
+                    UIManager:show(InfoMessage:new{ text = plugin:getTranslation("highlight_meaning_empty") })
+                    return
+                end
+
+                if reader_highlight and type(reader_highlight.onClose) == "function" then
+                    reader_highlight:onClose(true)
+                end
+
+                UIManager:scheduleIn(0.1, function()
+                    plugin:showHighlightMeaningDeckMenu(selected_text)
+                end)
+            end,
+        }
+    end)
+
+    self._tarot_highlight_meaning_registered = true
+    return true
 end
 
-local function journalShallowCopy(source)
-    local copy = {}
-    for key, value in pairs(source or {}) do
-        if type(value) == "table" then
-            local nested = {}
-            for nested_key, nested_value in pairs(value) do
-                nested[nested_key] = nested_value
+function TarotPlugin:showHighlightMeaningDeckMenu(selected_text)
+    local buttons = {
+        {{ label = true, text = self:getTranslation("choose_deck") }},
+        {{ text = self:getTranslation("tarot_deck"), close_before = true, callback = function()
+            self:showHighlightMeaningCardSelect(selected_text, false, 1)
+        end }},
+        {{ text = self:getTranslation("lenormand_deck"), close_before = true, callback = function()
+            self:showHighlightMeaningCardSelect(selected_text, true, 1)
+        end }},
+        {{ text = self:getTranslation("cancel"), footer = true, close_before = true }},
+    }
+
+    UIManager:show(FullscreenMenuDialog:new{
+        plugin = self,
+        title = self:getTranslation("highlight_meaning_title"),
+        buttons = buttons,
+    })
+    setTarotDirty(self)
+end
+
+function TarotPlugin:showHighlightMeaningCardSelect(selected_text, deck_is_lenormand, page)
+    local deck = deck_is_lenormand and LENORMAND_DECK or FULL_DECK
+    local per_page = 9
+    local page_count = math.max(1, math.ceil(#deck / per_page))
+    page = tonumber(page) or 1
+    if page < 1 then page = 1 end
+    if page > page_count then page = page_count end
+
+    local buttons = {
+        {{ label = true, text = string.format(self:getTranslation("page_count"), page, page_count) }},
+    }
+
+    local start_index = (page - 1) * per_page + 1
+    local end_index = math.min(#deck, start_index + per_page - 1)
+    for index = start_index, end_index do
+        local card = deck[index]
+        local prefix = deck_is_lenormand and string.format("%02d. ", index) or ""
+        table.insert(buttons, {{
+            text = prefix .. T(card.name),
+            close_before = true,
+            callback = function()
+                if deck_is_lenormand then
+                    if self:appendCustomMeaning(card, true, "upright", selected_text) then
+                        self:showCardInBook(card, true)
+                    end
+                else
+                    self:showHighlightMeaningOrientationMenu(selected_text, card)
+                end
+            end,
+        }})
+    end
+
+    local footer_row = {}
+    table.insert(footer_row, {
+        text = self:getTranslation("prev"),
+        footer = true,
+        enabled = page > 1,
+        close_before = true,
+        callback = function()
+            self:showHighlightMeaningCardSelect(selected_text, deck_is_lenormand, page - 1)
+        end,
+    })
+    table.insert(footer_row, {
+        text = self:getTranslation("next"),
+        footer = true,
+        enabled = page < page_count,
+        close_before = true,
+        callback = function()
+            self:showHighlightMeaningCardSelect(selected_text, deck_is_lenormand, page + 1)
+        end,
+    })
+    table.insert(buttons, footer_row)
+    table.insert(buttons, {{
+        text = self:getTranslation("back"),
+        footer = true,
+        close_before = true,
+        callback = function()
+            self:showHighlightMeaningDeckMenu(selected_text)
+        end,
+    }})
+
+    UIManager:show(FullscreenMenuDialog:new{
+        plugin = self,
+        title = deck_is_lenormand and self:getTranslation("choose_lenormand_card") or self:getTranslation("choose_tarot_card"),
+        buttons = buttons,
+    })
+    setTarotDirty(self)
+end
+
+function TarotPlugin:showHighlightMeaningOrientationMenu(selected_text, card)
+    local buttons = {
+        {{ label = true, text = T(card.name) }},
+        {{ text = self:getTranslation("upright_meaning_choice"), close_before = true, callback = function()
+            if self:appendCustomMeaning(card, false, "upright", selected_text) then
+                self:showCardInBook(card, false)
             end
-            copy[key] = nested
-        else
-            copy[key] = value
+        end }},
+        {{ text = self:getTranslation("reversed_meaning_choice"), close_before = true, callback = function()
+            if self:appendCustomMeaning(card, false, "reversed", selected_text) then
+                self:showCardInBook(card, false)
+            end
+        end }},
+        {{ text = self:getTranslation("back"), footer = true, close_before = true, callback = function()
+            self:showHighlightMeaningCardSelect(selected_text, false, 1)
+        end }},
+    }
+
+    UIManager:show(FullscreenMenuDialog:new{
+        plugin = self,
+        title = self:getTranslation("choose_orientation"),
+        buttons = buttons,
+    })
+    setTarotDirty(self)
+end
+
+function TarotPlugin:formatCustomMeaningEntries(entries, show_source)
+    local lines = {}
+    for _, entry in ipairs(entries or {}) do
+        local source = normalizeCustomMeaningSourceTitle(entry.source_title or "")
+        if show_source and source ~= "" then
+            table.insert(lines, string.format(
+                '%s: "%s"',
+                self:getTranslation("highlight_source_label"),
+                source
+            ))
+        end
+        table.insert(lines, journalTrim(entry.text))
+        table.insert(lines, "")
+    end
+    return journalTrim(table.concat(lines, "\n"))
+end
+
+
+function TarotPlugin:cleanCustomMeaningEditorText(text)
+    text = tostring(text or ""):gsub("%z", "")
+    return journalTrim(text)
+end
+
+function TarotPlugin:writeCustomMeanings(entries)
+    local path = self.custom_meanings_path or (self:getPluginDirectory() .. "/significados_cartas.trcm")
+    local lines = { CUSTOM_MEANINGS_MAGIC }
+
+    for _, entry in ipairs(entries or {}) do
+        local deck = entry.deck == "lenormand" and "lenormand" or "tarot"
+        local card_id = tonumber(entry.card_id)
+        local text = self:cleanCustomMeaningEditorText(entry.text)
+        if card_id and text ~= "" then
+            table.insert(lines, "entry=" .. table.concat({
+                journalEscape(deck),
+                journalEscape(tostring(card_id)),
+                journalEscape(normalizeMeaningOrientation(entry.orientation, deck == "lenormand")),
+                journalEscape(tostring(tonumber(entry.created_at) or os.time())),
+                journalEscape(normalizeCustomMeaningSourceTitle(entry.source_title or "")),
+                journalEscape(text),
+            }, "|"))
         end
     end
-    return copy
-end
 
-local function journalSafeLower(text)
-    text = tostring(text or "")
-    local replacements = {
-        ["Á"]="á", ["À"]="à", ["Â"]="â", ["Ã"]="ã", ["Ä"]="ä",
-        ["É"]="é", ["È"]="è", ["Ê"]="ê", ["Ë"]="ë",
-        ["Í"]="í", ["Ì"]="ì", ["Î"]="î", ["Ï"]="ï",
-        ["Ó"]="ó", ["Ò"]="ò", ["Ô"]="ô", ["Õ"]="õ", ["Ö"]="ö",
-        ["Ú"]="ú", ["Ù"]="ù", ["Û"]="û", ["Ü"]="ü",
-        ["Ç"]="ç", ["Ñ"]="ñ",
-    }
-    for upper, lower in pairs(replacements) do
-        text = text:gsub(upper, lower)
+    local ok, err = journalWriteAll(path, table.concat(lines, "\n") .. "\n")
+    if not ok then
+        logger.warn("tarot.koplugin: erro ao gravar significados pessoais:", err)
+        UIManager:show(InfoMessage:new{ text = self:getTranslation("journal_save_error") })
+        return false
     end
-    return text:lower()
+    return true
 end
 
-local function journalPreview(text, max_bytes)
-    text = journalTrim(tostring(text or ""):gsub("[%s\r\n]+", " "))
-    -- Não cortamos por bytes para não partir caracteres UTF-8. O botão possui
-    -- altura fixa e o próprio KOReader aplica reticências de maneira segura.
-    return text
+function TarotPlugin:insertCustomMeaning(card, deck_is_lenormand, orientation, text, source_title)
+    text = self:cleanCustomMeaningEditorText(text)
+    if text == "" then
+        UIManager:show(InfoMessage:new{ text = self:getTranslation("highlight_meaning_empty") })
+        return false
+    end
+
+    local id = card and tonumber(card.id)
+    if not id then return false end
+
+    local entries = self:readCustomMeanings()
+    table.insert(entries, {
+        deck = getDeckStorageId(deck_is_lenormand),
+        card_id = id,
+        orientation = normalizeMeaningOrientation(orientation, deck_is_lenormand),
+        created_at = os.time(),
+        source_title = normalizeCustomMeaningSourceTitle(source_title or ""),
+        text = text,
+    })
+
+    if not self:writeCustomMeanings(entries) then return false end
+    UIManager:show(InfoMessage:new{ text = self:getTranslation("highlight_meaning_saved") })
+    return true
+end
+
+function TarotPlugin:updateCustomMeaningByIndex(entry_index, text)
+    entry_index = tonumber(entry_index)
+    text = self:cleanCustomMeaningEditorText(text)
+    if not entry_index then return false end
+    if text == "" then
+        UIManager:show(InfoMessage:new{ text = self:getTranslation("highlight_meaning_empty") })
+        return false
+    end
+
+    local changed = false
+    local entries = self:readCustomMeanings()
+    for _, entry in ipairs(entries) do
+        if tonumber(entry.index) == entry_index then
+            entry.text = text
+            changed = true
+            break
+        end
+    end
+
+    if not changed then return false end
+    if not self:writeCustomMeanings(entries) then return false end
+    UIManager:show(InfoMessage:new{ text = self:getTranslation("custom_meaning_updated") })
+    return true
+end
+
+function TarotPlugin:removeCustomMeaningByIndex(entry_index)
+    entry_index = tonumber(entry_index)
+    if not entry_index then return false end
+
+    local changed = false
+    local remaining = {}
+    for _, entry in ipairs(self:readCustomMeanings()) do
+        if tonumber(entry.index) == entry_index then
+            changed = true
+        else
+            table.insert(remaining, entry)
+        end
+    end
+
+    if not changed then return false end
+    if not self:writeCustomMeanings(remaining) then return false end
+    UIManager:show(InfoMessage:new{ text = self:getTranslation("custom_meaning_removed") })
+    return true
+end
+
+function TarotPlugin:getCustomMeaningByIndex(entry_index)
+    entry_index = tonumber(entry_index)
+    if not entry_index then return nil end
+    for _, entry in ipairs(self:readCustomMeanings()) do
+        if tonumber(entry.index) == entry_index then
+            return entry
+        end
+    end
+    return nil
+end
+
+function TarotPlugin:showCustomMeaningEditorStart(parent_dialog)
+    -- Primeiro abre o menu real do editor (Tarot / Lenormand) e só depois
+    -- exibe o aviso por cima dele. Assim o usuário já entende onde está e não
+    -- vê o aviso surgir ainda sobre o Livro de Cartas.
+    self:showCustomMeaningEditorDeckMenu()
+
+    UIManager:scheduleIn(0.1, function()
+        -- Fecha o Livro de Cartas somente depois que o novo menu já está na
+        -- pilha da UI. Isso evita o salto visual para a Home.
+        if parent_dialog then
+            pcall(function() UIManager:close(parent_dialog) end)
+        end
+        self:showCustomMeaningEditorHint()
+    end)
+end
+
+function TarotPlugin:showCustomMeaningEditorDeckMenu()
+    local buttons = {
+        {{ label = true, text = self:getTranslation("choose_deck") }},
+        {{ text = self:getTranslation("tarot_deck"), close_before = true, callback = function()
+            self:showCustomMeaningEditorCardSelect(false, 1)
+        end }},
+        {{ text = self:getTranslation("lenormand_deck"), close_before = true, callback = function()
+            self:showCustomMeaningEditorCardSelect(true, 1)
+        end }},
+        {{ text = self:getTranslation("back"), footer = true, close_before = true, callback = function()
+            self:showCardBook()
+        end }},
+    }
+
+    UIManager:show(FullscreenMenuDialog:new{
+        plugin = self,
+        title = self:getTranslation("edit_custom_meanings"),
+        buttons = buttons,
+    })
+    setTarotDirty(self)
+end
+
+function TarotPlugin:showCustomMeaningEditorCardSelect(deck_is_lenormand, page)
+    local deck = deck_is_lenormand and LENORMAND_DECK or FULL_DECK
+    local per_page = 9
+    local page_count = math.max(1, math.ceil(#deck / per_page))
+    page = tonumber(page) or 1
+    if page < 1 then page = 1 end
+    if page > page_count then page = page_count end
+
+    local buttons = {
+        {{ label = true, text = string.format(self:getTranslation("page_count"), page, page_count) }},
+    }
+
+    local start_index = (page - 1) * per_page + 1
+    local end_index = math.min(#deck, start_index + per_page - 1)
+    for index = start_index, end_index do
+        local card = deck[index]
+        local prefix = deck_is_lenormand and string.format("%02d. ", index) or ""
+        table.insert(buttons, {{
+            text = prefix .. T(card.name),
+            close_before = true,
+            callback = function()
+                if deck_is_lenormand then
+                    self:showCustomMeaningManageMenu(card, true, "upright", 1)
+                else
+                    self:showCustomMeaningEditorOrientationMenu(card)
+                end
+            end,
+        }})
+    end
+
+    local footer_row = {}
+    table.insert(footer_row, {
+        text = self:getTranslation("prev"),
+        footer = true,
+        enabled = page > 1,
+        close_before = true,
+        callback = function()
+            self:showCustomMeaningEditorCardSelect(deck_is_lenormand, page - 1)
+        end,
+    })
+    table.insert(footer_row, {
+        text = self:getTranslation("next"),
+        footer = true,
+        enabled = page < page_count,
+        close_before = true,
+        callback = function()
+            self:showCustomMeaningEditorCardSelect(deck_is_lenormand, page + 1)
+        end,
+    })
+    table.insert(buttons, footer_row)
+    table.insert(buttons, {{
+        text = self:getTranslation("back"),
+        footer = true,
+        close_before = true,
+        callback = function()
+            self:showCustomMeaningEditorDeckMenu()
+        end,
+    }})
+
+    UIManager:show(FullscreenMenuDialog:new{
+        plugin = self,
+        title = deck_is_lenormand and self:getTranslation("choose_lenormand_card") or self:getTranslation("choose_tarot_card"),
+        buttons = buttons,
+    })
+    setTarotDirty(self)
+end
+
+function TarotPlugin:showCustomMeaningEditorOrientationMenu(card)
+    local buttons = {
+        {{ label = true, text = T(card.name) }},
+        {{ text = self:getTranslation("upright_meaning_choice"), close_before = true, callback = function()
+            self:showCustomMeaningManageMenu(card, false, "upright", 1)
+        end }},
+        {{ text = self:getTranslation("reversed_meaning_choice"), close_before = true, callback = function()
+            self:showCustomMeaningManageMenu(card, false, "reversed", 1)
+        end }},
+        {{ text = self:getTranslation("back"), footer = true, close_before = true, callback = function()
+            self:showCustomMeaningEditorCardSelect(false, 1)
+        end }},
+    }
+
+    UIManager:show(FullscreenMenuDialog:new{
+        plugin = self,
+        title = self:getTranslation("choose_orientation"),
+        buttons = buttons,
+    })
+    setTarotDirty(self)
+end
+
+function TarotPlugin:showCustomMeaningInput(card, deck_is_lenormand, orientation, entry_index)
+    local current_entry = entry_index and self:getCustomMeaningByIndex(entry_index) or nil
+    local input_dialog
+    input_dialog = InputDialog:new{
+        title = current_entry and self:getTranslation("edit_custom_meaning") or self:getTranslation("add_custom_meaning"),
+        input = current_entry and current_entry.text or "",
+        input_hint = self:getTranslation("custom_meaning_input_hint"),
+        fullscreen = true,
+        condensed = true,
+        allow_newline = true,
+        add_nav_bar = true,
+        buttons = {
+            {
+                {
+                    text = self:getTranslation("cancel"),
+                    callback = function()
+                        UIManager:close(input_dialog)
+                        self:showCustomMeaningManageMenu(card, deck_is_lenormand, orientation, 1)
+                    end,
+                },
+                {
+                    text = self:getTranslation("save"),
+                    is_enter_default = true,
+                    callback = function()
+                        local text = input_dialog:getInputText()
+                        local ok
+                        if current_entry then
+                            ok = self:updateCustomMeaningByIndex(current_entry.index, text)
+                        else
+                            ok = self:insertCustomMeaning(card, deck_is_lenormand, orientation, text, "")
+                        end
+                        if ok then
+                            UIManager:close(input_dialog)
+                            self:showCustomMeaningManageMenu(card, deck_is_lenormand, orientation, 1)
+                        end
+                    end,
+                },
+            },
+        },
+    }
+    UIManager:show(input_dialog)
+    input_dialog:onShowKeyboard()
+end
+
+function TarotPlugin:showCustomMeaningEntryActions(card, deck_is_lenormand, orientation, entry_index)
+    local entry = self:getCustomMeaningByIndex(entry_index)
+    if not entry then
+        self:showCustomMeaningManageMenu(card, deck_is_lenormand, orientation, 1)
+        return
+    end
+
+    local buttons = {
+        {{ label = true, text = journalPreview(entry.text, 160) }},
+        {{ text = self:getTranslation("edit_custom_meaning"), close_before = true, callback = function()
+            self:showCustomMeaningInput(card, deck_is_lenormand, orientation, entry.index)
+        end }},
+        {{ text = self:getTranslation("remove_custom_meaning"), close_before = true, callback = function()
+            local confirm
+            confirm = ConfirmBox:new{
+                text = self:getTranslation("remove_custom_meaning_confirm"),
+                ok_text = self:getTranslation("yes"),
+                cancel_text = self:getTranslation("no"),
+                ok_callback = function()
+                    if self:removeCustomMeaningByIndex(entry.index) then
+                        self:showCustomMeaningManageMenu(card, deck_is_lenormand, orientation, 1)
+                    end
+                end,
+                cancel_callback = function()
+                    self:showCustomMeaningManageMenu(card, deck_is_lenormand, orientation, 1)
+                end,
+            }
+            UIManager:show(confirm)
+        end }},
+        {{ text = self:getTranslation("back"), footer = true, close_before = true, callback = function()
+            self:showCustomMeaningManageMenu(card, deck_is_lenormand, orientation, 1)
+        end }},
+    }
+
+    UIManager:show(FullscreenMenuDialog:new{
+        plugin = self,
+        title = self:getTranslation("choose_custom_meaning"),
+        buttons = buttons,
+    })
+    setTarotDirty(self)
+end
+
+function TarotPlugin:showCustomMeaningManageMenu(card, deck_is_lenormand, orientation, page)
+    local entries = self:getCustomMeaningsForCard(card, deck_is_lenormand, orientation)
+    local per_page = 5
+    local page_count = math.max(1, math.ceil(math.max(1, #entries) / per_page))
+    page = tonumber(page) or 1
+    if page < 1 then page = 1 end
+    if page > page_count then page = page_count end
+
+    local orientation_label = deck_is_lenormand and self:getTranslation("upright")
+        or (orientation == "reversed" and self:getTranslation("reversed") or self:getTranslation("upright"))
+    local buttons = {
+        {{ label = true, text = T(card.name) .. " — " .. orientation_label }},
+        {{ text = self:getTranslation("add_custom_meaning"), close_before = true, callback = function()
+            self:showCustomMeaningInput(card, deck_is_lenormand, orientation)
+        end }},
+    }
+
+    if #entries == 0 then
+        table.insert(buttons, {{ label = true, text = self:getTranslation("no_custom_meanings") }})
+    else
+        table.insert(buttons, {{ label = true, text = string.format(self:getTranslation("page_count"), page, page_count) }})
+        local start_index = (page - 1) * per_page + 1
+        local end_index = math.min(#entries, start_index + per_page - 1)
+        for index = start_index, end_index do
+            local entry = entries[index]
+            table.insert(buttons, {{
+                text = journalPreview(entry.text, 180),
+                close_before = true,
+                callback = function()
+                    self:showCustomMeaningEntryActions(card, deck_is_lenormand, orientation, entry.index)
+                end,
+            }})
+        end
+
+        if page_count > 1 then
+            table.insert(buttons, {
+                {
+                    text = self:getTranslation("prev"),
+                    footer = true,
+                    enabled = page > 1,
+                    close_before = true,
+                    callback = function()
+                        self:showCustomMeaningManageMenu(card, deck_is_lenormand, orientation, page - 1)
+                    end,
+                },
+                {
+                    text = self:getTranslation("next"),
+                    footer = true,
+                    enabled = page < page_count,
+                    close_before = true,
+                    callback = function()
+                        self:showCustomMeaningManageMenu(card, deck_is_lenormand, orientation, page + 1)
+                    end,
+                },
+            })
+        end
+    end
+
+    table.insert(buttons, {{
+        text = self:getTranslation("back"),
+        footer = true,
+        close_before = true,
+        callback = function()
+            if deck_is_lenormand then
+                self:showCustomMeaningEditorCardSelect(true, 1)
+            else
+                self:showCustomMeaningEditorOrientationMenu(card)
+            end
+        end,
+    }})
+
+    UIManager:show(FullscreenMenuDialog:new{
+        plugin = self,
+        title = self:getTranslation("edit_custom_meanings"),
+        buttons = buttons,
+    })
+    setTarotDirty(self)
 end
 
 function TarotPlugin:writeJournalEntry(entry)
@@ -2614,6 +2350,7 @@ function TarotPlugin:writeJournalEntry(entry)
     entry.outcome_at = tonumber(entry.outcome_at) or 0
     entry.favorite = entry.favorite == true
     entry.cards = entry.cards or {}
+    entry.position_names = entry.position_names or {}
 
     local lines = {
         JOURNAL_MAGIC,
@@ -2630,6 +2367,13 @@ function TarotPlugin:writeJournalEntry(entry)
         "outcome_at=" .. tostring(entry.outcome_at),
         "favorite=" .. (entry.favorite and "1" or "0"),
     }
+
+    for slot = 1, 16 do
+        local stored_name = journalTrim(entry.position_names[slot])
+        if stored_name ~= "" then
+            table.insert(lines, "position=" .. tostring(slot) .. "|" .. journalEscape(stored_name))
+        end
+    end
 
     for _, card_data in ipairs(entry.cards) do
         local id = tonumber(card_data.id)
@@ -2662,10 +2406,19 @@ function TarotPlugin:readJournalEntry(path)
         return nil
     end
 
-    local entry = { cards = {}, filepath = path, source = "structured" }
+    local entry = { cards = {}, position_names = {}, filepath = path, source = "structured" }
     for line in content:gmatch("[^\r\n]+") do
         local key, value = line:match("^([^=]+)=(.*)$")
-        if key == "card" then
+        if key == "position" then
+            local slot, stored_name = value:match("^(%d+)|(.*)$")
+            slot = tonumber(slot)
+            if slot and slot >= 1 and slot <= 16 then
+                stored_name = journalTrim(journalUnescape(stored_name))
+                if stored_name ~= "" then
+                    entry.position_names[slot] = stored_name
+                end
+            end
+        elseif key == "card" then
             local id, reversed, grid_slot = value:match("^(%-?%d+)|([01])|(%d+)$")
             if not id then
                 id, reversed = value:match("^(%-?%d+)|([01])$")
@@ -2698,6 +2451,7 @@ function TarotPlugin:readJournalEntry(path)
     entry.entry_type = entry.entry_type or "free"
     entry.deck = entry.deck or "none"
     entry.layout_mode = entry.layout_mode == "custom" and "custom" or "auto"
+    entry.position_names = entry.position_names or {}
     entry.filename = path:match("([^/]+)$")
     return entry
 end
@@ -2705,6 +2459,14 @@ end
 function TarotPlugin:makeJournalEntryFromCards(cards, title, note, entry_type)
     local is_lenormand = cards and cards[1] and cards[1].card and cards[1].card.symbol ~= nil
     local card_refs = {}
+    local position_names = {}
+    for slot, stored_name in pairs((cards and cards.position_names) or {}) do
+        slot = tonumber(slot)
+        stored_name = journalTrim(stored_name)
+        if slot and slot >= 1 and slot <= 16 and stored_name ~= "" then
+            position_names[slot] = stored_name
+        end
+    end
     for _, card_data in ipairs(cards or {}) do
         if card_data.card and card_data.card.id ~= nil then
             table.insert(card_refs, {
@@ -2712,6 +2474,11 @@ function TarotPlugin:makeJournalEntryFromCards(cards, title, note, entry_type)
                 is_reversed = card_data.is_reversed == true,
                 grid_slot = tonumber(card_data.grid_slot),
             })
+            local slot = tonumber(card_data.grid_slot)
+            local stored_name = journalTrim(card_data.position_name)
+            if slot and slot >= 1 and slot <= 16 and stored_name ~= "" then
+                position_names[slot] = stored_name
+            end
         end
     end
 
@@ -2743,6 +2510,7 @@ function TarotPlugin:makeJournalEntryFromCards(cards, title, note, entry_type)
         outcome_at = 0,
         favorite = false,
         cards = card_refs,
+        position_names = position_names,
     }
 end
 
@@ -4101,7 +3869,7 @@ function TarotPlugin:clearDirectoryRecursive(path, keep_root)
     return ok
 end
 
-function TarotPlugin:showSaveTitleInput(cards, entry_type)
+function TarotPlugin:showSaveTitleInput(cards, entry_type, on_saved)
     local title_input
     title_input = InputDialog:new{
         title = self:getTranslation("save_title"),
@@ -4119,7 +3887,7 @@ function TarotPlugin:showSaveTitleInput(cards, entry_type)
                     callback = function()
                         local title = journalTrim(title_input:getInputText())
                         UIManager:close(title_input)
-                        self:showSaveNoteInput(cards, title, entry_type or "spread")
+                        self:showSaveNoteInput(cards, title, entry_type or "spread", on_saved)
                     end,
                 },
             },
@@ -4129,7 +3897,7 @@ function TarotPlugin:showSaveTitleInput(cards, entry_type)
     title_input:onShowKeyboard()
 end
 
-function TarotPlugin:showSaveNoteInput(cards, title, entry_type)
+function TarotPlugin:showSaveNoteInput(cards, title, entry_type, on_saved)
     local note_input
     note_input = InputDialog:new{
         title = self:getTranslation("save_note"),
@@ -4150,6 +3918,9 @@ function TarotPlugin:showSaveNoteInput(cards, title, entry_type)
                         local note = note_input:getInputText()
                         if self:saveReading(cards, title, note, entry_type or "spread") then
                             UIManager:close(note_input)
+                            if type(on_saved) == "function" then
+                                on_saved()
+                            end
                         end
                     end,
                 },
@@ -4313,8 +4084,11 @@ function CardDialog:init()
     local has_image = card_path and lfs.attributes(card_path) and lfs.attributes(card_path).mode == "file"
     local hide_name = use_lenormand and T.current_lang == "C" and has_image
 
-    local title_suffix = self.title_label or self.plugin:getTranslation("title")
-    if not self.title_label and use_lenormand then
+    local position_title = getPositionNameDisplay(self.plugin, card_data.position_name)
+    local title_suffix = position_title ~= ""
+        and position_title
+        or (self.title_label or self.plugin:getTranslation("title"))
+    if position_title == "" and not self.title_label and use_lenormand then
         title_suffix = self.plugin:getTranslation("lenormand_title")
     end
     local title_text = title_suffix
@@ -4565,14 +4339,41 @@ function CardDialog:init()
         }
     end
 
-    local meaning_text
+    local current_orientation = (is_reversed and not use_lenormand) and "reversed" or "upright"
+    local base_meaning_text
     if use_lenormand then
-        meaning_text = T(card.meaning)
+        base_meaning_text = T(card.meaning)
     else
-        meaning_text = is_reversed and T(card.reversed_meaning) or T(card.meaning)
+        base_meaning_text = is_reversed and T(card.reversed_meaning) or T(card.meaning)
     end
-    if meaning_mode == "summary" then
-        meaning_text = summarizeCardMeaning(meaning_text, 180)
+
+    local custom_meaning_entries = {}
+    if meaning_mode == "full" then
+        custom_meaning_entries = self.plugin:getCustomMeaningsForCard(
+            card,
+            use_lenormand,
+            current_orientation
+        )
+    end
+    local has_custom_meanings = #custom_meaning_entries > 0
+    local show_only_custom = meaning_mode == "full"
+        and has_custom_meanings
+        and self.plugin.show_only_custom_meanings == true
+
+    local meaning_text
+    if show_only_custom then
+        meaning_text = self.plugin:formatCustomMeaningEntries(custom_meaning_entries, false)
+    else
+        meaning_text = base_meaning_text
+        if meaning_mode == "summary" then
+            meaning_text = summarizeCardMeaning(meaning_text, 180)
+        elseif meaning_mode == "full" and has_custom_meanings then
+            meaning_text = journalTrim(table.concat({
+                meaning_text,
+                self.plugin:getTranslation("personal_meanings") .. ":",
+                self.plugin:formatCustomMeaningEntries(custom_meaning_entries, false),
+            }, "\n\n"))
+        end
     end
 
     local meaning_face_name = "cfont"
@@ -4585,15 +4386,41 @@ function CardDialog:init()
         meaning_face_name = "smalltfont"
     end
 
-    local meaning_w = TextBoxWidget:new{
-        text      = meaning_text,
-        face      = Font:getFace(meaning_face_name),
-        width     = iw,
-        alignment = "center",
-    }
+    local should_scroll_meaning = meaning_mode == "full"
+        and (has_custom_meanings or #meaning_text > 520 or meaning_text:find("\n"))
+    local meaning_h = math.floor(layout.safe_h * 0.24)
+    if total_cards > 1 then
+        meaning_h = math.floor(layout.safe_h * 0.21)
+    end
+    if meaning_h < 110 then meaning_h = 110 end
+    if meaning_h > math.floor(layout.safe_h * 0.34) then
+        meaning_h = math.floor(layout.safe_h * 0.34)
+    end
+
+    local meaning_w
+    if should_scroll_meaning then
+        meaning_w = ScrollTextWidget:new{
+            text = meaning_text,
+            face = Font:getFace(meaning_face_name),
+            width = iw,
+            height = meaning_h,
+            alignment = "left",
+            scroll_by_pan = true,
+            dialog = self,
+        }
+    else
+        meaning_w = TextBoxWidget:new{
+            text      = meaning_text,
+            face      = Font:getFace(meaning_face_name),
+            width     = iw,
+            alignment = "center",
+        }
+    end
 
     local meaning_label_text = self.plugin:getTranslation("meaning_label")
-    if is_reversed and not use_lenormand then
+    if show_only_custom then
+        meaning_label_text = self.plugin:getTranslation("personal_meanings")
+    elseif is_reversed and not use_lenormand then
         meaning_label_text = self.plugin:getTranslation("reversed_meaning_label")
     end
     local meaning_label_w = TextWidget:new{
@@ -4685,6 +4512,8 @@ function CardDialog:init()
 
     if show_meaning then
         table.insert(body, VerticalSpan:new{ width = Size.span.vertical_large })
+        table.insert(body, meaning_label_w)
+        table.insert(body, VerticalSpan:new{ width = Size.span.vertical_small })
         table.insert(body, meaning_w)
     end
 
@@ -5010,16 +4839,29 @@ function PhysicalDeckDialog:init()
     }
 end
 
--- Abre as cartas de um registro em modo somente leitura. A navegação entre
--- cartas é feita pelas miniaturas laterais e nunca troca de registro do Diário.
+local HiddenCardDialog
+
+-- Abre as cartas de um registro em modo somente leitura. Tiragens montadas na
+-- grade 4×4 são reabertas no layout original; registros antigos continuam com
+-- a navegação linear pelas miniaturas laterais.
 function TarotPlugin:showJournalCards(entry)
     local cards = {}
+    local has_custom_slot = false
+    local position_names = entry.position_names or {}
+
     for _, saved_card in ipairs(entry.cards or {}) do
         local card = self:getJournalCard(entry, saved_card)
         if card then
+            local slot = tonumber(saved_card.grid_slot)
+            if slot and slot >= 1 and slot <= 16 then
+                has_custom_slot = true
+            end
             table.insert(cards, {
                 card = card,
                 is_reversed = saved_card.is_reversed == true,
+                is_revealed = true,
+                grid_slot = slot,
+                position_name = slot and position_names[slot] or nil,
             })
         end
     end
@@ -5029,26 +4871,42 @@ function TarotPlugin:showJournalCards(entry)
         return
     end
 
-    UIManager:show(CardDialog:new{
-        cards = cards,
-        current_index = 1,
-        plugin = self,
-        title_label = self:getJournalDisplayTitle(entry),
-        read_only = true,
-        deck_is_lenormand = entry.deck == "lenormand",
-        on_close = function()
-            self:showJournalEntry(entry)
-        end,
-    })
+    local function returnToJournalEntry()
+        self:showJournalEntry(entry)
+    end
+
+    if entry.layout_mode == "custom" and has_custom_slot then
+        UIManager:show(HiddenCardDialog:new{
+            plugin = self,
+            cards = cards,
+            position_names = position_names,
+            title_label = self:getJournalDisplayTitle(entry),
+            read_only = true,
+            allow_add_card = false,
+            deck_is_lenormand = entry.deck == "lenormand",
+            on_close = returnToJournalEntry,
+        })
+    else
+        UIManager:show(CardDialog:new{
+            cards = cards,
+            current_index = 1,
+            plugin = self,
+            title_label = self:getJournalDisplayTitle(entry),
+            read_only = true,
+            deck_is_lenormand = entry.deck == "lenormand",
+            on_close = returnToJournalEntry,
+        })
+    end
     setTarotDirty(self.plugin or self)
 end
 
 -- ╔══════════════════════════════════════════════════════════════════════════════╗
 -- ║ CARTA OCULTA — GRADE FIXA 4×4, INSERÇÃO DIRETA E ORGANIZAÇÃO POR TOQUE      ║
 -- ╚══════════════════════════════════════════════════════════════════════════════╝
-local HiddenCardDialog = InputContainer:extend{
+HiddenCardDialog = InputContainer:extend{
     plugin = nil,
     cards = nil,
+    position_names = nil,
     on_new = nil,
     is_daily = false,
     on_reveal = nil,
@@ -5056,9 +4914,12 @@ local HiddenCardDialog = InputContainer:extend{
     allow_add_card = false,
     max_cards = 16,
     deck_is_lenormand = nil,
+    read_only = false,
+    on_close = nil,
     selected_action_index = nil,
     moving_index = nil,
     show_opening_hint = false,
+    manual_save_state = nil,
 }
 
 function HiddenCardDialog:init()
@@ -5066,7 +4927,19 @@ function HiddenCardDialog:init()
     local iw = layout.content_w
 
     self.cards = self.cards or {}
+    self.position_names = self.position_names or {}
     self.max_cards = math.max(1, math.min(16, tonumber(self.max_cards) or 16))
+
+    -- Mantém apenas nomes válidos associados às 16 posições fixas.
+    local normalized_position_names = {}
+    for slot, stored_name in pairs(self.position_names) do
+        slot = tonumber(slot)
+        stored_name = trimPositionName(stored_name)
+        if slot and slot >= 1 and slot <= 16 and stored_name ~= "" then
+            normalized_position_names[slot] = stored_name
+        end
+    end
+    self.position_names = normalized_position_names
 
     local use_lenormand = self.deck_is_lenormand
     if use_lenormand == nil then
@@ -5111,6 +4984,12 @@ function HiddenCardDialog:init()
     end
     normalizeGridSlots()
 
+    local function markReadingChanged()
+        -- Qualquer alteração depois de um salvamento manual torna a grade
+        -- novamente diferente do registro salvo no Diário.
+        self.manual_save_state = nil
+    end
+
     local function allCardsRevealed()
         if #self.cards == 0 then return false end
         for _, item in ipairs(self.cards) do
@@ -5121,11 +5000,24 @@ function HiddenCardDialog:init()
 
     local function orderedCardsForReading()
         local ordered = {}
-        for _, item in ipairs(self.cards) do table.insert(ordered, item) end
+        for _, item in ipairs(self.cards) do
+            local slot = tonumber(item.grid_slot)
+            table.insert(ordered, {
+                card = item.card,
+                is_reversed = item.is_reversed == true,
+                is_revealed = item.is_revealed == true,
+                grid_slot = slot,
+                position_name = slot and self.position_names[slot] or nil,
+            })
+        end
         if not self.is_daily then
             table.sort(ordered, function(a, b)
                 return (tonumber(a.grid_slot) or 99) < (tonumber(b.grid_slot) or 99)
             end)
+        end
+        ordered.position_names = {}
+        for slot, stored_name in pairs(self.position_names) do
+            ordered.position_names[slot] = stored_name
         end
         return ordered
     end
@@ -5135,6 +5027,7 @@ function HiddenCardDialog:init()
         UIManager:show(HiddenCardDialog:new{
             plugin = self.plugin,
             cards = self.cards,
+            position_names = self.position_names,
             on_new = self.on_new,
             is_daily = self.is_daily,
             on_reveal = self.on_reveal,
@@ -5142,8 +5035,11 @@ function HiddenCardDialog:init()
             allow_add_card = self.allow_add_card,
             max_cards = self.max_cards,
             deck_is_lenormand = use_lenormand,
+            read_only = self.read_only,
+            on_close = self.on_close,
             selected_action_index = self.selected_action_index,
             moving_index = self.moving_index,
+            manual_save_state = self.manual_save_state,
             -- O aviso pertence à abertura da tiragem, nunca às reconstruções
             -- internas causadas por revelar, mover, excluir ou adicionar cartas.
             show_opening_hint = false,
@@ -5164,7 +5060,7 @@ function HiddenCardDialog:init()
     end
 
     local function addCardAtSlot(slot)
-        if self.is_daily or not self.allow_add_card then return end
+        if self.read_only or self.is_daily or not self.allow_add_card then return end
         if self.selected_action_index or self.moving_index then return end
         if #self.cards >= self.max_cards then return end
         local occupied = slotIsOccupied(slot)
@@ -5172,15 +5068,17 @@ function HiddenCardDialog:init()
 
         local new_card = self.plugin:drawAdditionalUniqueCard(self.cards)
         if not new_card then return end
-        new_card.is_revealed = false
+        new_card.is_revealed = self.plugin.spread_cards_always_revealed == true
         new_card.grid_slot = slot
         table.insert(self.cards, new_card)
+        markReadingChanged()
         refreshHiddenDialog()
     end
 
     local function deleteCard(index)
-        if self.is_daily or not self.cards[index] then return end
+        if self.read_only or self.is_daily or not self.cards[index] then return end
         table.remove(self.cards, index)
+        markReadingChanged()
         clearTransientSelection()
         normalizeGridSlots()
         refreshHiddenDialog()
@@ -5192,7 +5090,9 @@ function HiddenCardDialog:init()
         for _, item in ipairs(orderedCardsForReading()) do
             if item.is_revealed == true then
                 table.insert(revealed_cards, item)
-                if item == source_item then dialog_index = #revealed_cards end
+                if tonumber(item.grid_slot) == tonumber(source_item.grid_slot) then
+                    dialog_index = #revealed_cards
+                end
             end
         end
         if not dialog_index or #revealed_cards == 0 then return end
@@ -5203,6 +5103,7 @@ function HiddenCardDialog:init()
             plugin = self.plugin,
             title_label = self.title_label or self.plugin:getTranslation("draw_cards"),
             is_daily = false,
+            read_only = self.read_only,
             deck_is_lenormand = use_lenormand,
             hidden_grid_view = true,
             on_close = function()
@@ -5220,6 +5121,11 @@ function HiddenCardDialog:init()
         -- são aceitas. Isso evita revelar ou adicionar cartas por acidente.
         if self.selected_action_index then return end
 
+        if self.read_only then
+            if item.is_revealed == true then openRevealedCard(item) end
+            return
+        end
+
         if self.moving_index then
             if self.moving_index == index then
                 self.moving_index = nil
@@ -5227,6 +5133,7 @@ function HiddenCardDialog:init()
                 local source = self.cards[self.moving_index]
                 if source then
                     source.grid_slot, item.grid_slot = item.grid_slot, source.grid_slot
+                    markReadingChanged()
                 end
                 self.moving_index = nil
             end
@@ -5245,17 +5152,21 @@ function HiddenCardDialog:init()
             openRevealedCard(item)
         else
             item.is_revealed = true
+            markReadingChanged()
             refreshHiddenDialog()
         end
     end
 
     local function tapEmptySlot(slot)
-        if self.is_daily then return end
+        if self.read_only or self.is_daily then return end
         if self.selected_action_index then return end
 
         if self.moving_index then
             local source = self.cards[self.moving_index]
-            if source then source.grid_slot = slot end
+            if source then
+                source.grid_slot = slot
+                markReadingChanged()
+            end
             self.moving_index = nil
             refreshHiddenDialog()
             return
@@ -5265,10 +5176,135 @@ function HiddenCardDialog:init()
     end
 
     local function holdCard(index)
-        if self.is_daily or not self.cards[index] then return end
+        if self.read_only or self.is_daily or not self.cards[index] then return end
         self.selected_action_index = index
         self.moving_index = nil
         refreshHiddenDialog()
+    end
+
+    local function showPositionNamePopup(slot)
+        if self.read_only or self.is_daily then return end
+        slot = tonumber(slot)
+        if not slot or slot < 1 or slot > 16 then return end
+
+        local position_dialog
+
+        local function finishPositionNaming(stored_name)
+            if position_dialog then UIManager:close(position_dialog) end
+            stored_name = trimPositionName(stored_name)
+            self.position_names[slot] = stored_name ~= "" and stored_name or nil
+            markReadingChanged()
+            clearTransientSelection()
+            refreshHiddenDialog()
+        end
+
+        local function cancelPositionNaming()
+            if position_dialog then UIManager:close(position_dialog) end
+            clearTransientSelection()
+            refreshHiddenDialog()
+        end
+
+        local function openCustomPositionInput()
+            if position_dialog then UIManager:close(position_dialog) end
+            local current_display = getPositionNameDisplay(self.plugin, self.position_names[slot])
+            local input_dialog
+            input_dialog = InputDialog:new{
+                title = self.plugin:getTranslation("custom_position_name"),
+                input = current_display,
+                input_hint = self.plugin:getTranslation("custom_position_name_hint"),
+                input_type = "string",
+                buttons = {
+                    {
+                        {
+                            text = self.plugin:getTranslation("cancel"),
+                            callback = function()
+                                UIManager:close(input_dialog)
+                                clearTransientSelection()
+                                refreshHiddenDialog()
+                            end,
+                        },
+                        {
+                            text = self.plugin:getTranslation("confirm"),
+                            is_enter_default = true,
+                            callback = function()
+                                local custom_name = trimPositionName(input_dialog:getInputText())
+                                UIManager:close(input_dialog)
+                                self.position_names[slot] = custom_name ~= ""
+                                    and makeStoredCustomPositionName(custom_name) or nil
+                                markReadingChanged()
+                                clearTransientSelection()
+                                refreshHiddenDialog()
+                            end,
+                        },
+                    },
+                },
+            }
+            UIManager:show(input_dialog)
+            input_dialog:onShowKeyboard()
+        end
+
+        local buttons = {}
+        for index = 1, #POSITION_NAME_PRESETS, 2 do
+            local row = {}
+            for offset = 0, 1 do
+                local preset = POSITION_NAME_PRESETS[index + offset]
+                if preset then
+                    local preset_id = preset.id
+                    local preset_key = preset.key
+                    table.insert(row, {
+                        text = self.plugin:getTranslation(preset_key),
+                        callback = function()
+                            finishPositionNaming(makeStoredPresetPositionName(preset_id))
+                        end,
+                    })
+                end
+            end
+            table.insert(buttons, row)
+        end
+
+        table.insert(buttons, {
+            {
+                text = self.plugin:getTranslation("custom_position_name"),
+                callback = openCustomPositionInput,
+            },
+        })
+
+        if self.position_names[slot] then
+            table.insert(buttons, {
+                {
+                    text = self.plugin:getTranslation("remove_position_name"),
+                    callback = function() finishPositionNaming(nil) end,
+                },
+            })
+        end
+
+        table.insert(buttons, {
+            {
+                text = self.plugin:getTranslation("cancel"),
+                callback = cancelPositionNaming,
+            },
+        })
+
+        position_dialog = ButtonDialog:new{
+            title = self.plugin:getTranslation("position_name_title"),
+            title_align = "center",
+            width_factor = 0.72,
+            buttons = buttons,
+            tap_close_callback = function()
+                clearTransientSelection()
+                UIManager:scheduleIn(0.05, function()
+                    refreshHiddenDialog()
+                end)
+            end,
+        }
+        UIManager:show(position_dialog)
+        setTarotDirty(self.plugin or self)
+    end
+
+    local function holdEmptySlot(slot)
+        if self.read_only or self.is_daily then return end
+        if self.moving_index then return end
+        showPositionNamePopup(slot)
     end
 
     local action_gap = math.max(6, math.floor(iw * 0.025))
@@ -5280,22 +5316,28 @@ function HiddenCardDialog:init()
         enabled = allCardsRevealed(),
         callback = function()
             clearTransientSelection()
-            UIManager:close(self)
             setTarotDirty(self.plugin or self)
-            self.plugin:showSaveTitleInput(orderedCardsForReading(), "spread")
+            self.plugin:showSaveTitleInput(orderedCardsForReading(), "spread", function()
+                -- Salvar não fecha a grade. O usuário continua olhando a
+                -- tiragem e decide sozinho quando sair.
+                self.manual_save_state = "saved"
+            end)
         end,
     }
 
     local function closeHiddenNow()
         UIManager:close(self)
         setTarotDirty(self.plugin or self)
+        if self.on_close then self.on_close() end
     end
 
     local function closeHidden()
         local complete = allCardsRevealed()
         local ordered_cards = orderedCardsForReading()
 
-        if complete and self.plugin.auto_save_spreads == true then
+        local was_manually_saved = self.manual_save_state == "saved"
+
+        if complete and self.plugin.auto_save_spreads == true and not was_manually_saved then
             if self.plugin:autoSaveReading(ordered_cards) then
                 closeHiddenNow()
             else
@@ -5307,6 +5349,7 @@ function HiddenCardDialog:init()
         end
 
         local should_warn = complete
+            and not was_manually_saved
             and self.plugin.auto_save_spreads ~= true
             and self.plugin.disable_unsaved_close_warning ~= true
 
@@ -5342,7 +5385,7 @@ function HiddenCardDialog:init()
     }
 
     local footer = makeFullscreenFooter(iw,
-        self.is_daily and makeTransparentTextButton{
+        (self.is_daily or self.read_only) and makeTransparentTextButton{
             text = self.plugin:getTranslation("close"),
             width = math.max(100, math.floor(iw * 0.42)),
             callback = closeHiddenNow,
@@ -5364,7 +5407,7 @@ function HiddenCardDialog:init()
 
     local function makeActionMenu(index, width, height)
         local item = self.cards[index]
-        local action_count = item and item.is_revealed == true and 4 or 3
+        local action_count = item and item.is_revealed == true and 5 or 4
         local menu_w = width
         -- Mantém o box e as áreas de toque compactos. O destaque visual vem
         -- apenas da fonte maior, não de botões ou bordas mais grossos.
@@ -5400,6 +5443,19 @@ function HiddenCardDialog:init()
         end
 
         local menu_content = VerticalGroup:new{ align = "center" }
+        local slot = item and tonumber(item.grid_slot)
+        local position_button_text = slot
+            and getPositionNameDisplay(self.plugin, self.position_names[slot]) or ""
+        if position_button_text == "" then
+            position_button_text = self.plugin:getTranslation("name_position")
+        end
+
+        -- A nomeação ocupa sempre o topo. Depois da escolha, o próprio nome da
+        -- posição substitui o texto genérico "Nomear posição".
+        table.insert(menu_content, largeTextActionButton(position_button_text, function()
+            if slot then showPositionNamePopup(slot) end
+        end))
+        table.insert(menu_content, VerticalSpan:new{ width = button_gap })
 
         table.insert(menu_content, largeTextActionButton(self.plugin:getTranslation("move_card"), function()
             self.moving_index = index
@@ -5416,6 +5472,7 @@ function HiddenCardDialog:init()
             table.insert(menu_content, VerticalSpan:new{ width = button_gap })
             table.insert(menu_content, largeTextActionButton(self.plugin:getTranslation("turn_face_down"), function()
                 item.is_revealed = false
+                markReadingChanged()
                 clearTransientSelection()
                 refreshHiddenDialog()
             end))
@@ -5521,7 +5578,8 @@ function HiddenCardDialog:init()
         local card_touch = TappableImageContainer:new{
             content = visual,
             callback = function() tapCard(index) end,
-            hold_callback = not self.is_daily and function() holdCard(index) end or nil,
+            hold_callback = (not self.is_daily and not self.read_only)
+                and function() holdCard(index) end or nil,
         }
 
         if self.selected_action_index ~= index and self.moving_index ~= index then
@@ -5604,6 +5662,8 @@ function HiddenCardDialog:init()
                     table.insert(row_widget, TappableImageContainer:new{
                         content = placeholder,
                         callback = function() tapEmptySlot(slot) end,
+                        hold_callback = (not self.read_only)
+                            and function() holdEmptySlot(slot) end or nil,
                     })
                 end
                 if column < columns then table.insert(row_widget, HorizontalSpan:new{ width = gap_x }) end
@@ -5692,7 +5752,8 @@ function TarotHomeDialog:init()
     -- Em vez disso, usamos a área segura da tela e reservamos uma faixa para
     -- cabeçalho, nome da carta e rodapé. Assim a imagem cresce em telas altas,
     -- mas continua segura em Kindle Basic 2022 e janelas pequenas.
-    local reserved_h = math.floor(layout.safe_h * 0.46)
+    local reserved_ratio = self.plugin.hide_daily_card_name == true and 0.43 or 0.46
+    local reserved_h = math.floor(layout.safe_h * reserved_ratio)
     if reserved_h < 300 then reserved_h = 300 end
     if reserved_h > math.floor(layout.safe_h * 0.58) then
         reserved_h = math.floor(layout.safe_h * 0.58)
@@ -5737,19 +5798,21 @@ function TarotHomeDialog:init()
 
     local daily_name_w
     if daily_data.is_revealed then
-        local daily_name = T(daily_card.name)
-        if daily_data.is_reversed
-            and not daily_is_lenormand
-            and self.plugin.show_reversed_label ~= false then
-            daily_name = daily_name .. " (" .. self.plugin:getTranslation("reversed") .. ")"
+        if self.plugin.hide_daily_card_name ~= true then
+            local daily_name = T(daily_card.name)
+            if daily_data.is_reversed
+                and not daily_is_lenormand
+                and self.plugin.show_reversed_label ~= false then
+                daily_name = daily_name .. " (" .. self.plugin:getTranslation("reversed") .. ")"
+            end
+            daily_name_w = TextWidget:new{
+                text      = daily_name,
+                face      = Font:getFace("cfont"),
+                bold      = true,
+                max_width = iw,
+                alignment = "center",
+            }
         end
-        daily_name_w = TextWidget:new{
-            text      = daily_name,
-            face      = Font:getFace("cfont"),
-            bold      = true,
-            max_width = iw,
-            alignment = "center",
-        }
     else
         daily_name_w = TextWidget:new{
             text      = self.plugin:getTranslation("hidden_card"),
@@ -5842,14 +5905,15 @@ function TarotHomeDialog:init()
         end,
     }
 
-    local body = VerticalGroup:new{
-        align = "center",
-        daily_title_w,
-        VerticalSpan:new{ width = Size.span.vertical_small },
-        daily_image,
-        VerticalSpan:new{ width = Size.span.vertical_small },
-        daily_name_w,
-    }
+    local body_items = { align = "center" }
+    table.insert(body_items, daily_title_w)
+    table.insert(body_items, VerticalSpan:new{ width = Size.span.vertical_small })
+    table.insert(body_items, daily_image)
+    if daily_name_w then
+        table.insert(body_items, VerticalSpan:new{ width = Size.span.vertical_small })
+        table.insert(body_items, daily_name_w)
+    end
+    local body = VerticalGroup:new(body_items)
 
     local footer = VerticalGroup:new{ align = "center" }
     table.insert(footer, daily_button)
@@ -5988,16 +6052,47 @@ function SettingsDialog:init()
                 end,
             }
         end
+        local hide_name_mark = self.plugin.hide_daily_card_name and "☑" or "☐"
+        local hide_name_button = makeRoundedButton{
+            text = "  " .. hide_name_mark .. "  " .. self.plugin:getTranslation("hide_daily_card_name"),
+            width = card_inner_w,
+            callback = function()
+                self.home_needs_refresh = true
+                self.plugin:toggleHideDailyCardName()
+                reopen(2)
+            end,
+        }
+        local daily_always_mark = self.plugin.daily_card_always_revealed and "☑" or "☐"
+        local daily_always_button = makeRoundedButton{
+            text = "  " .. daily_always_mark .. "  "
+                .. self.plugin:getTranslation("daily_card_always_revealed"),
+            width = card_inner_w,
+            callback = function()
+                self.home_needs_refresh = true
+                self.plugin:toggleDailyCardAlwaysRevealed()
+                reopen(2)
+            end,
+        }
         local daily_body = VerticalGroup:new{
             align = "center",
+            makeMutedText(self.plugin:getTranslation("daily_card_deck_mode"), card_inner_w),
+            VerticalSpan:new{ width = Size.span.vertical_small },
             dailyDeckButton("tarot", "daily_card_tarot_only"),
             VerticalSpan:new{ width = Size.span.vertical_small },
             dailyDeckButton("lenormand", "daily_card_lenormand_only"),
             VerticalSpan:new{ width = Size.span.vertical_small },
             dailyDeckButton("either", "daily_card_either"),
+            VerticalSpan:new{ width = Size.span.vertical_default },
+            makeTarotDivider(card_inner_w),
+            VerticalSpan:new{ width = Size.span.vertical_small },
+            hide_name_button,
+            VerticalSpan:new{ width = Size.span.vertical_small },
+            makeMutedText(self.plugin:getTranslation("hide_daily_card_name_hint"), card_inner_w),
+            VerticalSpan:new{ width = Size.span.vertical_default },
+            daily_always_button,
         }
         table.insert(rows, makeSettingsCard(
-            self.plugin:getTranslation("daily_card_deck_mode"),
+            self.plugin:getTranslation("daily_card"),
             daily_body,
             card_w
         ))
@@ -6097,6 +6192,28 @@ function SettingsDialog:init()
             width = card_inner_w,
             callback = function()
                 self.plugin:toggleShowReversedLabel()
+                reopen(4)
+            end,
+        })
+        table.insert(display_controls, VerticalSpan:new{ width = Size.span.vertical_default })
+        local always_revealed_mark = self.plugin.spread_cards_always_revealed and "☑" or "☐"
+        table.insert(display_controls, makeRoundedButton{
+            text = "  " .. always_revealed_mark .. "  "
+                .. self.plugin:getTranslation("spread_cards_always_revealed"),
+            width = card_inner_w,
+            callback = function()
+                self.plugin:toggleSpreadCardsAlwaysRevealed()
+                reopen(4)
+            end,
+        })
+        table.insert(display_controls, VerticalSpan:new{ width = Size.span.vertical_default })
+        local only_custom_mark = self.plugin.show_only_custom_meanings and "☑" or "☐"
+        table.insert(display_controls, makeRoundedButton{
+            text = "  " .. only_custom_mark .. "  "
+                .. self.plugin:getTranslation("show_only_custom_meanings"),
+            width = card_inner_w,
+            callback = function()
+                self.plugin:toggleShowOnlyCustomMeanings()
                 reopen(4)
             end,
         })
@@ -6276,6 +6393,7 @@ local CardBookDialog = InputContainer:extend{
     card_list = nil,
     current_index = 1,
     parent_callback = nil,
+    deck_is_lenormand = nil,
 }
 
 function CardBookDialog:init()
@@ -6283,6 +6401,11 @@ function CardBookDialog:init()
     local iw  = layout.content_w
 
     local card = self.card_list[self.current_index]
+    local deck_is_lenormand = self.deck_is_lenormand
+    if deck_is_lenormand == nil then
+        deck_is_lenormand = card and card.symbol ~= nil
+    end
+    self.deck_is_lenormand = deck_is_lenormand == true
 
     local name_text = T(card.name)
     local header_w = makeSectionHeader(
@@ -6291,70 +6414,48 @@ function CardBookDialog:init()
         name_text
     )
 
-    -- 2. Imagem à esquerda, informações à direita
+    -- Imagem à esquerda, informações à direita. A imagem é mantida compacta
+    -- para sobrar uma área rolável grande para significados longos e grifos.
     local default_w, default_h = self.plugin:getDefaultCardSize(card)
     local img_w = math.floor(default_w * 2/3)
     local img_h = math.floor(default_h * 2/3)
     local img_widget = self.plugin:getCardImageWidget(card, img_w, img_h)
-
-    -- Largura disponível para a coluna da direita
     local right_col_w = iw - img_w - Size.span.horizontal_default
+    if right_col_w < math.floor(iw * 0.38) then
+        right_col_w = math.floor(iw * 0.38)
+        img_w = math.floor((iw - right_col_w - Size.span.horizontal_default) * 0.95)
+        img_h = math.floor(img_w * (default_h / math.max(1, default_w)))
+        img_widget = self.plugin:getCardImageWidget(card, img_w, img_h)
+    end
 
-    -- Coluna da direita (VerticalGroup)
     local right_col = VerticalGroup:new{ align = "left" }
-
-    -- Função auxiliar para adicionar um rótulo (cinza, small) + valor (normal)
     local function addInfoField(label, value)
-        -- Rótulo
-        local label_w = TextWidget:new{
+        table.insert(right_col, TextWidget:new{
             text      = label .. ":",
             face      = Font:getFace("x_smallinfofont"),
             fgcolor   = Blitbuffer.gray(0.5),
             max_width = right_col_w,
             alignment = "left",
-        }
-        table.insert(right_col, label_w)
-        -- Valor
-        local value_w = TextBoxWidget:new{
+        })
+        table.insert(right_col, TextBoxWidget:new{
             text      = value,
             face      = Font:getFace("cfont"),
             width     = right_col_w,
             alignment = "left",
-        }
-        table.insert(right_col, value_w)
+        })
         table.insert(right_col, VerticalSpan:new{ width = Size.span.vertical_small })
     end
 
-    -- Keywords
     if card.keywords then
-        local kw = T(card.keywords)
-        addInfoField(self.plugin:getTranslation("keywords_label"), kw)
+        addInfoField(self.plugin:getTranslation("keywords_label"), T(card.keywords))
     end
-    -- Planet / Sign
     if card.planet then
-        local planet = T(card.planet)
-        addInfoField(self.plugin:getTranslation("planet_sign_label"), planet)
+        addInfoField(self.plugin:getTranslation("planet_sign_label"), T(card.planet))
     end
-    -- Timing
     if card.timing then
-        local timing = T(card.timing)
-        addInfoField(self.plugin:getTranslation("timing_label"), timing)
+        addInfoField(self.plugin:getTranslation("timing_label"), T(card.timing))
     end
 
-    -- Pequeno divisor se houver informações
-    if card.keywords or card.planet or card.timing then
-        local info_divider = TextWidget:new{
-            text      = "─ ─ ─ ─ ─ ─ ─ ─",
-            face      = Font:getFace("x_smallinfofont"),
-            fgcolor   = Blitbuffer.gray(0.5),
-            max_width = right_col_w,
-            alignment = "left",
-        }
-        table.insert(right_col, info_divider)
-        table.insert(right_col, VerticalSpan:new{ width = Size.span.vertical_small })
-    end
-
-    -- Layout lado a lado: imagem (esquerda) + coluna de informações (direita)
     local image_info_row = HorizontalGroup:new{
         align = "top",
         img_widget,
@@ -6362,65 +6463,7 @@ function CardBookDialog:init()
         right_col,
     }
 
-    -- Significado normal (Upright) – ALINHADO À ESQUERDA COMO O REVERSO
-    local upright_label = self.plugin:getTranslation("upright") .. ":"
-    local upright_label_w = TextWidget:new{
-        text      = upright_label,
-        face      = Font:getFace("x_smallinfofont"),
-        fgcolor   = Blitbuffer.gray(0.5),
-        max_width = iw,
-        alignment = "left",
-    }
-    local meaning_text = T(card.meaning)
-    local meaning_w = TextBoxWidget:new{
-        text      = meaning_text,
-        face      = Font:getFace("cfont"),
-        width     = iw,
-        alignment = "left",
-    }
-    local upright_section = VerticalGroup:new{
-        align = "left",
-        upright_label_w,
-        VerticalSpan:new{ width = Size.span.vertical_small },
-        meaning_w,
-    }
-
-    -- Significado invertido (apenas se não for Lenormand e existir)
-    local reversed_section
-    if not self.plugin.use_lenormand and card.reversed_meaning then
-        local reversed_label = self.plugin:getTranslation("reversed") .. ":"
-        local reversed_label_w = TextWidget:new{
-            text      = reversed_label,
-            face      = Font:getFace("x_smallinfofont"),
-            fgcolor   = Blitbuffer.gray(0.5),
-            max_width = iw,
-            alignment = "left",
-        }
-        local reversed_meaning_text = T(card.reversed_meaning)
-        local reversed_meaning_w = TextBoxWidget:new{
-            text      = reversed_meaning_text,
-            face      = Font:getFace("cfont"),
-            width     = iw,
-            alignment = "left",
-        }
-        reversed_section = VerticalGroup:new{
-            align = "left",
-            reversed_label_w,
-            VerticalSpan:new{ width = Size.span.vertical_small },
-            reversed_meaning_w,
-        }
-    end
-
-    -- Divisor padrão
-    local divider = TextWidget:new{
-        text      = "─ ─ ─ ─ ─ ─ ─ ─",
-        face      = Font:getFace("x_smallinfofont"),
-        fgcolor   = Blitbuffer.gray(0.5),
-        max_width = iw,
-        alignment = "center",
-    }
-
-    -- Navegação entre cartas
+    -- Navegação entre cartas no rodapé.
     local nav_row
     if #self.card_list > 1 then
         local btn_prev = makeRoundedButton{
@@ -6436,12 +6479,13 @@ function CardBookDialog:init()
                         card_list = self.card_list,
                         current_index = self.current_index - 1,
                         parent_callback = self.parent_callback,
+                        deck_is_lenormand = self.deck_is_lenormand,
                     })
                     setTarotDirty(self.plugin or self)
                 end
             end,
         }
-        
+
         local counter_w = TextWidget:new{
             text      = string.format(self.plugin:getTranslation("card_count"), self.current_index, #self.card_list),
             face      = Font:getFace("x_smallinfofont"),
@@ -6449,7 +6493,7 @@ function CardBookDialog:init()
             max_width = math.floor(iw * 0.36),
             alignment = "center",
         }
-        
+
         local btn_next = makeRoundedButton{
             text     = self.plugin:getTranslation("next"),
             width    = math.floor(iw * 0.30),
@@ -6463,12 +6507,13 @@ function CardBookDialog:init()
                         card_list = self.card_list,
                         current_index = self.current_index + 1,
                         parent_callback = self.parent_callback,
+                        deck_is_lenormand = self.deck_is_lenormand,
                     })
                     setTarotDirty(self.plugin or self)
                 end
             end,
         }
-        
+
         nav_row = HorizontalGroup:new{
             align = "center",
             btn_prev,
@@ -6479,7 +6524,6 @@ function CardBookDialog:init()
         }
     end
 
-    -- Botão Voltar
     local btn_back = makeTransparentTextButton{
         text     = self.plugin:getTranslation("back"),
         width    = math.floor(iw * 0.40),
@@ -6492,34 +6536,99 @@ function CardBookDialog:init()
         end,
     }
 
-    -- Montagem final: título em cima; carta/significados no centro;
-    -- navegação e voltar sempre no rodapé.
-    local body = VerticalGroup:new{
-        align = "center",
-        image_info_row,
-        VerticalSpan:new{ width = Size.span.vertical_large },
-        upright_section,   -- ← agora alinhado à esquerda dentro do grupo
-    }
-
-    if reversed_section then
-        table.insert(body, VerticalSpan:new{ width = Size.span.vertical_default })
-        table.insert(body, divider)
-        table.insert(body, VerticalSpan:new{ width = Size.span.vertical_default })
-        table.insert(body, reversed_section)
-    end
-
     local footer_content = VerticalGroup:new{ align = "center" }
     if nav_row then
         table.insert(footer_content, nav_row)
         table.insert(footer_content, VerticalSpan:new{ width = Size.span.vertical_default })
     end
     table.insert(footer_content, btn_back)
+    local footer_w = makeFullscreenFooter(iw, footer_content)
+
+    local header_h = header_w:getSize().h
+    local footer_h = footer_w:getSize().h
+    local image_h = image_info_row:getSize().h
+    local scroll_h = layout.safe_h
+        - header_h
+        - footer_h
+        - image_h
+        - Size.span.vertical_default * 5
+    if scroll_h < math.floor(layout.safe_h * 0.38) then
+        scroll_h = math.floor(layout.safe_h * 0.38)
+    end
+    if scroll_h < 120 then scroll_h = 120 end
+
+    -- O Livro de Cartas usa ScrollableContainer com widgets reais, em vez de
+    -- texto puro, para permitir rótulos em cinza como "Upright", "Reversed" e
+    -- "Significado Pessoal" sem perder rolagem em telas pequenas.
+    local meanings_content = VerticalGroup:new{ align = "left" }
+    local function addMutedLabel(text)
+        table.insert(meanings_content, TextWidget:new{
+            text = text,
+            face = Font:getFace("smalltfont"),
+            bold = true,
+            fgcolor = Blitbuffer.gray(0.5),
+            max_width = iw,
+            alignment = "left",
+        })
+        table.insert(meanings_content, VerticalSpan:new{ width = Size.span.vertical_small })
+    end
+    local function addMeaningText(text)
+        text = journalTrim(text)
+        if text == "" then return end
+        table.insert(meanings_content, TextBoxWidget:new{
+            text = text,
+            face = Font:getFace("cfont"),
+            width = iw,
+            alignment = "left",
+        })
+        table.insert(meanings_content, VerticalSpan:new{ width = Size.span.vertical_default })
+    end
+    local function addSection(title, content, custom_entries)
+        local has_custom = custom_entries and #custom_entries > 0
+        local show_only_custom = has_custom and self.plugin.show_only_custom_meanings == true
+        addMutedLabel(title)
+        if not show_only_custom then
+            addMeaningText(content)
+        end
+        if has_custom then
+            addMutedLabel(self.plugin:getTranslation("personal_meanings"))
+            addMeaningText(self.plugin:formatCustomMeaningEntries(custom_entries, true))
+        end
+        table.insert(meanings_content, VerticalSpan:new{ width = Size.span.vertical_small })
+    end
+
+    addSection(
+        self.plugin:getTranslation("upright"),
+        T(card.meaning),
+        self.plugin:getCustomMeaningsForCard(card, deck_is_lenormand, "upright")
+    )
+
+    if not deck_is_lenormand and card.reversed_meaning then
+        addSection(
+            self.plugin:getTranslation("reversed"),
+            T(card.reversed_meaning),
+            self.plugin:getCustomMeaningsForCard(card, false, "reversed")
+        )
+    end
+
+    local meanings_scroll = ScrollableContainer:new{
+        dimen = Geom:new{ x = 0, y = 0, w = iw, h = scroll_h },
+        meanings_content,
+    }
+    self.cropping_widget = meanings_scroll
+
+    local body = VerticalGroup:new{
+        align = "center",
+        image_info_row,
+        VerticalSpan:new{ width = Size.span.vertical_default },
+        meanings_scroll,
+    }
 
     self[1] = makeFullscreenScaffold{
         layout = layout,
         header = header_w,
         body = body,
-        footer = makeFullscreenFooter(iw, footer_content),
+        footer = footer_w,
     }
 end
 
@@ -6770,13 +6879,32 @@ function CardBookMenu:init()
         table.insert(deck_content, self:makeCardCountLabel(56, iw))
     end
 
+    local btn_edit_custom = makeTransparentTextButton{
+        text = self.plugin:getTranslation("edit_custom_meanings"),
+        width = math.floor(iw * 0.48),
+        callback = function()
+            -- Mantém o Livro de Cartas na tela enquanto o aviso/editor é
+            -- preparado. O editor fecha esta tela de forma segura depois,
+            -- evitando tanto o salto visual para a Home quanto o crash causado
+            -- por abrir um menu novo e fechar o antigo no mesmo callback.
+            self.plugin:showCustomMeaningEditorStart(self)
+        end,
+    }
+
     local btn_close = makeTransparentTextButton{
         text = self.plugin:getTranslation("close"),
-        width = math.floor(iw * 0.40),
+        width = math.floor(iw * 0.36),
         callback = function()
             UIManager:close(self)
             setTarotDirty(self.plugin or self)
         end,
+    }
+
+    local footer_actions = HorizontalGroup:new{
+        align = "center",
+        btn_edit_custom,
+        HorizontalSpan:new{ width = math.floor(iw * 0.08) },
+        btn_close,
     }
 
     local body = VerticalGroup:new{
@@ -6792,7 +6920,7 @@ function CardBookMenu:init()
         layout = layout,
         header = header_w,
         body = body,
-        footer = makeFullscreenFooter(iw, btn_close),
+        footer = makeFullscreenFooter(iw, footer_actions),
     }
 end
 
@@ -6924,6 +7052,7 @@ function CardBookMenu:showMinorArcanaMenu()
             plugin = self.plugin,
             card_list = cards,
             current_index = 1,
+            deck_is_lenormand = false,
             parent_callback = function()
                 UIManager:show(CardBookMenu:new{
                     plugin = self.plugin,
@@ -7036,6 +7165,7 @@ function CardBookMenu:showCardList(cards)
         plugin = self.plugin,
         card_list = cards,
         current_index = 1,
+        deck_is_lenormand = book_use_lenormand,
         parent_callback = function()
             UIManager:show(CardBookMenu:new{
                 plugin = self.plugin,
@@ -7262,6 +7392,7 @@ function TarotPlugin:showCardInBook(card, deck_is_lenormand)
         plugin = self,
         card_list = deck,
         current_index = index,
+        deck_is_lenormand = deck_is_lenormand,
         parent_callback = function()
             setTarotDirty(self.plugin or self)
         end,
@@ -7371,7 +7502,7 @@ function TarotPlugin:getDailyCardData()
         is_lenormand = use_lenormand,
         today = today,
         revealed_key = revealed_key,
-        is_revealed = revealed_date == today,
+        is_revealed = self.daily_card_always_revealed == true or revealed_date == today,
     }
 end
 

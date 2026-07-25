@@ -1,30 +1,20 @@
 --[[
 Carregador de traduções isolado do plugin Tarot.
 
-O gettext interno do KOReader 2026.03 carrega catálogos compilados .mo.
-Este módulo possui um leitor próprio e deliberadamente simples de .po para
-permitir que as traduções do plugin sejam mantidas sem etapa de compilação.
-Ele não altera o catálogo global do KOReader.
-
-A implementação anterior alterava temporariamente o catálogo global, copiava
-suas tabelas e depois tentava restaurá-lo. Embora funcionasse no aplicativo
-para computador, esse procedimento podia falhar no Kindle e deixava apenas
-traduções genéricas do catálogo principal, como "Close" -> "Fechar".
-
-Esta versão:
-  1. lê o idioma configurado diretamente em settings.reader.lua;
-  2. normaliza variantes como pt-BR, pt_BR.UTF-8 e zh_CN:zh;
-  3. abre somente o .po pertencente ao plugin;
-  4. nunca altera o gettext global do KOReader;
-  5. usa o catálogo global apenas como fallback para entradas ausentes.
+O gettext interno do KOReader usa o catálogo global do aplicativo. Para plugin
+instalado manualmente no Kindle, confiar nesse catálogo global costuma deixar
+apenas traduções genéricas, como "Close" -> "Fechar", e ignora as strings
+próprias do plugin. Este módulo lê o catálogo do próprio plugin por caminho
+absoluto e nunca altera o gettext global do KOReader.
 
 Estrutura esperada:
     l10n/pt_BR/koreader.po
+    l10n/pt/koreader.po
     l10n/zh_CN/koreader.po
 
-O inglês permanece como idioma-fonte do código e não precisa de catálogo para
-ser exibido. O arquivo l10n/en/koreader.po pode continuar no pacote para
-manutenção e distribuição padronizada.
+O carregador usa .po como fonte principal porque ele fica legível e editável no
+Kindle. Os arquivos .mo podem existir no pacote para compatibilidade com fluxos
+externos, mas este módulo não depende deles.
 ]]
 
 local CoreGetText = require("gettext")
@@ -50,7 +40,7 @@ local PluginGetText = {
 
 -- Remove espaços externos sem depender de util.trim.
 local function trim(value)
-    return (value:gsub("^%s+", ""):gsub("%s+$", ""))
+    return (tostring(value or ""):gsub("^%s+", ""):gsub("%s+$", ""))
 end
 
 -- Adiciona um item apenas se ele ainda não estiver na lista.
@@ -99,16 +89,14 @@ local function getLanguageCandidates(language)
     local base = lower:match("^([a-z][a-z])")
 
     if base == "pt" then
-        -- O plugin fornece português brasileiro como catálogo principal.
+        -- O plugin tem pt_BR e pt. Variantes como pt-PT tentam pt e pt_BR.
         addUnique(candidates, seen, "pt_BR")
         addUnique(candidates, seen, "pt")
     elseif base == "zh" then
-        -- zh, zh-Hans e variantes simplificadas usam zh_CN.
-        if lower == "zh" or lower:find("hans", 1, true)
-            or lower:find("_cn", 1, true)
-            or lower:find("_sg", 1, true) then
-            addUnique(candidates, seen, "zh_CN")
-        end
+        -- O pacote atual fornece chinês simplificado. Qualquer variante zh
+        -- cai em zh_CN para não voltar ao inglês no Kindle.
+        addUnique(candidates, seen, "zh_CN")
+        addUnique(candidates, seen, "zh")
     elseif base == "en" then
         addUnique(candidates, seen, "en")
     elseif base then
@@ -158,7 +146,7 @@ end
 
 -- Lê o subconjunto padrão de PO utilizado pelos catálogos deste plugin.
 local function loadPO(path)
-    local file, open_error = io.open(path, "r")
+    local file, open_error = io.open(path, "rb")
     if not file then
         return nil, open_error or "não foi possível abrir o arquivo"
     end
@@ -167,6 +155,7 @@ local function loadPO(path)
     local entry = {}
     local active_field = nil
     local fuzzy = false
+    local first_line = true
 
     local function commitEntry()
         if not fuzzy
@@ -183,6 +172,12 @@ local function loadPO(path)
     end
 
     for line in file:lines() do
+        if first_line then
+            -- Remove BOM UTF-8 caso o arquivo tenha sido editado no Windows.
+            line = line:gsub("^\239\187\191", "")
+            first_line = false
+        end
+
         if line == "" then
             commitEntry()
         elseif line:match("^#,.*fuzzy") then
@@ -237,13 +232,15 @@ end
 local function loadConfiguredCatalog()
     local requested = getConfiguredLanguage()
     PluginGetText.requested_lang = requested or "C"
+    PluginGetText.current_lang = "C"
+    PluginGetText.catalog_path = nil
+    PluginGetText.translation = {}
 
     local normalized = normalizeLanguage(requested)
     if not normalized
-        or normalized == "C"
+        or normalized:lower() == "c"
         or normalized:lower():match("^en") then
-        -- O próprio msgid já é o texto inglês.
-        PluginGetText.current_lang = "C"
+        -- O próprio msgid já é o texto-base.
         return
     end
 
@@ -281,6 +278,12 @@ local function loadConfiguredCatalog()
         tostring(requested),
         table.concat(attempted, ", ")
     )
+end
+
+-- Permite recarregar o catálogo quando o plugin é aberto novamente na mesma
+-- sessão do KOReader após mudança de idioma.
+function PluginGetText.reload()
+    loadConfiguredCatalog()
 end
 
 loadConfiguredCatalog()
