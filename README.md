@@ -18,7 +18,7 @@ Draw cards, reveal meanings, save reflections, and browse the card book directly
 * Reflection Journal
 * Adaptive fullscreen layout
 * E-ink friendly refresh options
-* Translations in English, Portuguese, Brazilian Portuguese, and Chinese
+* Translations in English, Portuguese, Brazilian Portuguese,Spanish and Chinese
 
 ## Installation
 
@@ -32,7 +32,7 @@ Then restart KOReader and open the plugin from the tools menu.
 
 ## Version
 
-**Arcana - 5.5.3**
+**Arcana - 5.9.18**
 
 ## Cards credits
 
