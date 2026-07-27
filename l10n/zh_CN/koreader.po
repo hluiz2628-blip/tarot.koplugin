@@ -4,19 +4,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Tarot KOReader 5.5.1\n"
+"Project-Id-Version: Tarot KOReader 5.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-25 00:00-0300\n"
-"PO-Revision-Date: 2026-07-25 00:00-0300\n"
+"POT-Creation-Date: 2026-07-27 00:00-0300\n"
+"PO-Revision-Date: 2026-07-27 00:00-0300\n"
 "Last-Translator: \n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: custom Lua string extractor\n"
-""
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Generated-By: tools/update_l10n.py\n"
 
 #: tarot_strings.lua:5 _meta.lua:20
 msgid "Tarot Reading"
@@ -26,7 +25,7 @@ msgstr "塔罗牌解读"
 msgid "Tarot Home"
 msgstr "塔罗主页"
 
-#: tarot_strings.lua:7 tarot_strings.lua:121
+#: tarot_strings.lua:7 tarot_strings.lua:134
 msgid "Spreads"
 msgstr "牌阵"
 
@@ -72,8 +71,8 @@ msgid "Press and hold a card in the list to reverse it."
 msgstr "长按列表中的卡牌可将其设为逆位。"
 
 #: tarot_strings.lua:18
-msgid "Click the card beside it to access it."
-msgstr "点击旁边的牌即可查看。"
+msgid "Swipe left or right to move between cards, or tap a side card."
+msgstr "左右滑动可在牌之间切换，也可以点击侧边的牌。"
 
 #: tarot_strings.lua:19
 msgid "Do not show this message again"
@@ -208,7 +207,7 @@ msgstr "仅限大阿卡纳"
 msgid "Draw only from the 22 Major Arcana"
 msgstr "仅从 22 张大阿卡纳中抽牌"
 
-#: tarot_strings.lua:52
+#: tarot_strings.lua:52 tarot_strings.lua:77
 msgid "Reading display"
 msgstr "牌阵显示"
 
@@ -262,337 +261,387 @@ msgid "Show only Personal Meaning if available"
 msgstr "有个人释义时仅显示个人释义"
 
 #: tarot_strings.lua:65
+msgid "Show \"view in book\""
+msgstr "显示“在书中查看”"
+
+#: tarot_strings.lua:66
 msgid "Meaning text size"
 msgstr "释义文字大小"
 
-#: tarot_strings.lua:66
+#: tarot_strings.lua:67
 msgid "Compact"
 msgstr "紧凑"
 
-#: tarot_strings.lua:67
+#: tarot_strings.lua:68
 msgid "Standard"
 msgstr "标准"
 
-#: tarot_strings.lua:68
+#: tarot_strings.lua:69
 msgid "Large"
 msgstr "大"
 
-#: tarot_strings.lua:69
+#: tarot_strings.lua:70
 msgid "Meanings in readings"
 msgstr "牌阵中的释义"
 
-#: tarot_strings.lua:70
+#: tarot_strings.lua:71
 msgid "Full"
 msgstr "完整"
 
-#: tarot_strings.lua:71
+#: tarot_strings.lua:72
 msgid "Summarized"
 msgstr "摘要"
 
-#: tarot_strings.lua:72
+#: tarot_strings.lua:73
 msgid "Hidden"
 msgstr "隐藏"
 
-#: tarot_strings.lua:73
+#: tarot_strings.lua:74
 #, lua-format
 msgid "Page %d of %d"
 msgstr "第 %d 页，共 %d 页"
 
-#: tarot_strings.lua:74
+#: tarot_strings.lua:75
+msgid "Deck and draw"
+msgstr "牌组与抽牌"
+
+#: tarot_strings.lua:76
+msgid "Reading meanings"
+msgstr "牌阵含义"
+
+#: tarot_strings.lua:78
+msgid "Journal and saving"
+msgstr "日记与保存"
+
+#: tarot_strings.lua:79
+msgid "System"
+msgstr "系统"
+
+#: tarot_strings.lua:80
 msgid "Journal and system"
 msgstr "日记与系统"
 
-#: tarot_strings.lua:75
+#: tarot_strings.lua:81
 msgid "Screen refresh"
 msgstr "屏幕刷新"
 
-#: tarot_strings.lua:76
+#: tarot_strings.lua:82
 msgid "Update mode"
 msgstr "更新模式"
 
-#: tarot_strings.lua:77
+#: tarot_strings.lua:83
 msgid "Balanced"
 msgstr "均衡"
 
-#: tarot_strings.lua:78
+#: tarot_strings.lua:84
 msgid "Fewer flashes"
 msgstr "减少闪烁"
 
-#: tarot_strings.lua:79
+#: tarot_strings.lua:85
 msgid "Cleaner screen"
 msgstr "更干净的屏幕"
 
-#: tarot_strings.lua:80
+#: tarot_strings.lua:86
 msgid ""
-"Fewer flashes reduces black/white blinking, but may leave more ghosting on e-i"
-"nk screens."
+"Fewer flashes reduces black/white blinking, but may leave more ghosting on e-"
+"ink screens."
 msgstr "减少闪烁会降低黑白闪屏，但在墨水屏上可能留下更多残影。"
 
-#: tarot_strings.lua:81
+#: tarot_strings.lua:87
 msgid "Major Arcana"
 msgstr "大阿卡纳"
 
-#: tarot_strings.lua:82
+#: tarot_strings.lua:88
 msgid "Minor Arcana"
 msgstr "小阿卡纳"
 
-#: tarot_strings.lua:83
+#: tarot_strings.lua:89
 msgid "Deck Type"
 msgstr "牌组类型"
 
-#: tarot_strings.lua:84
+#: tarot_strings.lua:90
 msgid "Choose between Tarot and Lenormand"
 msgstr "在塔罗牌与雷诺曼牌之间选择"
 
-#: tarot_strings.lua:85
+#: tarot_strings.lua:91
 msgid "Tarot"
 msgstr "塔罗牌"
 
-#: tarot_strings.lua:86
+#: tarot_strings.lua:92
 msgid "Lenormand"
 msgstr "雷诺曼牌"
 
-#: tarot_strings.lua:87
+#: tarot_strings.lua:93
 msgid "Lenormand Reading"
 msgstr "雷诺曼牌解读"
 
-#: tarot_strings.lua:88
+#: tarot_strings.lua:94
 msgid "Lenormand Deck"
 msgstr "雷诺曼牌组"
 
-#: tarot_strings.lua:89
+#: tarot_strings.lua:95
 msgid "Save"
 msgstr "保存"
 
-#: tarot_strings.lua:90
+#: tarot_strings.lua:96
 msgid "Record title"
 msgstr "记录标题"
 
-#: tarot_strings.lua:91
+#: tarot_strings.lua:97
 msgid "Ex: Daily reflection"
 msgstr "例如：每日反思"
 
-#: tarot_strings.lua:92
+#: tarot_strings.lua:98
 msgid "Reflection about the reading"
 msgstr "牌阵反思"
 
-#: tarot_strings.lua:93
+#: tarot_strings.lua:99
 msgid "Ex: What I felt seeing these cards..."
 msgstr "例如：看到这些牌时我的感受……"
 
-#: tarot_strings.lua:94
+#: tarot_strings.lua:100
 msgid "Spread saved successfully!"
 msgstr "牌阵已成功保存！"
 
-#: tarot_strings.lua:95
+#: tarot_strings.lua:101
 msgid "Error saving the spread."
 msgstr "保存牌阵时出错。"
 
-#: tarot_strings.lua:96
+#: tarot_strings.lua:102
 msgid "Journal"
 msgstr "日记"
 
-#: tarot_strings.lua:97
+#: tarot_strings.lua:103
 msgid "Reflection Journal"
 msgstr "反思日记"
 
-#: tarot_strings.lua:98
+#: tarot_strings.lua:104
 msgid "No journal entries found."
 msgstr "未找到日记记录。"
 
-#: tarot_strings.lua:99
+#: tarot_strings.lua:105
 msgid "Save a spread, record the daily card, or create a free reflection."
 msgstr "保存牌阵、记录每日牌，或创建自由反思。"
 
-#: tarot_strings.lua:100
+#: tarot_strings.lua:106
 msgid "Open record"
 msgstr "打开记录"
 
-#: tarot_strings.lua:101
+#: tarot_strings.lua:107
 msgid "Move to trash"
 msgstr "移到回收站"
 
-#: tarot_strings.lua:102
+#: tarot_strings.lua:108
 msgid "Move this record to the trash?"
 msgstr "将此记录移到回收站吗？"
 
-#: tarot_strings.lua:103
+#: tarot_strings.lua:109
 msgid "Record moved to the trash."
 msgstr "记录已移到回收站。"
 
-#: tarot_strings.lua:104
+#: tarot_strings.lua:110
 msgid "Error moving the record."
 msgstr "移动记录时出错。"
 
-#: tarot_strings.lua:105
+#: tarot_strings.lua:111
 #, lua-format
 msgid "%d records"
 msgstr "%d 条记录"
 
-#: tarot_strings.lua:106
+#: tarot_strings.lua:112
 msgid "New reflection"
 msgstr "新建反思"
 
-#: tarot_strings.lua:107
+#: tarot_strings.lua:113
 msgid "Search"
 msgstr "搜索"
 
-#: tarot_strings.lua:108
+#: tarot_strings.lua:114
 msgid "Filter"
 msgstr "筛选"
 
-#: tarot_strings.lua:109
+#: tarot_strings.lua:115
 msgid "More"
 msgstr "更多"
 
-#: tarot_strings.lua:110
+#: tarot_strings.lua:116
+msgid "Marked"
+msgstr "已标记"
+
+#: tarot_strings.lua:117
+msgid "No marked items yet."
+msgstr "还没有标记项目。"
+
+#: tarot_strings.lua:118
+#, lua-format
+msgid "Card: %s"
+msgstr "牌：%s"
+
+#: tarot_strings.lua:119
+#, lua-format
+msgid "Journal: %s"
+msgstr "日记：%s"
+
+#: tarot_strings.lua:120
+msgid "This marked item could not be found."
+msgstr "找不到这个已标记项目。"
+
+#: tarot_strings.lua:121
+msgid "Mark"
+msgstr "标记"
+
+#: tarot_strings.lua:122
+msgid "Unmark"
+msgstr "取消标记"
+
+#: tarot_strings.lua:123
 #, lua-format
 msgid "%d of %d"
 msgstr "第 %d / %d 页"
 
-#: tarot_strings.lua:111
+#: tarot_strings.lua:124
 msgid "No journal entries match the current search or filters."
 msgstr "没有符合当前搜索或筛选条件的记录。"
 
-#: tarot_strings.lua:112
+#: tarot_strings.lua:125
 msgid "Clear search and filters"
 msgstr "清除搜索和筛选"
 
-#: tarot_strings.lua:113
+#: tarot_strings.lua:126
 msgid "Clear search"
 msgstr "清除搜索"
 
-#: tarot_strings.lua:114
+#: tarot_strings.lua:127
 msgid "Search journal"
 msgstr "搜索日记"
 
-#: tarot_strings.lua:115
+#: tarot_strings.lua:128
 msgid "Title, reflection, card, or outcome"
 msgstr "标题、反思、牌或结果"
 
-#: tarot_strings.lua:116
+#: tarot_strings.lua:129
 msgid "Journal filters"
 msgstr "日记筛选"
 
-#: tarot_strings.lua:117
+#: tarot_strings.lua:130
 msgid "Apply"
 msgstr "应用"
 
-#: tarot_strings.lua:118
+#: tarot_strings.lua:131
 msgid "All"
 msgstr "全部"
 
-#: tarot_strings.lua:119
+#: tarot_strings.lua:132
 #, lua-format
 msgid "Deck: %s"
 msgstr "牌组：%s"
 
-#: tarot_strings.lua:120
+#: tarot_strings.lua:133
 msgid "Entry types"
 msgstr "记录类型"
 
-#: tarot_strings.lua:122
+#: tarot_strings.lua:135
 msgid "Daily cards"
 msgstr "每日牌"
 
-#: tarot_strings.lua:123
+#: tarot_strings.lua:136
 msgid "Free reflections"
 msgstr "自由反思"
 
-#: tarot_strings.lua:124
+#: tarot_strings.lua:137
 msgid "Old records"
 msgstr "旧记录"
 
-#: tarot_strings.lua:125
+#: tarot_strings.lua:138
 msgid "Favorites only"
 msgstr "仅收藏"
 
-#: tarot_strings.lua:126
+#: tarot_strings.lua:139
 #, lua-format
 msgid "Order: %s"
 msgstr "排序：%s"
 
-#: tarot_strings.lua:127
+#: tarot_strings.lua:140
 msgid "Newest first"
 msgstr "最新优先"
 
-#: tarot_strings.lua:128
+#: tarot_strings.lua:141
 msgid "Oldest first"
 msgstr "最早优先"
 
-#: tarot_strings.lua:129 tarot_strings.lua:198
+#: tarot_strings.lua:142 tarot_strings.lua:211
 msgid "Title"
 msgstr "标题"
 
-#: tarot_strings.lua:130
+#: tarot_strings.lua:143
 msgid "Last edited"
 msgstr "最近编辑"
 
-#: tarot_strings.lua:131
+#: tarot_strings.lua:144
 msgid "Select at least one entry type."
 msgstr "请至少选择一种记录类型。"
 
-#: tarot_strings.lua:132
+#: tarot_strings.lua:145
 msgid "Go to month"
 msgstr "跳转到月份"
 
-#: tarot_strings.lua:133
+#: tarot_strings.lua:146
 msgid "Month"
 msgstr "月份"
 
-#: tarot_strings.lua:134
+#: tarot_strings.lua:147
 msgid "YYYY-MM, for example 2026-07"
 msgstr "YYYY-MM，例如 2026-07"
 
-#: tarot_strings.lua:135
+#: tarot_strings.lua:148
 msgid "Use the YYYY-MM format."
 msgstr "请使用 YYYY-MM 格式。"
 
-#: tarot_strings.lua:136
+#: tarot_strings.lua:149
 msgid "Clear month filter"
 msgstr "清除月份筛选"
 
-#: tarot_strings.lua:137
+#: tarot_strings.lua:150
 msgid "Journal summary"
 msgstr "日记摘要"
 
-#: tarot_strings.lua:138
+#: tarot_strings.lua:151
 msgid "Trash"
 msgstr "回收站"
 
-#: tarot_strings.lua:139
+#: tarot_strings.lua:152
 msgid "Journal Trash"
 msgstr "日记回收站"
 
-#: tarot_strings.lua:140
+#: tarot_strings.lua:153
 msgid "The journal trash is empty."
 msgstr "日记回收站为空。"
 
-#: tarot_strings.lua:141 tarot_strings.lua:201
+#: tarot_strings.lua:154 tarot_strings.lua:214
 msgid "Restore"
 msgstr "恢复默认"
 
-#: tarot_strings.lua:142
+#: tarot_strings.lua:155
 msgid "Record restored."
 msgstr "记录已恢复。"
 
-#: tarot_strings.lua:143
+#: tarot_strings.lua:156
 msgid "Delete permanently"
 msgstr "永久删除"
 
-#: tarot_strings.lua:144
+#: tarot_strings.lua:157
 msgid "Permanently delete this record?"
 msgstr "永久删除此记录吗？"
 
-#: tarot_strings.lua:145
+#: tarot_strings.lua:158
 msgid "Record permanently deleted."
 msgstr "记录已永久删除。"
 
-#: tarot_strings.lua:146
+#: tarot_strings.lua:159
 msgid "Export journal"
 msgstr "导出日记"
 
-#: tarot_strings.lua:147
+#: tarot_strings.lua:160
 #, lua-format
 msgid ""
 "Journal exported to:\n"
@@ -601,15 +650,15 @@ msgstr ""
 "日记已导出到：\n"
 "%s"
 
-#: tarot_strings.lua:148
+#: tarot_strings.lua:161
 msgid "Error exporting the journal."
 msgstr "导出日记时出错。"
 
-#: tarot_strings.lua:149
+#: tarot_strings.lua:162
 msgid "Create backup"
 msgstr "创建备份"
 
-#: tarot_strings.lua:150
+#: tarot_strings.lua:163
 #, lua-format
 msgid ""
 "Backup created at:\n"
@@ -618,588 +667,595 @@ msgstr ""
 "备份已创建于：\n"
 "%s"
 
-#: tarot_strings.lua:151
+#: tarot_strings.lua:164
 msgid "Error creating the backup."
 msgstr "创建备份时出错。"
 
-#: tarot_strings.lua:152
+#: tarot_strings.lua:165
 msgid "Restore backup"
 msgstr "恢复备份"
 
-#: tarot_strings.lua:153
+#: tarot_strings.lua:166
 msgid "No journal backups found."
 msgstr "未找到日记备份。"
 
-#: tarot_strings.lua:154
+#: tarot_strings.lua:167
 msgid "Backup restored. Existing records were preserved."
 msgstr "备份已恢复，现有记录已保留。"
 
-#: tarot_strings.lua:155
+#: tarot_strings.lua:168
 msgid "Reflection title"
 msgstr "反思标题"
 
-#: tarot_strings.lua:156
+#: tarot_strings.lua:169
 msgid "What is this reflection about?"
 msgstr "这次反思关于什么？"
 
-#: tarot_strings.lua:157
+#: tarot_strings.lua:170
 msgid "Reflection"
 msgstr "反思"
 
-#: tarot_strings.lua:158
+#: tarot_strings.lua:171
 msgid "Write your reflection..."
 msgstr "写下你的反思……"
 
-#: tarot_strings.lua:159
+#: tarot_strings.lua:172
 msgid "Save reflection"
 msgstr "保存反思"
 
-#: tarot_strings.lua:160
+#: tarot_strings.lua:173
 msgid "Edit"
 msgstr "编辑"
 
-#: tarot_strings.lua:161
+#: tarot_strings.lua:174
 msgid "Edit title"
 msgstr "编辑标题"
 
-#: tarot_strings.lua:162
+#: tarot_strings.lua:175
 msgid "Edit reflection"
 msgstr "编辑反思"
 
-#: tarot_strings.lua:163
+#: tarot_strings.lua:176
 msgid "Add outcome"
 msgstr "添加结果"
 
-#: tarot_strings.lua:164
+#: tarot_strings.lua:177
 msgid "Edit outcome"
 msgstr "编辑结果"
 
-#: tarot_strings.lua:165 tarot_strings.lua:243
+#: tarot_strings.lua:178 tarot_strings.lua:256
 msgid "Outcome"
 msgstr "结果"
 
-#: tarot_strings.lua:166
+#: tarot_strings.lua:179
 msgid "What happened after this reflection?"
 msgstr "这次反思之后发生了什么？"
 
-#: tarot_strings.lua:167
+#: tarot_strings.lua:180
 msgid "Favorite"
 msgstr "收藏"
 
-#: tarot_strings.lua:168
+#: tarot_strings.lua:181
 msgid "Remove favorite"
 msgstr "取消收藏"
 
-#: tarot_strings.lua:169
+#: tarot_strings.lua:182
 msgid "View cards and meanings"
 msgstr "查看牌与含义"
 
-#: tarot_strings.lua:170
+#: tarot_strings.lua:183
 msgid "Back to journal"
 msgstr "返回日记"
 
-#: tarot_strings.lua:171
+#: tarot_strings.lua:184
 msgid "Add to journal"
 msgstr "添加到日记"
 
-#: tarot_strings.lua:172
+#: tarot_strings.lua:185
 msgid "MY REFLECTION"
 msgstr "我的反思"
 
-#: tarot_strings.lua:173
+#: tarot_strings.lua:186
 msgid "OUTCOME"
 msgstr "结果"
 
-#: tarot_strings.lua:174
+#: tarot_strings.lua:187
 msgid "CARDS"
 msgstr "牌"
 
-#: tarot_strings.lua:175
+#: tarot_strings.lua:188
 msgid "Created on"
 msgstr "创建于"
 
-#: tarot_strings.lua:176
+#: tarot_strings.lua:189
 msgid "Updated on"
 msgstr "更新于"
 
-#: tarot_strings.lua:177
+#: tarot_strings.lua:190
 msgid "Type"
 msgstr "类型"
 
-#: tarot_strings.lua:178
+#: tarot_strings.lua:191
 msgid "Spread"
 msgstr "牌阵"
 
-#: tarot_strings.lua:179
+#: tarot_strings.lua:192
 msgid "Daily card"
 msgstr "每日牌"
 
-#: tarot_strings.lua:180
+#: tarot_strings.lua:193
 msgid "Free reflection"
 msgstr "自由反思"
 
-#: tarot_strings.lua:181
+#: tarot_strings.lua:194
 msgid "Old record"
 msgstr "旧记录"
 
-#: tarot_strings.lua:182
+#: tarot_strings.lua:195
 msgid "1 card"
 msgstr "1 张牌"
 
-#: tarot_strings.lua:183
+#: tarot_strings.lua:196
 msgid "3 cards"
 msgstr "3 张牌"
 
-#: tarot_strings.lua:184 tarot_strings.lua:220
+#: tarot_strings.lua:197 tarot_strings.lua:233
 #, lua-format
 msgid "%d cards"
 msgstr "%d 张牌"
 
-#: tarot_strings.lua:185
+#: tarot_strings.lua:198
 msgid "Untitled reflection"
 msgstr "无标题反思"
 
-#: tarot_strings.lua:186
+#: tarot_strings.lua:199
 msgid "No reflection text."
 msgstr "没有反思内容。"
 
-#: tarot_strings.lua:187
+#: tarot_strings.lua:200
 msgid "Error saving the journal record."
 msgstr "保存日记记录时出错。"
 
-#: tarot_strings.lua:188
+#: tarot_strings.lua:201
 msgid "Journal record saved."
 msgstr "记录已保存到日记。"
 
-#: tarot_strings.lua:189
+#: tarot_strings.lua:202
 msgid ""
-"Old records are read-only, but they can be searched, opened, exported, or move"
-"d to the trash."
+"Old records are read-only, but they can be searched, opened, exported, or "
+"moved to the trash."
 msgstr "旧记录为只读，但可以搜索、打开、导出或移到回收站。"
 
-#: tarot_strings.lua:190
+#: tarot_strings.lua:203
 #, lua-format
 msgid "Total records: %d"
 msgstr "记录总数：%d"
 
-#: tarot_strings.lua:191
+#: tarot_strings.lua:204
 #, lua-format
 msgid "Tarot: %d"
 msgstr "塔罗：%d"
 
-#: tarot_strings.lua:192
+#: tarot_strings.lua:205
 #, lua-format
 msgid "Lenormand: %d"
 msgstr "雷诺曼：%d"
 
-#: tarot_strings.lua:193
+#: tarot_strings.lua:206
 #, lua-format
 msgid "This month: %d"
 msgstr "本月：%d"
 
-#: tarot_strings.lua:194
+#: tarot_strings.lua:207
 #, lua-format
 msgid "Favorites: %d"
 msgstr "收藏：%d"
 
-#: tarot_strings.lua:195
+#: tarot_strings.lua:208
 #, lua-format
 msgid "Most frequent card: %s (%d)"
 msgstr "最常出现的牌：%s（%d）"
 
-#: tarot_strings.lua:196
+#: tarot_strings.lua:209
 msgid "Most frequent card: —"
 msgstr "最常出现的牌：—"
 
-#: tarot_strings.lua:197
+#: tarot_strings.lua:210
 msgid "Saved on"
 msgstr "保存于"
 
-#: tarot_strings.lua:199
+#: tarot_strings.lua:212
 msgid "Note"
 msgstr "备注"
 
-#: tarot_strings.lua:200
+#: tarot_strings.lua:213
 msgid "Position"
 msgstr "位置"
 
-#: tarot_strings.lua:202
+#: tarot_strings.lua:215
 msgid "Erase all plugin data"
 msgstr "删除插件的所有数据"
 
-#: tarot_strings.lua:203
+#: tarot_strings.lua:216
 msgid "ATTENTION: EVERYTHING will be DELETED. Continue?"
 msgstr "注意：所有内容都将被删除。是否继续？"
 
-#: tarot_strings.lua:204
+#: tarot_strings.lua:217
 msgid "This action cannot be undone. Continue?"
 msgstr "此操作无法撤销。是否继续？"
 
-#: tarot_strings.lua:205
+#: tarot_strings.lua:218
 msgid "All plugin data was deleted. The app is now reset."
 msgstr "插件的所有数据已删除，应用现已重置。"
 
-#: tarot_strings.lua:206
+#: tarot_strings.lua:219
 msgid "The reset could not be completed. Some data could not be deleted."
 msgstr "无法完成重置。部分数据未能删除。"
 
-#: tarot_strings.lua:207
+#: tarot_strings.lua:220
 msgid "Yes"
 msgstr "是"
 
-#: tarot_strings.lua:208
+#: tarot_strings.lua:221
 msgid "No"
 msgstr "否"
 
-#: tarot_strings.lua:209
+#: tarot_strings.lua:222
 msgid "Confirm"
 msgstr "确认"
 
-#: tarot_strings.lua:210
+#: tarot_strings.lua:223
 msgid "Cancel"
 msgstr "取消"
 
-#: tarot_strings.lua:211
+#: tarot_strings.lua:224
 msgid "Reset"
 msgstr "重置"
 
-#: tarot_strings.lua:212
+#: tarot_strings.lua:225
 msgid "Card Book"
 msgstr "牌义手册"
 
-#: tarot_strings.lua:213
+#: tarot_strings.lua:226
 msgid "Major Arcana (22)"
 msgstr "大阿卡纳（22 张）"
 
-#: tarot_strings.lua:214
+#: tarot_strings.lua:227
 msgid "Minor Arcana (56)"
 msgstr "小阿卡纳（56 张）"
 
-#: tarot_strings.lua:215
+#: tarot_strings.lua:228
 msgid "Lenormand Deck (36)"
 msgstr "雷诺曼牌组（36 张）"
 
-#: tarot_strings.lua:216
+#: tarot_strings.lua:229
 msgid "View All Cards"
 msgstr "查看所有牌"
 
-#: tarot_strings.lua:217
+#: tarot_strings.lua:230
 msgid "Search Card"
 msgstr "搜索牌"
 
-#: tarot_strings.lua:218
+#: tarot_strings.lua:231
 msgid "Search Tarot"
 msgstr "搜索塔罗牌"
 
-#: tarot_strings.lua:219
+#: tarot_strings.lua:232
 msgid "Search Lenormand"
 msgstr "搜索雷诺曼牌"
 
-#: tarot_strings.lua:221
+#: tarot_strings.lua:234
 msgid "Type a card name or keyword"
 msgstr "输入牌名或关键词"
 
-#: tarot_strings.lua:222
+#: tarot_strings.lua:235
 msgid "Enter a search term."
 msgstr "请输入搜索内容。"
 
-#: tarot_strings.lua:223
+#: tarot_strings.lua:236
 msgid "Meaning"
 msgstr "含义"
 
-#: tarot_strings.lua:224
+#: tarot_strings.lua:237
 msgid "Reversed Meaning"
 msgstr "逆位含义"
 
-#: tarot_strings.lua:225
+#: tarot_strings.lua:238
 msgid "Number"
 msgstr "编号"
 
-#: tarot_strings.lua:226
+#: tarot_strings.lua:239
 msgid "Arcana"
 msgstr "阿卡纳"
 
-#: tarot_strings.lua:227
+#: tarot_strings.lua:240
 msgid "Filter Cards"
 msgstr "筛选牌"
 
-#: tarot_strings.lua:228
+#: tarot_strings.lua:241
 msgid "No cards found."
 msgstr "未找到任何牌。"
 
-#: tarot_strings.lua:229
+#: tarot_strings.lua:242
 msgid "Back"
 msgstr "返回"
 
-#: tarot_strings.lua:230 tarot_cards.lua:211
+#: tarot_strings.lua:243 tarot_cards.lua:211
 msgid "Wands"
 msgstr "权杖"
 
-#: tarot_strings.lua:231 tarot_cards.lua:212
+#: tarot_strings.lua:244 tarot_cards.lua:212
 msgid "Cups"
 msgstr "圣杯"
 
-#: tarot_strings.lua:232 tarot_cards.lua:213
+#: tarot_strings.lua:245 tarot_cards.lua:213
 msgid "Swords"
 msgstr "宝剑"
 
-#: tarot_strings.lua:233 tarot_cards.lua:214
+#: tarot_strings.lua:246 tarot_cards.lua:214
 msgid "Pentacles"
 msgstr "星币"
 
-#: tarot_strings.lua:234
+#: tarot_strings.lua:247
 msgid "Hidden Card"
 msgstr "隐藏牌"
 
-#: tarot_strings.lua:235
+#: tarot_strings.lua:248
 msgid "Name position"
 msgstr "命名位置"
 
-#: tarot_strings.lua:236
+#: tarot_strings.lua:249
 msgid "Choose position name"
 msgstr "选择位置名称"
 
-#: tarot_strings.lua:237
+#: tarot_strings.lua:250
 msgid "Past"
 msgstr "过去"
 
-#: tarot_strings.lua:238
+#: tarot_strings.lua:251
 msgid "Present"
 msgstr "现在"
 
-#: tarot_strings.lua:239
+#: tarot_strings.lua:252
 msgid "Future"
 msgstr "未来"
 
-#: tarot_strings.lua:240
+#: tarot_strings.lua:253
 msgid "Situation"
 msgstr "现状"
 
-#: tarot_strings.lua:241
+#: tarot_strings.lua:254
 msgid "Obstacle"
 msgstr "障碍"
 
-#: tarot_strings.lua:242
+#: tarot_strings.lua:255
 msgid "Advice"
 msgstr "建议"
 
-#: tarot_strings.lua:244
+#: tarot_strings.lua:257
 msgid "Custom name"
 msgstr "自定义名称"
 
-#: tarot_strings.lua:245
+#: tarot_strings.lua:258
 msgid "Type the position name"
 msgstr "输入位置名称"
 
-#: tarot_strings.lua:246
+#: tarot_strings.lua:259
 msgid "Remove name"
 msgstr "移除名称"
 
-#: tarot_strings.lua:247
+#: tarot_strings.lua:260
 msgid "Move"
 msgstr "移动"
 
-#: tarot_strings.lua:248
+#: tarot_strings.lua:261
 msgid "Delete"
 msgstr "删除"
 
-#: tarot_strings.lua:249
+#: tarot_strings.lua:262
 msgid "Undo"
 msgstr "撤销"
 
-#: tarot_strings.lua:250
+#: tarot_strings.lua:263
 msgid "Hide"
 msgstr "盖回"
 
-#: tarot_strings.lua:251
+#: tarot_strings.lua:264
 msgid "Tap another location to move"
 msgstr "轻触另一个位置进行移动"
 
-#: tarot_strings.lua:252
+#: tarot_strings.lua:265
 msgid "click on the card"
 msgstr "点击牌面"
 
-#: tarot_strings.lua:253
+#: tarot_strings.lua:266
 msgid "Exit"
 msgstr "退出"
 
-#: tarot_strings.lua:254
+#: tarot_strings.lua:267
 msgid "Reveal"
 msgstr "揭示"
 
-#: tarot_strings.lua:255
+#: tarot_strings.lua:268
 msgid "Reveal next card"
 msgstr "揭示下一张牌"
 
-#: tarot_strings.lua:256
+#: tarot_strings.lua:269
 msgid ""
-"Tap an empty space to add a card. Press and hold an empty space to name its po"
-"sition. Tap a hidden card to reveal it, and tap a revealed card to open its de"
-"tails. Press and hold a card to name its position, move, delete, undo, or hide"
-" it."
-msgstr "轻触空位添加牌；长按空位可命名该位置。轻触牌背可翻开，轻触已翻开的牌可查看详情。长按牌可命名位置、移动、删除、撤销或盖回。"
+"Tap an empty space to add a card. Press and hold an empty space to name its "
+"position. Tap a hidden card to reveal it, and tap a revealed card to open "
+"its details. Press and hold a card to name its position, move, delete, undo, "
+"or hide it."
+msgstr ""
+"轻触空位添加牌；长按空位可命名该位置。轻触牌背可翻开，轻触已翻开的牌可查看详"
+"情。长按牌可命名位置、移动、删除、撤销或盖回。"
 
-#: tarot_strings.lua:257
-msgid "Click the next card to reveal it. Press and hold to reveal all remaining cards."
-msgstr "点击下一张卡牌以揭示。长按可揭示所有剩余卡牌。"
+#: tarot_strings.lua:270
+msgid ""
+"Swipe left or tap the next card to reveal it. Press and hold the next card "
+"to reveal all remaining cards."
+msgstr "向左滑动或点击下一张牌来揭示它。长按下一张牌可揭示所有剩余的牌。"
 
-#: tarot_strings.lua:258
+#: tarot_strings.lua:271
 msgid "Reveal all remaining cards?"
 msgstr "揭示所有剩余卡牌？"
 
-#: tarot_strings.lua:259
+#: tarot_strings.lua:272
 #, lua-format
 msgid "Revealed %d of %d"
 msgstr "已揭示 %d / %d 张"
 
-#: tarot_strings.lua:260
+#: tarot_strings.lua:273
 msgid "About"
 msgstr "关于"
 
-#: tarot_strings.lua:261
+#: tarot_strings.lua:274
 msgid "About Tarot and Lenormand"
 msgstr "关于塔罗牌与雷诺曼牌"
 
-#: tarot_strings.lua:262
+#: tarot_strings.lua:275
 msgid ""
-"Tarot is a deck of 78 cards, divided into Major Arcana (22) and Minor Arcana ("
-"56), used for reflection and self-knowledge. The Lenormand deck has 36 cards w"
-"ith direct symbolism for practical guidance.\n"
+"Tarot is a deck of 78 cards, divided into Major Arcana (22) and Minor Arcana "
+"(56), used for reflection and self-knowledge. The Lenormand deck has 36 "
+"cards with direct symbolism for practical guidance.\n"
 "\n"
 "Credits for the free card images:\n"
 "• Lenormand Cards by Yve Lepkowski (https://stolen-thyme.com/)\n"
 "• Tarot Cards by Luciella Elisabeth Scarlett (https://luciellaes.itch.io/)"
 msgstr ""
-"塔罗牌由 78 张牌组成，分为大阿卡纳（22 张）和小阿卡纳（56 张），用于反思与自我认识。雷诺曼牌组有 36 张牌，以直接的象征意义提供实用指引。\n"
+"塔罗牌由 78 张牌组成，分为大阿卡纳（22 张）和小阿卡纳（56 张），用于反思与自"
+"我认识。雷诺曼牌组有 36 张牌，以直接的象征意义提供实用指引。\n"
 "\n"
 "免费牌面图片鸣谢：\n"
 "• Yve Lepkowski 的 Lenormand Cards（https://stolen-thyme.com/）\n"
 "• Luciella Elisabeth Scarlett 的 Tarot Cards（https://luciellaes.itch.io/）"
 
-#: tarot_strings.lua:267
+#: tarot_strings.lua:280
 msgid "view in book"
 msgstr "在手册中查看"
 
-#: tarot_strings.lua:268
+#: tarot_strings.lua:281
 msgid "Keywords"
 msgstr "关键词"
 
-#: tarot_strings.lua:269
+#: tarot_strings.lua:282
 msgid "Planet / Sign"
 msgstr "行星 / 星座"
 
-#: tarot_strings.lua:270
+#: tarot_strings.lua:283
 msgid "Timing"
 msgstr "时机"
 
-#: tarot_strings.lua:271
+#: tarot_strings.lua:284
 #, lua-format
 msgid "Card %d — %s (%s)"
 msgstr "第 %d 张牌 — %s（%s）"
 
-#: tarot_strings.lua:272
+#: tarot_strings.lua:285
 msgid "Add meaning to card"
 msgstr "为卡牌添加释义"
 
-#: tarot_strings.lua:273
+#: tarot_strings.lua:286
 msgid "Add highlighted text"
 msgstr "添加划线文本"
 
-#: tarot_strings.lua:274
+#: tarot_strings.lua:287
 msgid "Choose the deck"
 msgstr "选择牌组"
 
-#: tarot_strings.lua:275
+#: tarot_strings.lua:288
 msgid "Choose a Tarot card"
 msgstr "选择塔罗牌"
 
-#: tarot_strings.lua:276
+#: tarot_strings.lua:289
 msgid "Choose a Lenormand card"
 msgstr "选择雷诺曼牌"
 
-#: tarot_strings.lua:277
+#: tarot_strings.lua:290
 msgid "Choose the meaning type"
 msgstr "选择释义类型"
 
-#: tarot_strings.lua:278
+#: tarot_strings.lua:291
 msgid "Upright meaning"
 msgstr "正位释义"
 
-#: tarot_strings.lua:279
+#: tarot_strings.lua:292
 msgid "Reversed meaning"
 msgstr "逆位释义"
 
-#: tarot_strings.lua:280
+#: tarot_strings.lua:293
 msgid "Personal Meaning"
 msgstr "个人释义"
 
-#: tarot_strings.lua:282
+#: tarot_strings.lua:295
 msgid "Edit Personal Meanings"
 msgstr "编辑个人释义"
 
-#: tarot_strings.lua:283
+#: tarot_strings.lua:296
 msgid ""
-"You can highlight passages in books and add those highlights as Personal Meani"
-"ng for any card. This editor also lets you insert, edit, or remove Personal Me"
-"anings manually."
-msgstr "你可以在书中划线，并把这些划线内容添加为任意卡牌的个人释义。这个编辑器也可以手动新增、编辑或移除个人释义。"
+"You can highlight passages in books and add those highlights as Personal "
+"Meaning for any card. This editor also lets you insert, edit, or remove "
+"Personal Meanings manually."
+msgstr ""
+"你可以在书中划线，并把这些划线内容添加为任意卡牌的个人释义。这个编辑器也可以"
+"手动新增、编辑或移除个人释义。"
 
-#: tarot_strings.lua:284
+#: tarot_strings.lua:297
 msgid "Add Personal Meaning"
 msgstr "新增个人释义"
 
-#: tarot_strings.lua:285
+#: tarot_strings.lua:298
 msgid "Edit Personal Meaning"
 msgstr "编辑个人释义"
 
-#: tarot_strings.lua:286
+#: tarot_strings.lua:299
 msgid "Remove Personal Meaning"
 msgstr "移除个人释义"
 
-#: tarot_strings.lua:287
+#: tarot_strings.lua:300
 msgid "Choose a Personal Meaning"
 msgstr "选择个人释义"
 
-#: tarot_strings.lua:288
+#: tarot_strings.lua:301
 msgid "No Personal Meanings yet."
 msgstr "还没有个人释义。"
 
-#: tarot_strings.lua:289
+#: tarot_strings.lua:302
 msgid "Write the meaning here"
 msgstr "在这里写下释义"
 
-#: tarot_strings.lua:290
+#: tarot_strings.lua:303
 msgid "Personal Meaning updated."
 msgstr "个人释义已更新。"
 
-#: tarot_strings.lua:291
+#: tarot_strings.lua:304
 msgid "Personal Meaning removed."
 msgstr "个人释义已移除。"
 
-#: tarot_strings.lua:292
+#: tarot_strings.lua:305
 msgid "Remove this Personal Meaning?"
 msgstr "移除此个人释义吗？"
 
-#: tarot_strings.lua:293
+#: tarot_strings.lua:306
 msgid "Source"
 msgstr "来源"
 
-#: tarot_strings.lua:294
+#: tarot_strings.lua:307
 msgid "Meaning added to the card."
 msgstr "释义已添加到卡牌。"
 
-#: tarot_strings.lua:295
+#: tarot_strings.lua:308
 msgid "No highlighted text was found."
 msgstr "未找到划线文本。"
 
-#: tarot_strings.lua:296
+#: tarot_strings.lua:309
 msgid "Unknown book"
 msgstr "未知书籍"
 
-#: tarot_strings.lua:297 _meta.lua:21
+#: tarot_strings.lua:310 _meta.lua:21
 msgid ""
-"Draw Tarot and Lenormand cards for reflection, save readings, and browse the c"
-"omplete card book."
+"Draw Tarot and Lenormand cards for reflection, save readings, and browse the "
+"complete card book."
 msgstr "抽取塔罗牌和雷诺曼牌进行反思、保存解读，并浏览完整的牌义手册。"
 
 #: tarot_cards.lua:9
@@ -1220,14 +1276,14 @@ msgstr "立即、不可预测"
 
 #: tarot_cards.lua:13
 msgid ""
-"New beginnings. Spontaneity. Take a leap of faith. Venture without fear, the u"
-"niverse supports you."
+"New beginnings. Spontaneity. Take a leap of faith. Venture without fear, the "
+"universe supports you."
 msgstr "新的开始。顺其自然。凭信念勇敢一跃。无惧前行，宇宙会支持你。"
 
 #: tarot_cards.lua:14
 msgid ""
-"Recklessness. Lack of direction. Think before acting. Blind risk may bring con"
-"sequences."
+"Recklessness. Lack of direction. Think before acting. Blind risk may bring "
+"consequences."
 msgstr "鲁莽。缺乏方向。行动前先思考。盲目冒险可能带来后果。"
 
 #: tarot_cards.lua:18
@@ -1248,8 +1304,8 @@ msgstr "迅速，现在正是时候"
 
 #: tarot_cards.lua:22
 msgid ""
-"Personal power. Skill. You have everything you need. Manifest your desires wit"
-"h confidence."
+"Personal power. Skill. You have everything you need. Manifest your desires "
+"with confidence."
 msgstr "个人力量。能力。你已拥有所需的一切。满怀信心地让愿望成真。"
 
 #: tarot_cards.lua:23
@@ -1274,14 +1330,14 @@ msgstr "月相周期、28 天"
 
 #: tarot_cards.lua:31
 msgid ""
-"Intuition. Mystery. Trust your inner voice. Hidden knowledge reveals itself in"
-" silence."
+"Intuition. Mystery. Trust your inner voice. Hidden knowledge reveals itself "
+"in silence."
 msgstr "直觉。神秘。聆听内在的声音。答案会在静默中显现。"
 
 #: tarot_cards.lua:32
 msgid ""
-"Secrets revealed. Intuitive disconnection. Silence broken. Listen to your inne"
-"r voice again."
+"Secrets revealed. Intuitive disconnection. Silence broken. Listen to your "
+"inner voice again."
 msgstr "秘密被揭开。忽视直觉。表面化。重新聆听你内在的声音。"
 
 #: tarot_cards.lua:36
@@ -1305,7 +1361,8 @@ msgid "Abundance. Fertility. Nurture yourself. Nature flourishes around you."
 msgstr "丰盛。创造力。滋养。你所悉心照料的一切都会蓬勃生长。"
 
 #: tarot_cards.lua:41
-msgid "Neglect. Creative block. Dependence. Return to tending your inner garden."
+msgid ""
+"Neglect. Creative block. Dependence. Return to tending your inner garden."
 msgstr "忽视。创造力受阻。过度依赖。照料好你的内在花园。"
 
 #: tarot_cards.lua:45
@@ -1349,13 +1406,14 @@ msgid "5 weeks, slow but steady"
 msgstr "5 周、缓慢但稳健"
 
 #: tarot_cards.lua:58
-msgid "Tradition. Wisdom. Seek guidance. Masters appear when the student is ready."
+msgid ""
+"Tradition. Wisdom. Seek guidance. Masters appear when the student is ready."
 msgstr "传统。精神指引。学习。学生准备好时，老师自会出现。"
 
 #: tarot_cards.lua:59
 msgid ""
-"Rebellion. Dogma. Necessary questioning. Breaking with traditions can be liber"
-"ating."
+"Rebellion. Dogma. Necessary questioning. Breaking with traditions can be "
+"liberating."
 msgstr "反叛。挑战教条。个人信念。打破规则也可能带来自由。"
 
 #: tarot_cards.lua:63
@@ -1379,7 +1437,8 @@ msgid "Love. Choice. Harmony in relationships. The heart knows the way."
 msgstr "爱。重要的选择。和谐的结合。心知道正确的道路。"
 
 #: tarot_cards.lua:68
-msgid "Conflict. Imbalance. Difficult decision. Avoid impulsive choices in love."
+msgid ""
+"Conflict. Imbalance. Difficult decision. Avoid impulsive choices in love."
 msgstr "冲突。关系失衡。冲动的选择。先让你的价值观保持一致。"
 
 #: tarot_cards.lua:72
@@ -1400,14 +1459,14 @@ msgstr "7 周"
 
 #: tarot_cards.lua:76
 msgid ""
-"Victory. Determination. Move forward with confidence. Triumph awaits the perse"
-"verant."
+"Victory. Determination. Move forward with confidence. Triumph awaits the "
+"perseverant."
 msgstr "胜利。决心。掌控相反的力量。坚持不懈地向前。"
 
 #: tarot_cards.lua:77
 msgid ""
-"Lack of direction. Defeat. Loss of control. Reevaluate your route before proce"
-"eding."
+"Lack of direction. Defeat. Loss of control. Reevaluate your route before "
+"proceeding."
 msgstr "缺乏方向。失去控制。受挫。重新评估路线后再继续。"
 
 #: tarot_cards.lua:81
@@ -1427,13 +1486,14 @@ msgid "8 weeks"
 msgstr "8 周"
 
 #: tarot_cards.lua:85
-msgid "Courage. Inner strength. Master your impulses with kindness, not violence."
+msgid ""
+"Courage. Inner strength. Master your impulses with kindness, not violence."
 msgstr "勇气。内在力量。以温柔驾驭本能。善意胜过蛮力。"
 
 #: tarot_cards.lua:86
 msgid ""
-"Weakness. Insecurity. Lack of self-control. True strength comes from vulnerabi"
-"lity."
+"Weakness. Insecurity. Lack of self-control. True strength comes from "
+"vulnerability."
 msgstr "软弱。缺乏自信。压抑本能。在脆弱中重新找回力量。"
 
 #: tarot_cards.lua:90
@@ -1453,13 +1513,14 @@ msgid "9 months, slow"
 msgstr "9 个月、缓慢"
 
 #: tarot_cards.lua:94
-msgid "Introspection. Inner wisdom. Seek silence. The light you seek is within you."
+msgid ""
+"Introspection. Inner wisdom. Seek silence. The light you seek is within you."
 msgstr "内省。主动独处。内在智慧。你寻找的答案就在自己心中。"
 
 #: tarot_cards.lua:95
 msgid ""
-"Isolation. Loneliness. Refusing to see the truth. Prolonged retreat becomes es"
-"cape."
+"Isolation. Loneliness. Refusing to see the truth. Prolonged retreat becomes "
+"escape."
 msgstr "孤立。孤独。拒绝指引。别把独处变成逃避。"
 
 #: tarot_cards.lua:99
@@ -1479,13 +1540,15 @@ msgid "In motion, cyclical"
 msgstr "正在运转、周期性"
 
 #: tarot_cards.lua:103
-msgid "Change. Destiny. Luck is turning in your favor. Everything passes, cycles renew."
+msgid ""
+"Change. Destiny. Luck is turning in your favor. Everything passes, cycles "
+"renew."
 msgstr "变化。命运。周期在转动。接受无常，生命的循环会不断更新。"
 
 #: tarot_cards.lua:104
 msgid ""
-"Bad luck. Resistance to change. Negative cycle. Accept that nothing is permane"
-"nt."
+"Bad luck. Resistance to change. Negative cycle. Accept that nothing is "
+"permanent."
 msgstr "厄运。抗拒变化。失去掌控。记住，没有什么是永恒不变的。"
 
 #: tarot_cards.lua:108
@@ -1505,11 +1568,13 @@ msgid "Under review, fair"
 msgstr "审理之中、公正"
 
 #: tarot_cards.lua:112
-msgid "Balance. Truth. Justice will prevail. Reap what you have sown with serenity."
+msgid ""
+"Balance. Truth. Justice will prevail. Reap what you have sown with serenity."
 msgstr "平衡。真相。因果。你将收获自己播下的种子。"
 
 #: tarot_cards.lua:113
-msgid "Injustice. Dishonesty. Consequences coming. The scales weigh against you now."
+msgid ""
+"Injustice. Dishonesty. Consequences coming. The scales weigh against you now."
 msgstr "不公。偏见。逃避责任。当你背离真相时，天平会向你倾斜。"
 
 #: tarot_cards.lua:117
@@ -1529,11 +1594,13 @@ msgid "Indeterminate, pause"
 msgstr "时间未定、暂停"
 
 #: tarot_cards.lua:121
-msgid "Sacrifice. New perspective. Let go, trust. Sometimes stopping is advancing."
+msgid ""
+"Sacrifice. New perspective. Let go, trust. Sometimes stopping is advancing."
 msgstr "牺牲。暂停。新的视角。有时停下来就是前进。"
 
 #: tarot_cards.lua:122
-msgid "Stagnation. Procrastination. Resist change. The pause has become paralysis."
+msgid ""
+"Stagnation. Procrastination. Resist change. The pause has become paralysis."
 msgstr "停滞。拖延。无谓的牺牲。别把耐心变成瘫痪。"
 
 #: tarot_cards.lua:126
@@ -1554,14 +1621,14 @@ msgstr "秋季、不久"
 
 #: tarot_cards.lua:130
 msgid ""
-"Transformation. End of a cycle. Rebirth near. The old dies so the new can be b"
-"orn."
+"Transformation. End of a cycle. Rebirth near. The old dies so the new can be "
+"born."
 msgstr "转化。必要的结束。重生。旧事物消逝，新事物才能诞生。"
 
 #: tarot_cards.lua:131
 msgid ""
-"Resistance to change. Stagnation. Fear of endings. Let go of what no longer se"
-"rves."
+"Resistance to change. Stagnation. Fear of endings. Let go of what no longer "
+"serves."
 msgstr "抗拒变化。害怕结束。停滞。放下已不再有用的事物。"
 
 #: tarot_cards.lua:135
@@ -1606,12 +1673,14 @@ msgstr "15 天"
 
 #: tarot_cards.lua:148
 msgid ""
-"Temptation. Negative patterns. Free yourself from chains. You have the power t"
-"o break free."
+"Temptation. Negative patterns. Free yourself from chains. You have the power "
+"to break free."
 msgstr "诱惑。束缚。面对自己的阴影。觉察锁链，才能挣脱。"
 
 #: tarot_cards.lua:149
-msgid "Liberation. Breaking addictions. Recovery. Light enters where darkness once was."
+msgid ""
+"Liberation. Breaking addictions. Recovery. Light enters where darkness once "
+"was."
 msgstr "解脱。摆脱束缚。觉知。你开始看清黑暗中的锁链。"
 
 #: tarot_cards.lua:153 tarot_cards.lua:833
@@ -1631,11 +1700,13 @@ msgid "Sudden, unexpected"
 msgstr "突然、意外"
 
 #: tarot_cards.lua:157
-msgid "Sudden revelation. Rupture. Necessary reconstruction. What is false crumbles."
+msgid ""
+"Sudden revelation. Rupture. Necessary reconstruction. What is false crumbles."
 msgstr "突如其来的启示。结构崩塌。虚假的一切倒下，为真相腾出空间。"
 
 #: tarot_cards.lua:158
-msgid "Avoiding disaster. Fear of change. Denial. The fall is inevitable, accept it."
+msgid ""
+"Avoiding disaster. Fear of change. Denial. The fall is inevitable, accept it."
 msgstr "躲过灾难。害怕改变。延迟不可避免之事。尽早重建。"
 
 #: tarot_cards.lua:162 tarot_cards.lua:812
@@ -1656,14 +1727,14 @@ msgstr "17 天"
 
 #: tarot_cards.lua:166
 msgid ""
-"Hope. Faith. Follow your intuition. Light guides you in darkness. Trust the un"
-"iverse."
+"Hope. Faith. Follow your intuition. Light guides you in darkness. Trust the "
+"universe."
 msgstr "希望。信念。灵感。在暴风雨后重新振作，并再次信任宇宙。"
 
 #: tarot_cards.lua:167
 msgid ""
-"Hopelessness. Lack of faith. Spiritual disconnection. The light is there, you "
-"just don't see it."
+"Hopelessness. Lack of faith. Spiritual disconnection. The light is there, "
+"you just don't see it."
 msgstr "绝望。缺乏信念。与自我失去连接。光仍在那里，请重新寻找。"
 
 #: tarot_cards.lua:171 tarot_cards.lua:924
@@ -1684,8 +1755,8 @@ msgstr "28 天、夜间"
 
 #: tarot_cards.lua:175
 msgid ""
-"Illusion. Intuition. Not everything is as it seems. Walk carefully in the twil"
-"ight."
+"Illusion. Intuition. Not everything is as it seems. Walk carefully in the "
+"twilight."
 msgstr "幻象。深层直觉。潜意识中的恐惧。以觉察穿越朦胧地带。"
 
 #: tarot_cards.lua:176
@@ -1713,7 +1784,8 @@ msgid "Joy. Success. Vitality. Everything is illuminated. Happiness overflows."
 msgstr "喜悦。成功。活力。光明照亮一切。分享满溢的幸福。"
 
 #: tarot_cards.lua:185
-msgid "Temporary sadness. Delay. Lack of enthusiasm. The sun always shines again."
+msgid ""
+"Temporary sadness. Delay. Lack of enthusiasm. The sun always shines again."
 msgstr "短暂的悲伤。延迟的成功。光线微弱。太阳仍会再次升起。"
 
 #: tarot_cards.lua:189
@@ -1737,7 +1809,8 @@ msgid "Renewal. Inner calling. Time to awaken. The past has been forgiven."
 msgstr "更新。觉醒。内在召唤。宽恕过去，回应你的使命。"
 
 #: tarot_cards.lua:194
-msgid "Self-criticism. Regret. Denial of the calling. Free yourself from guilt."
+msgid ""
+"Self-criticism. Regret. Denial of the calling. Free yourself from guilt."
 msgstr "自我批判。拒绝召唤。内疚。释放评判，倾听内心。"
 
 #: tarot_cards.lua:198
@@ -1758,12 +1831,13 @@ msgstr "21 天或 21 个月、完整周期"
 
 #: tarot_cards.lua:202
 msgid ""
-"Completion. Fulfillment. Cycle successfully concluded. The universe celebrates"
-" with you."
+"Completion. Fulfillment. Cycle successfully concluded. The universe "
+"celebrates with you."
 msgstr "完成。圆满。一个周期成功结束。宇宙与你一同庆祝。"
 
 #: tarot_cards.lua:203
-msgid "Incompleteness. Delay. Lack of closure. There is still one step to take."
+msgid ""
+"Incompleteness. Delay. Lack of closure. There is still one step to take."
 msgstr "尚未完成。延迟。缺乏收尾。还有最后一步要走。"
 
 #: tarot_cards.lua:218
@@ -1836,14 +1910,14 @@ msgstr "迅速（数日）"
 
 #: tarot_cards.lua:241
 msgid ""
-"Creative inspiration. A new beginning full of energy. Seize the initial impuls"
-"e to start projects."
+"Creative inspiration. A new beginning full of energy. Seize the initial "
+"impulse to start projects."
 msgstr "创作灵感。充满能量的新开始。抓住最初的冲动，启动计划。"
 
 #: tarot_cards.lua:242
 msgid ""
-"False start. Procrastination. Lack of motivation. Rekindle your passion before"
-" moving on."
+"False start. Procrastination. Lack of motivation. Rekindle your passion "
+"before moving on."
 msgstr "起步受挫。拖延。缺乏动力。继续前先重新点燃热情。"
 
 #: tarot_cards.lua:246
@@ -1860,14 +1934,14 @@ msgstr "数周"
 
 #: tarot_cards.lua:249
 msgid ""
-"Planning. Looking ahead. You have the world in your hands, but you must choose"
-" the path."
+"Planning. Looking ahead. You have the world in your hands, but you must "
+"choose the path."
 msgstr "规划。展望未来。世界已在你手中，但你必须选择道路。"
 
 #: tarot_cards.lua:250
 msgid ""
-"Fear of the unknown. Lack of planning. Letting go of the reins. Define your go"
-"als."
+"Fear of the unknown. Lack of planning. Letting go of the reins. Define your "
+"goals."
 msgstr "害怕未知。缺乏规划。放弃掌控。明确你的目标。"
 
 #: tarot_cards.lua:254
@@ -1884,12 +1958,14 @@ msgstr "不久"
 
 #: tarot_cards.lua:257
 msgid ""
-"Expansion. Progress. Your plans are sailing. Await the return of the seeds you"
-" planted."
+"Expansion. Progress. Your plans are sailing. Await the return of the seeds "
+"you planted."
 msgstr "扩展。进展。你的计划已经启航。等待自己播下的种子带来回报。"
 
 #: tarot_cards.lua:258
-msgid "Unexpected obstacles. Delay. Frustration with results. Reassess your strategy."
+msgid ""
+"Unexpected obstacles. Delay. Frustration with results. Reassess your "
+"strategy."
 msgstr "意外阻碍。延迟。对结果感到挫败。重新评估策略。"
 
 #: tarot_cards.lua:262
@@ -1906,12 +1982,14 @@ msgstr "4 周"
 
 #: tarot_cards.lua:265
 msgid ""
-"Celebration. Harmony at home. Shared achievements. A well-deserved rest after "
-"effort."
+"Celebration. Harmony at home. Shared achievements. A well-deserved rest "
+"after effort."
 msgstr "庆祝。家庭和睦。共同取得成就。努力之后获得应有的休息。"
 
 #: tarot_cards.lua:266
-msgid "Lack of unity. Domestic instability. Postponed celebration. Recover simple joy."
+msgid ""
+"Lack of unity. Domestic instability. Postponed celebration. Recover simple "
+"joy."
 msgstr "缺乏团结。家庭不稳。庆祝推迟。重新找回简单的快乐。"
 
 #: tarot_cards.lua:270
@@ -1927,13 +2005,15 @@ msgid "5 weeks"
 msgstr "5 周"
 
 #: tarot_cards.lua:273
-msgid "Healthy competition. Creative conflict. Different viewpoints enrich the search."
+msgid ""
+"Healthy competition. Creative conflict. Different viewpoints enrich the "
+"search."
 msgstr "良性竞争。创造性的冲突。不同观点让探索更加丰富。"
 
 #: tarot_cards.lua:274
 msgid ""
-"Internal quarrels. Avoiding confrontation. Energy drain. Seek cooperation inst"
-"ead of dispute."
+"Internal quarrels. Avoiding confrontation. Energy drain. Seek cooperation "
+"instead of dispute."
 msgstr "内部争执。逃避对抗。精力耗损。以合作取代争斗。"
 
 #: tarot_cards.lua:278
@@ -1949,7 +2029,9 @@ msgid "6 weeks"
 msgstr "6 周"
 
 #: tarot_cards.lua:281
-msgid "Victory. Public recognition. High self-esteem. Reap the laurels with humility."
+msgid ""
+"Victory. Public recognition. High self-esteem. Reap the laurels with "
+"humility."
 msgstr "胜利。获得公众认可。自尊高涨。谦逊地接受荣誉。"
 
 #: tarot_cards.lua:282
@@ -1966,12 +2048,13 @@ msgstr "防守、坚持、勇气、抵抗"
 
 #: tarot_cards.lua:289
 msgid ""
-"Defense of positions. Perseverance. Stand firm despite opposition. You have th"
-"e upper hand."
+"Defense of positions. Perseverance. Stand firm despite opposition. You have "
+"the upper hand."
 msgstr "捍卫立场。坚持不懈。即使面对反对也要站稳脚跟，你仍占据优势。"
 
 #: tarot_cards.lua:290
-msgid "Exhaustion. Feeling cornered. Giving up. Reinforce your boundaries wisely."
+msgid ""
+"Exhaustion. Feeling cornered. Giving up. Reinforce your boundaries wisely."
 msgstr "筋疲力尽。感觉被逼入绝境。放弃。明智地巩固自己的界限。"
 
 #: tarot_cards.lua:294
@@ -1988,12 +2071,13 @@ msgstr "非常迅速"
 
 #: tarot_cards.lua:297
 msgid ""
-"Swift movement. News arriving. Accelerated action. Take advantage of the tailw"
-"ind."
+"Swift movement. News arriving. Accelerated action. Take advantage of the "
+"tailwind."
 msgstr "快速推进。消息传来。行动加速。善用顺风之势。"
 
 #: tarot_cards.lua:298
-msgid "Delay. Lack of direction. Scattered energy. Wait for the right moment to act."
+msgid ""
+"Delay. Lack of direction. Scattered energy. Wait for the right moment to act."
 msgstr "延迟。缺乏方向。精力分散。等待合适的行动时机。"
 
 #: tarot_cards.lua:302
@@ -2010,14 +2094,14 @@ msgstr "9 周"
 
 #: tarot_cards.lua:305
 msgid ""
-"Resilience. Last battle. You are almost there, even if tired. Keep your guard "
-"up."
+"Resilience. Last battle. You are almost there, even if tired. Keep your "
+"guard up."
 msgstr "韧性。最后一战。即使疲惫，你也已接近终点。继续保持警觉。"
 
 #: tarot_cards.lua:306
 msgid ""
-"Stubbornness. Refusing help. Exhaustion. Let down your defense and allow yours"
-"elf to rest."
+"Stubbornness. Refusing help. Exhaustion. Let down your defense and allow "
+"yourself to rest."
 msgstr "固执。拒绝帮助。精疲力竭。卸下防备，让自己休息。"
 
 #: tarot_cards.lua:310
@@ -2034,14 +2118,14 @@ msgstr "10 周、周期末尾"
 
 #: tarot_cards.lua:313
 msgid ""
-"Overload. Heavy responsibilities. The burden is great, but the end is near. De"
-"legate tasks."
+"Overload. Heavy responsibilities. The burden is great, but the end is near. "
+"Delegate tasks."
 msgstr "负担过重。责任沉重。担子虽重，但终点已近。把任务分担出去。"
 
 #: tarot_cards.lua:314
 msgid ""
-"Inability to delegate. Burnout. Refusing help. Let go of what doesn't belong t"
-"o you."
+"Inability to delegate. Burnout. Refusing help. Let go of what doesn't belong "
+"to you."
 msgstr "无法放权。身心耗竭。拒绝帮助。放下不属于你的责任。"
 
 #: tarot_cards.lua:318
@@ -2058,12 +2142,14 @@ msgstr "年轻、迅速"
 
 #: tarot_cards.lua:321
 msgid ""
-"Enthusiasm. New ideas. A young messenger brings inspiration. Explore your curi"
-"osity without fear."
+"Enthusiasm. New ideas. A young messenger brings inspiration. Explore your "
+"curiosity without fear."
 msgstr "热情。新想法。一位年轻的信使带来灵感。无惧地探索你的好奇心。"
 
 #: tarot_cards.lua:322
-msgid "Lack of plans. Impulsiveness. Ideas without execution. Set goals before acting."
+msgid ""
+"Lack of plans. Impulsiveness. Ideas without execution. Set goals before "
+"acting."
 msgstr "缺乏计划。冲动。想法没有落实。行动前先设定目标。"
 
 #: tarot_cards.lua:326
@@ -2080,14 +2166,14 @@ msgstr "立即、强烈"
 
 #: tarot_cards.lua:329
 msgid ""
-"Passionate action. Courage to take risks. Go ahead boldly, but don't forget th"
-"e destination."
+"Passionate action. Courage to take risks. Go ahead boldly, but don't forget "
+"the destination."
 msgstr "充满热情地行动。敢于冒险。大胆前进，但别忘记目的地。"
 
 #: tarot_cards.lua:330
 msgid ""
-"Impatience. Rushing without direction. Conflict. Slow down and choose the righ"
-"t path."
+"Impatience. Rushing without direction. Conflict. Slow down and choose the "
+"right path."
 msgstr "急躁。没有方向地猛冲。冲突。放慢脚步，选择正确道路。"
 
 #: tarot_cards.lua:334
@@ -2104,12 +2190,14 @@ msgstr "夏季、成熟"
 
 #: tarot_cards.lua:337
 msgid ""
-"Warmth, determination and magnetism. Inspiring leadership. Use your charisma t"
-"o attract what you want."
+"Warmth, determination and magnetism. Inspiring leadership. Use your charisma "
+"to attract what you want."
 msgstr "温暖、坚定且富有吸引力。鼓舞人心的领导力。用你的魅力吸引所求之物。"
 
 #: tarot_cards.lua:338
-msgid "Jealousy. Insecurity. Explosive temper. The inner flame can burn those nearby."
+msgid ""
+"Jealousy. Insecurity. Explosive temper. The inner flame can burn those "
+"nearby."
 msgstr "嫉妒。不安。脾气暴烈。内在火焰也可能灼伤身边的人。"
 
 #: tarot_cards.lua:342
@@ -2126,14 +2214,14 @@ msgstr "长期、领导"
 
 #: tarot_cards.lua:345
 msgid ""
-"Entrepreneurial vision. Strong leadership. Take command with integrity and ins"
-"pire others."
+"Entrepreneurial vision. Strong leadership. Take command with integrity and "
+"inspire others."
 msgstr "创业愿景。强大的领导力。以正直掌舵，并激励他人。"
 
 #: tarot_cards.lua:346
 msgid ""
-"Authoritarianism. Empty promises. Lack of vision. Leading by fear builds nothi"
-"ng lasting."
+"Authoritarianism. Empty promises. Lack of vision. Leading by fear builds "
+"nothing lasting."
 msgstr "专制。空洞承诺。缺乏远见。靠恐惧领导，无法建立长久之物。"
 
 #: tarot_cards.lua:352
@@ -2150,14 +2238,14 @@ msgstr "月亮周期、情感"
 
 #: tarot_cards.lua:355
 msgid ""
-"Overflowing love. New emotional cycle. Open yourself to deep feelings and true"
-" connections."
+"Overflowing love. New emotional cycle. Open yourself to deep feelings and "
+"true connections."
 msgstr "爱意满溢。新的情感周期。向深厚的感受与真挚的连接敞开心扉。"
 
 #: tarot_cards.lua:356
 msgid ""
-"Repressed love. Emotional block. Inner emptiness. Allow yourself to feel in or"
-"der to heal."
+"Repressed love. Emotional block. Inner emptiness. Allow yourself to feel in "
+"order to heal."
 msgstr "压抑的爱。情感阻塞。内在空虚。允许自己感受，才能疗愈。"
 
 #: tarot_cards.lua:360
@@ -2174,14 +2262,14 @@ msgstr "不久后相遇"
 
 #: tarot_cards.lua:363
 msgid ""
-"Union. Loving partnership. Soul meeting. Mutual respect and commitment strengt"
-"hen the bond."
+"Union. Loving partnership. Soul meeting. Mutual respect and commitment "
+"strengthen the bond."
 msgstr "结合。充满爱意的伙伴关系。灵魂相遇。相互尊重与承诺会巩固纽带。"
 
 #: tarot_cards.lua:364
 msgid ""
-"Disconnection. Quarrels. Emotional imbalance. A sincere conversation can resto"
-"re harmony."
+"Disconnection. Quarrels. Emotional imbalance. A sincere conversation can "
+"restore harmony."
 msgstr "失去连接。争吵。情感失衡。真诚的交谈可以恢复和谐。"
 
 #: tarot_cards.lua:368
@@ -2198,14 +2286,14 @@ msgstr "社交活动"
 
 #: tarot_cards.lua:371
 msgid ""
-"Friendship. Celebration. Shared joy. Gather with those you love and celebrate "
-"life."
+"Friendship. Celebration. Shared joy. Gather with those you love and "
+"celebrate life."
 msgstr "友谊。庆祝。共享喜悦。与所爱之人相聚，庆祝生活。"
 
 #: tarot_cards.lua:372
 msgid ""
-"Gossip. Isolation. Excess partying. Beware of superficial friendships and hidd"
-"en resentments."
+"Gossip. Isolation. Excess partying. Beware of superficial friendships and "
+"hidden resentments."
 msgstr "流言蜚语。孤立。聚会过度。警惕肤浅的友谊与隐藏的怨恨。"
 
 #: tarot_cards.lua:376
@@ -2222,14 +2310,14 @@ msgstr "停滞"
 
 #: tarot_cards.lua:379
 msgid ""
-"Contemplation. Apathy. New invitation ignored. Look beyond boredom to notice o"
-"pportunities."
+"Contemplation. Apathy. New invitation ignored. Look beyond boredom to notice "
+"opportunities."
 msgstr "沉思。冷漠。忽视新的邀请。越过厌倦，留意身边的机会。"
 
 #: tarot_cards.lua:380
 msgid ""
-"Awakening. Acceptance. New perspectives. Leave your comfort zone and seize the"
-" chance offered."
+"Awakening. Acceptance. New perspectives. Leave your comfort zone and seize "
+"the chance offered."
 msgstr "觉醒。接纳。新的视角。走出舒适区，抓住所提供的机会。"
 
 #: tarot_cards.lua:384
@@ -2245,11 +2333,14 @@ msgid "Recent past"
 msgstr "不久前"
 
 #: tarot_cards.lua:387
-msgid "Grief. Loss. Focus on what is gone. Two cups still stand – look at what remains."
+msgid ""
+"Grief. Loss. Focus on what is gone. Two cups still stand – look at what "
+"remains."
 msgstr "悲伤。失去。只关注已经离去的事物。仍有两只圣杯立着——看看你还拥有什么。"
 
 #: tarot_cards.lua:388
-msgid "Overcoming. Recovery. Learning from pain. Accept the past and move forward."
+msgid ""
+"Overcoming. Recovery. Learning from pain. Accept the past and move forward."
 msgstr "克服困难。恢复。从痛苦中学习。接受过去，继续前行。"
 
 #: tarot_cards.lua:392
@@ -2266,12 +2357,13 @@ msgstr "重访过去"
 
 #: tarot_cards.lua:395
 msgid ""
-"Nostalgia. Fond memories. Reunion with the past. Cherish your roots with affec"
-"tion."
+"Nostalgia. Fond memories. Reunion with the past. Cherish your roots with "
+"affection."
 msgstr "怀旧。温馨的回忆。与过去重逢。怀着爱珍视自己的根源。"
 
 #: tarot_cards.lua:396
-msgid "Clinging to the past. Immaturity. Inability to move on. Live the present."
+msgid ""
+"Clinging to the past. Immaturity. Inability to move on. Live the present."
 msgstr "执着于过去。不成熟。无法继续前进。活在当下。"
 
 #: tarot_cards.lua:400
@@ -2288,8 +2380,8 @@ msgstr "混乱、时间不定"
 
 #: tarot_cards.lua:403
 msgid ""
-"Illusions. Fantasies. Multiple options. Discernment is needed to choose the tr"
-"ue cup."
+"Illusions. Fantasies. Multiple options. Discernment is needed to choose the "
+"true cup."
 msgstr "幻象。幻想。多种选择。需要辨别力，才能选出真实的那只圣杯。"
 
 #: tarot_cards.lua:404
@@ -2310,14 +2402,14 @@ msgstr "情感过渡"
 
 #: tarot_cards.lua:411
 msgid ""
-"Withdrawal. Spiritual search. Leaving behind what doesn't fulfill. Follow your"
-" intuition."
+"Withdrawal. Spiritual search. Leaving behind what doesn't fulfill. Follow "
+"your intuition."
 msgstr "离开。精神追寻。把无法带来满足的事物留在身后。跟随直觉。"
 
 #: tarot_cards.lua:412
 msgid ""
-"Fear of change. Staying out of convenience. Silent dissatisfaction. Courage to"
-" leave."
+"Fear of change. Staying out of convenience. Silent dissatisfaction. Courage "
+"to leave."
 msgstr "害怕改变。因贪图方便而留下。默默不满。鼓起离开的勇气。"
 
 #: tarot_cards.lua:416
@@ -2334,14 +2426,14 @@ msgstr "愿望即将实现"
 
 #: tarot_cards.lua:419
 msgid ""
-"Wish fulfilled. Satisfaction. The “dream cup” is full. Enjoy emotional abundan"
-"ce."
+"Wish fulfilled. Satisfaction. The “dream cup” is full. Enjoy emotional "
+"abundance."
 msgstr "愿望实现。满足。“梦想之杯”已经盛满。享受情感上的丰盛。"
 
 #: tarot_cards.lua:420
 msgid ""
-"Dissatisfaction. Unmet desires. Empty materialism. True happiness lies in simp"
-"licity."
+"Dissatisfaction. Unmet desires. Empty materialism. True happiness lies in "
+"simplicity."
 msgstr "不满。愿望未遂。空洞的物质主义。真正的幸福在于简单。"
 
 #: tarot_cards.lua:424
@@ -2358,14 +2450,14 @@ msgstr "圆满结局"
 
 #: tarot_cards.lua:427
 msgid ""
-"Full happiness. Family love. Lasting harmony. The heart overflows with shared "
-"joy."
+"Full happiness. Family love. Lasting harmony. The heart overflows with "
+"shared joy."
 msgstr "圆满幸福。家人之爱。长久和谐。内心洋溢着共同的喜悦。"
 
 #: tarot_cards.lua:428
 msgid ""
-"Family conflicts. Broken bonds. Idealization of happiness. Work on emotional c"
-"ommunication."
+"Family conflicts. Broken bonds. Idealization of happiness. Work on emotional "
+"communication."
 msgstr "家庭冲突。纽带破裂。理想化幸福。改善情感沟通。"
 
 #: tarot_cards.lua:432
@@ -2381,13 +2473,15 @@ msgid "Emotional surprise"
 msgstr "情感上的惊喜"
 
 #: tarot_cards.lua:435
-msgid "Creative sensitivity. Message of love. Open up to intuition and heart surprises."
+msgid ""
+"Creative sensitivity. Message of love. Open up to intuition and heart "
+"surprises."
 msgstr "富有创造力的敏感。爱的讯息。向直觉与内心的惊喜敞开。"
 
 #: tarot_cards.lua:436
 msgid ""
-"Emotional immaturity. Love disappointment. Childish jealousy. Put fantasy asid"
-"e and face reality."
+"Emotional immaturity. Love disappointment. Childish jealousy. Put fantasy "
+"aside and face reality."
 msgstr "情感不成熟。爱情失望。幼稚的嫉妒。放下幻想，面对现实。"
 
 #: tarot_cards.lua:440
@@ -2404,14 +2498,14 @@ msgstr "邀请即将到来"
 
 #: tarot_cards.lua:443
 msgid ""
-"Romanticism. Charming proposal. Search for the beautiful and ideal. Follow you"
-"r heart with elegance."
+"Romanticism. Charming proposal. Search for the beautiful and ideal. Follow "
+"your heart with elegance."
 msgstr "浪漫。迷人的提议。追寻美与理想。优雅地跟随内心。"
 
 #: tarot_cards.lua:444
 msgid ""
-"Love illusion. Empty promises. Excess of idealization. Keep your feet on the g"
-"round."
+"Love illusion. Empty promises. Excess of idealization. Keep your feet on the "
+"ground."
 msgstr "爱情幻象。空洞承诺。过度理想化。保持脚踏实地。"
 
 #: tarot_cards.lua:448
@@ -2428,14 +2522,14 @@ msgstr "月亮周期、成熟"
 
 #: tarot_cards.lua:451
 msgid ""
-"Deep intuition. Empathy. Emotional caregiver. Trust your ability to love and h"
-"eal."
+"Deep intuition. Empathy. Emotional caregiver. Trust your ability to love and "
+"heal."
 msgstr "深刻直觉。共情。情感上的照料者。相信自己爱与疗愈的能力。"
 
 #: tarot_cards.lua:452
 msgid ""
-"Emotional dependence. Exacerbated sensitivity. Emotional manipulation. Set hea"
-"lthy boundaries."
+"Emotional dependence. Exacerbated sensitivity. Emotional manipulation. Set "
+"healthy boundaries."
 msgstr "情感依赖。过度敏感。情感操控。设立健康的界限。"
 
 #: tarot_cards.lua:456
@@ -2452,14 +2546,14 @@ msgstr "情感稳定"
 
 #: tarot_cards.lua:459
 msgid ""
-"Emotional mastery. Mature compassion. Leadership with heart. Calm turbulent wa"
-"ters with wisdom."
+"Emotional mastery. Mature compassion. Leadership with heart. Calm turbulent "
+"waters with wisdom."
 msgstr "成熟地掌控情感。深厚的慈悲。以真心领导。用智慧平息汹涌波涛。"
 
 #: tarot_cards.lua:460
 msgid ""
-"Coldness. Emotional repression. Manipulation. The repressed heart becomes a si"
-"lent tyrant."
+"Coldness. Emotional repression. Manipulation. The repressed heart becomes a "
+"silent tyrant."
 msgstr "冷漠。压抑情感。操控。受压抑的心会成为沉默的暴君。"
 
 #: tarot_cards.lua:466
@@ -2476,12 +2570,14 @@ msgstr "迅速作出决定"
 
 #: tarot_cards.lua:469
 msgid ""
-"Mental clarity. Truth revealed. Sharp idea. Use the power of the word with jus"
-"tice."
+"Mental clarity. Truth revealed. Sharp idea. Use the power of the word with "
+"justice."
 msgstr "思维清晰。真相揭示。敏锐的想法。公正地运用语言的力量。"
 
 #: tarot_cards.lua:470
-msgid "Confusion. Lies. Verbal abuse. Distorted truth hurts. Seek clean communication."
+msgid ""
+"Confusion. Lies. Verbal abuse. Distorted truth hurts. Seek clean "
+"communication."
 msgstr "困惑。谎言。言语伤害。被扭曲的真相会伤人。寻求清楚坦诚的沟通。"
 
 #: tarot_cards.lua:474
@@ -2498,14 +2594,14 @@ msgstr "停滞不前"
 
 #: tarot_cards.lua:477
 msgid ""
-"Difficult decision. Impasse. Precarious balance. Remove the blindfold and face"
-" the situation."
+"Difficult decision. Impasse. Precarious balance. Remove the blindfold and "
+"face the situation."
 msgstr "艰难的决定。僵局。脆弱的平衡。摘下眼罩，直面处境。"
 
 #: tarot_cards.lua:478
 msgid ""
-"Postponed decision. Escape from truth. Internal conflict. Free yourself from p"
-"aralysis and choose."
+"Postponed decision. Escape from truth. Internal conflict. Free yourself from "
+"paralysis and choose."
 msgstr "推迟决定。逃避真相。内心冲突。摆脱瘫痪状态，作出选择。"
 
 #: tarot_cards.lua:482
@@ -2522,14 +2618,14 @@ msgstr "近期的痛苦"
 
 #: tarot_cards.lua:485
 msgid ""
-"Emotional pain. Betrayal. Broken heart. Suffering is real, but it's the first "
-"step toward healing."
+"Emotional pain. Betrayal. Broken heart. Suffering is real, but it's the "
+"first step toward healing."
 msgstr "情感创伤。背叛。心碎。痛苦真实存在，但它是走向疗愈的第一步。"
 
 #: tarot_cards.lua:486
 msgid ""
-"Slow recovery. Holding grudges. Difficulty forgiving. Free yourself from the p"
-"oison of resentment."
+"Slow recovery. Holding grudges. Difficulty forgiving. Free yourself from the "
+"poison of resentment."
 msgstr "恢复缓慢。心怀怨恨。难以原谅。让自己摆脱怨恨的毒害。"
 
 #: tarot_cards.lua:490
@@ -2545,13 +2641,15 @@ msgid "Necessary pause"
 msgstr "必要的暂停"
 
 #: tarot_cards.lua:493
-msgid "Mental rest. Retreat. Recovery. Step away from the noise and recharge your mind."
+msgid ""
+"Mental rest. Retreat. Recovery. Step away from the noise and recharge your "
+"mind."
 msgstr "让思绪休息。退隐。恢复。远离喧嚣，为心智补充能量。"
 
 #: tarot_cards.lua:494
 msgid ""
-"Insomnia. Mental exhaustion. Inability to relax. Excessive thinking makes you "
-"sick."
+"Insomnia. Mental exhaustion. Inability to relax. Excessive thinking makes "
+"you sick."
 msgstr "失眠。精神疲惫。无法放松。过度思虑会损害健康。"
 
 #: tarot_cards.lua:498
@@ -2568,12 +2666,14 @@ msgstr "当前的冲突"
 
 #: tarot_cards.lua:501
 msgid ""
-"Conflict. Empty victory. Humiliation. Sometimes winning the battle means losin"
-"g the war."
+"Conflict. Empty victory. Humiliation. Sometimes winning the battle means "
+"losing the war."
 msgstr "冲突。空洞的胜利。羞辱。有时赢得战斗却意味着输掉战争。"
 
 #: tarot_cards.lua:502
-msgid "Reconciliation. Remorse. Putting pride aside. Seek peace instead of being right."
+msgid ""
+"Reconciliation. Remorse. Putting pride aside. Seek peace instead of being "
+"right."
 msgstr "和解。悔意。放下自尊。寻求和平，而不是执着于证明自己正确。"
 
 #: tarot_cards.lua:506
@@ -2590,14 +2690,14 @@ msgstr "逐步过渡"
 
 #: tarot_cards.lua:509
 msgid ""
-"Smooth transition. Healing journey. Leaving turbulent waters behind. Toward ca"
-"lm waters."
+"Smooth transition. Healing journey. Leaving turbulent waters behind. Toward "
+"calm waters."
 msgstr "平稳过渡。疗愈之旅。把汹涌水域留在身后，驶向平静。"
 
 #: tarot_cards.lua:510
 msgid ""
-"Resistance to change. Emotional baggage. Staying stuck in the problem. Release"
-" what you cannot carry."
+"Resistance to change. Emotional baggage. Staying stuck in the problem. "
+"Release what you cannot carry."
 msgstr "抗拒改变。背负情感包袱。困在问题中。放下你无法继续携带的东西。"
 
 #: tarot_cards.lua:514
@@ -2614,12 +2714,13 @@ msgstr "迅速、隐秘"
 
 #: tarot_cards.lua:517
 msgid ""
-"Strategy. Subtle escape. Not everything needs to be faced head-on. Act with in"
-"telligence."
+"Strategy. Subtle escape. Not everything needs to be faced head-on. Act with "
+"intelligence."
 msgstr "策略。巧妙脱身。并非所有事情都需要正面迎击。以智慧行事。"
 
 #: tarot_cards.lua:518
-msgid "Deception. Theft. Lack of ethics. Lies have short legs. Act with honesty."
+msgid ""
+"Deception. Theft. Lack of ethics. Lies have short legs. Act with honesty."
 msgstr "欺骗。偷窃。缺乏道德。谎言很快就会露馅。诚实行事。"
 
 #: tarot_cards.lua:522
@@ -2636,14 +2737,14 @@ msgstr "心灵牢笼、暂时"
 
 #: tarot_cards.lua:525
 msgid ""
-"Feeling trapped. Self-sabotage. Imaginary limitations. The prison is mental – "
-"the key is within you."
+"Feeling trapped. Self-sabotage. Imaginary limitations. The prison is mental "
+"– the key is within you."
 msgstr "感觉受困。自我破坏。想象出来的限制。牢笼在心中——钥匙也在你手里。"
 
 #: tarot_cards.lua:526
 msgid ""
-"Liberation. New perspective. Overcoming limiting beliefs. Break the bonds and "
-"see the light."
+"Liberation. New perspective. Overcoming limiting beliefs. Break the bonds "
+"and see the light."
 msgstr "解脱。新的视角。克服限制性信念。挣脱束缚，看见光明。"
 
 #: tarot_cards.lua:530
@@ -2660,14 +2761,14 @@ msgstr "夜间、失眠"
 
 #: tarot_cards.lua:533
 msgid ""
-"Anxiety. Nightmares. Nocturnal worries. The mind is its own tormentor. Seek to"
-" calm your thoughts."
+"Anxiety. Nightmares. Nocturnal worries. The mind is its own tormentor. Seek "
+"to calm your thoughts."
 msgstr "焦虑。噩梦。夜间忧虑。心智会成为自己的折磨者。设法平静思绪。"
 
 #: tarot_cards.lua:534
 msgid ""
-"Recovery from anguish. Learning from pain. The worst is over. Take a deep brea"
-"th."
+"Recovery from anguish. Learning from pain. The worst is over. Take a deep "
+"breath."
 msgstr "从痛苦中恢复。从伤痛中学习。最糟的已经过去。深呼吸。"
 
 #: tarot_cards.lua:538
@@ -2684,14 +2785,14 @@ msgstr "跌至谷底、新的黎明"
 
 #: tarot_cards.lua:541
 msgid ""
-"Painful ending. Final betrayal. Rock bottom. From this abyss one can only rise"
-" – dawn arrives."
+"Painful ending. Final betrayal. Rock bottom. From this abyss one can only "
+"rise – dawn arrives."
 msgstr "痛苦的结束。最终的背叛。跌至谷底。从深渊中只能向上——黎明终会到来。"
 
 #: tarot_cards.lua:542
 msgid ""
-"Recovery. Resistance. Avoiding the final collapse. Suffering can be transforme"
-"d into strength."
+"Recovery. Resistance. Avoiding the final collapse. Suffering can be "
+"transformed into strength."
 msgstr "恢复。抵抗。避免彻底崩溃。痛苦可以转化为力量。"
 
 #: tarot_cards.lua:546
@@ -2708,14 +2809,14 @@ msgstr "消息即将到来"
 
 #: tarot_cards.lua:549
 msgid ""
-"Intellectual curiosity. New ideas. Agile communication. Speak your truth, but "
-"with tact."
+"Intellectual curiosity. New ideas. Agile communication. Speak your truth, "
+"but with tact."
 msgstr "求知的好奇心。新想法。敏捷沟通。说出真相，但要注意分寸。"
 
 #: tarot_cards.lua:550
 msgid ""
-"Gossip. Superficial thinking. Baseless criticism. Use your mind to build, not "
-"destroy."
+"Gossip. Superficial thinking. Baseless criticism. Use your mind to build, "
+"not destroy."
 msgstr "流言蜚语。思考肤浅。毫无根据的批评。用头脑去建设，而非摧毁。"
 
 #: tarot_cards.lua:554
@@ -2732,14 +2833,14 @@ msgstr "现在、紧迫"
 
 #: tarot_cards.lua:557
 msgid ""
-"Impetuous action. Intellectual determination. Advance with momentum, but don't"
-" trample others."
+"Impetuous action. Intellectual determination. Advance with momentum, but "
+"don't trample others."
 msgstr "果断迅猛地行动。理智上的决心。乘势前进，但不要践踏他人。"
 
 #: tarot_cards.lua:558
 msgid ""
-"Blind impulsiveness. Unnecessary confrontation. Aggressiveness. Think before b"
-"randishing the sword."
+"Blind impulsiveness. Unnecessary confrontation. Aggressiveness. Think before "
+"brandishing the sword."
 msgstr "盲目冲动。不必要的对抗。攻击性。挥剑前先思考。"
 
 #: tarot_cards.lua:562
@@ -2756,14 +2857,14 @@ msgstr "成熟的决定"
 
 #: tarot_cards.lua:565
 msgid ""
-"Clear rationality. Independence. Weighted justice. Make decisions with the min"
-"d, but without losing empathy."
+"Clear rationality. Independence. Weighted justice. Make decisions with the "
+"mind, but without losing empathy."
 msgstr "清醒的理性。独立。审慎的正义。用头脑作决定，但不要失去共情。"
 
 #: tarot_cards.lua:566
 msgid ""
-"Emotional coldness. Bitterness. Harsh judgment. Reason without heart becomes c"
-"ruelty."
+"Emotional coldness. Bitterness. Harsh judgment. Reason without heart becomes "
+"cruelty."
 msgstr "情感冷漠。苦涩。苛刻评判。没有温度的理性会变成残酷。"
 
 #: tarot_cards.lua:570
@@ -2780,14 +2881,14 @@ msgstr "法律权威、长期"
 
 #: tarot_cards.lua:573
 msgid ""
-"Intellectual authority. Ethics. Just and lucid leadership. Truth is your sharp"
-"est sword."
+"Intellectual authority. Ethics. Just and lucid leadership. Truth is your "
+"sharpest sword."
 msgstr "思想权威。道德。公正而清醒的领导力。真相是你最锋利的剑。"
 
 #: tarot_cards.lua:574
 msgid ""
-"Mental tyranny. Manipulation of truth. Abuse of power. Intellect without moral"
-"s oppresses."
+"Mental tyranny. Manipulation of truth. Abuse of power. Intellect without "
+"morals oppresses."
 msgstr "思想专制。操弄真相。滥用权力。没有道德的才智会造成压迫。"
 
 #: tarot_cards.lua:580
@@ -2803,13 +2904,15 @@ msgid "Material beginning"
 msgstr "物质层面的开始"
 
 #: tarot_cards.lua:583
-msgid "New material opportunity. Prosperity at hand. Get to work to reap solid fruits."
+msgid ""
+"New material opportunity. Prosperity at hand. Get to work to reap solid "
+"fruits."
 msgstr "新的物质机会。繁荣近在眼前。着手行动，收获坚实成果。"
 
 #: tarot_cards.lua:584
 msgid ""
-"Missed opportunity. Greed. Financial delay. The foundation needs to be set bef"
-"ore growing."
+"Missed opportunity. Greed. Financial delay. The foundation needs to be set "
+"before growing."
 msgstr "错失机会。贪婪。财务延迟。成长之前，必须先打好基础。"
 
 #: tarot_cards.lua:588
@@ -2826,14 +2929,14 @@ msgstr "起伏不定"
 
 #: tarot_cards.lua:591
 msgid ""
-"Financial balance. Juggling. Adapt to changes without losing control of your a"
-"ccounts."
+"Financial balance. Juggling. Adapt to changes without losing control of your "
+"accounts."
 msgstr "财务平衡。多方兼顾。适应变化，同时不失去对账目的掌控。"
 
 #: tarot_cards.lua:592
 msgid ""
-"Disorganization. Debt overload. Inability to prioritize. Reorganize your finan"
-"ces."
+"Disorganization. Debt overload. Inability to prioritize. Reorganize your "
+"finances."
 msgstr "混乱无序。债务过重。无法分清轻重缓急。重新整理财务。"
 
 #: tarot_cards.lua:596
@@ -2850,14 +2953,14 @@ msgstr "项目进行中"
 
 #: tarot_cards.lua:599
 msgid ""
-"Teamwork. Mastery. Productive collaboration. Together, the result is greater t"
-"han the sum."
+"Teamwork. Mastery. Productive collaboration. Together, the result is greater "
+"than the sum."
 msgstr "团队合作。精湛技艺。富有成效的协作。众人合作的成果大于简单相加。"
 
 #: tarot_cards.lua:600
 msgid ""
-"Lack of collaboration. Carelessness. Poor workmanship. Restore respect for exc"
-"ellence."
+"Lack of collaboration. Carelessness. Poor workmanship. Restore respect for "
+"excellence."
 msgstr "缺乏协作。粗心。做工低劣。重新尊重卓越品质。"
 
 #: tarot_cards.lua:604
@@ -2874,14 +2977,14 @@ msgstr "稳定、停滞"
 
 #: tarot_cards.lua:607
 msgid ""
-"Material security. Attachment to possessions. Healthy saving, but without clos"
-"ing off to the new."
+"Material security. Attachment to possessions. Healthy saving, but without "
+"closing off to the new."
 msgstr "物质安全。依恋财物。适度储蓄，但不要因此拒绝新事物。"
 
 #: tarot_cards.lua:608
 msgid ""
-"Miserliness. Fear of loss. Blocking abundance. Let go a little control to rece"
-"ive."
+"Miserliness. Fear of loss. Blocking abundance. Let go a little control to "
+"receive."
 msgstr "吝啬。害怕失去。阻断丰盛。稍微放下控制，才能接纳所得。"
 
 #: tarot_cards.lua:612
@@ -2898,14 +3001,14 @@ msgstr "困难时期"
 
 #: tarot_cards.lua:615
 msgid ""
-"Material hardship. Feeling of exclusion. Help is closer than you think. Ask fo"
-"r assistance."
+"Material hardship. Feeling of exclusion. Help is closer than you think. Ask "
+"for assistance."
 msgstr "物质困境。感觉遭到排斥。帮助比你想象的更近。主动求助。"
 
 #: tarot_cards.lua:616
 msgid ""
-"Financial recovery. End of scarcity. Re-inclusion. Light shines at the end of "
-"the tunnel."
+"Financial recovery. End of scarcity. Re-inclusion. Light shines at the end "
+"of the tunnel."
 msgstr "财务复苏。匮乏结束。重新融入。隧道尽头已有光亮。"
 
 #: tarot_cards.lua:620
@@ -2922,14 +3025,14 @@ msgstr "给予与接受"
 
 #: tarot_cards.lua:623
 msgid ""
-"Generosity. Sharing. Giving and receiving in balance. Prosperity circulates wh"
-"en the hand opens."
+"Generosity. Sharing. Giving and receiving in balance. Prosperity circulates "
+"when the hand opens."
 msgstr "慷慨。分享。平衡地给予和接受。手掌张开时，财富才能流动。"
 
 #: tarot_cards.lua:624
 msgid ""
-"Self-interested charity. Debts. Imbalance in giving. Beware of those who only "
-"ask and never give back."
+"Self-interested charity. Debts. Imbalance in giving. Beware of those who "
+"only ask and never give back."
 msgstr "带有私心的慈善。债务。付出失衡。提防只索取、从不回报的人。"
 
 #: tarot_cards.lua:628
@@ -2946,17 +3049,17 @@ msgstr "长期"
 
 #: tarot_cards.lua:631
 msgid ""
-"Patience. Harvest in progress. Evaluate if your efforts are yielding the expec"
-"ted fruits."
+"Patience. Harvest in progress. Evaluate if your efforts are yielding the "
+"expected fruits."
 msgstr "耐心。收获正在形成。评估你的努力是否正结出预期的果实。"
 
 #: tarot_cards.lua:632
 msgid ""
-"Impatience. Fruitless work. Frustration with results. Recalculate the route an"
-"d continue."
+"Impatience. Fruitless work. Frustration with results. Recalculate the route "
+"and continue."
 msgstr "急躁。徒劳的工作。对结果失望。重新规划路线，然后继续。"
 
-#: tarot_cards.lua:636 main.lua:419
+#: tarot_cards.lua:636
 msgid "Eight of Pentacles"
 msgstr "星币八"
 
@@ -2970,14 +3073,14 @@ msgstr "每日、持续"
 
 #: tarot_cards.lua:639
 msgid ""
-"Dedicated learning. Craftsmanship. Constant improvement. Mastery requires dail"
-"y practice."
+"Dedicated learning. Craftsmanship. Constant improvement. Mastery requires "
+"daily practice."
 msgstr "专心学习。精湛手艺。持续改进。熟练来自每日练习。"
 
 #: tarot_cards.lua:640
 msgid ""
-"Perfectionism. Monotonous work. Lack of motivation. Rekindle the pleasure in d"
-"oing."
+"Perfectionism. Monotonous work. Lack of motivation. Rekindle the pleasure in "
+"doing."
 msgstr "完美主义。工作单调。缺乏动力。重新找回做事的乐趣。"
 
 #: tarot_cards.lua:644
@@ -2994,14 +3097,14 @@ msgstr "个人收获"
 
 #: tarot_cards.lua:647
 msgid ""
-"Self-sufficiency. Personal luxury. Material achievement with independence. Enj"
-"oy what you have built."
+"Self-sufficiency. Personal luxury. Material achievement with independence. "
+"Enjoy what you have built."
 msgstr "自给自足。个人享受。独立取得物质成就。享受自己建立的一切。"
 
 #: tarot_cards.lua:648
 msgid ""
-"Financial dependence. Empty ostentation. Material insecurity. Real value lies "
-"in who you are."
+"Financial dependence. Empty ostentation. Material insecurity. Real value "
+"lies in who you are."
 msgstr "经济依赖。空洞炫耀。物质上的不安全感。真正的价值在于你是谁。"
 
 #: tarot_cards.lua:652
@@ -3018,14 +3121,14 @@ msgstr "持久、长期"
 
 #: tarot_cards.lua:655
 msgid ""
-"Lasting wealth. Family legacy. Material and emotional security. Strong roots n"
-"ourish the future."
+"Lasting wealth. Family legacy. Material and emotional security. Strong roots "
+"nourish the future."
 msgstr "持久财富。家庭传承。物质与情感上的安全。深厚根基滋养未来。"
 
 #: tarot_cards.lua:656
 msgid ""
-"Loss of inheritance. Family conflicts over money. Financial instability. Rebui"
-"ld the foundations."
+"Loss of inheritance. Family conflicts over money. Financial instability. "
+"Rebuild the foundations."
 msgstr "失去遗产。家庭因金钱发生冲突。财务不稳。重建基础。"
 
 #: tarot_cards.lua:660
@@ -3041,13 +3144,14 @@ msgid "Slow start"
 msgstr "缓慢起步"
 
 #: tarot_cards.lua:663
-msgid "Applied study. New skill. Constructive ambition. Start small, dream big."
+msgid ""
+"Applied study. New skill. Constructive ambition. Start small, dream big."
 msgstr "用心学习。新技能。建设性的抱负。从小处着手，怀抱远大梦想。"
 
 #: tarot_cards.lua:664
 msgid ""
-"Lack of focus. Slow progress. Premature abandonment. Persist in studies and wo"
-"rk."
+"Lack of focus. Slow progress. Premature abandonment. Persist in studies and "
+"work."
 msgstr "缺乏专注。进展缓慢。过早放弃。在学习和工作中坚持下去。"
 
 #: tarot_cards.lua:668
@@ -3063,11 +3167,13 @@ msgid "Step by step"
 msgstr "一步一步"
 
 #: tarot_cards.lua:671
-msgid "Hard work. Reliable routine. Patience to build. Steady steps take you far."
+msgid ""
+"Hard work. Reliable routine. Patience to build. Steady steps take you far."
 msgstr "勤奋工作。可靠的日常节奏。耐心建设。稳健的步伐能带你走得很远。"
 
 #: tarot_cards.lua:672
-msgid "Stagnation. Boredom. Lack of ambition. Move before inertia becomes permanent."
+msgid ""
+"Stagnation. Boredom. Lack of ambition. Move before inertia becomes permanent."
 msgstr "停滞。厌倦。缺乏抱负。在惰性变成常态前行动起来。"
 
 #: tarot_cards.lua:676
@@ -3084,14 +3190,14 @@ msgstr "家庭周期"
 
 #: tarot_cards.lua:679
 msgid ""
-"Homely prosperity. Practical care. Generous mother. Your material security sus"
-"tains those you love."
+"Homely prosperity. Practical care. Generous mother. Your material security "
+"sustains those you love."
 msgstr "家庭兴旺。务实的关怀。慷慨的母亲。你的物质保障支撑着所爱之人。"
 
 #: tarot_cards.lua:680
 msgid ""
-"Neglect of home. Selfish materialism. Work-home imbalance. Take care of your n"
-"est first."
+"Neglect of home. Selfish materialism. Work-home imbalance. Take care of your "
+"nest first."
 msgstr "忽视家庭。自私的物质主义。工作与家庭失衡。先照料好自己的家。"
 
 #: tarot_cards.lua:684
@@ -3108,14 +3214,14 @@ msgstr "财务成熟"
 
 #: tarot_cards.lua:687
 msgid ""
-"Financial success. Prosperous leadership. Abundance with stability. Your busin"
-"ess acumen is a gift."
+"Financial success. Prosperous leadership. Abundance with stability. Your "
+"business acumen is a gift."
 msgstr "财务成功。繁荣的领导力。稳定中的丰盛。你的商业才干是一份天赋。"
 
 #: tarot_cards.lua:688
 msgid ""
-"Miserliness. Extreme materialism. Corruption. Wealth without purpose is empty "
-"and corrupts."
+"Miserliness. Extreme materialism. Corruption. Wealth without purpose is "
+"empty and corrupts."
 msgstr "吝啬。极端物质主义。腐败。没有目标的财富既空虚又会腐化人心。"
 
 #: tarot_cards.lua:707
@@ -3128,8 +3234,8 @@ msgstr "消息、讯息、访客、迅速"
 
 #: tarot_cards.lua:710
 msgid ""
-"News arriving. A visitor or important message. Swift movement and good tidings"
-" on the horizon."
+"News arriving. A visitor or important message. Swift movement and good "
+"tidings on the horizon."
 msgstr "消息即将到来。一位访客或一则重要讯息。迅速的行动与好消息已在前方。"
 
 #: tarot_cards.lua:714
@@ -3142,8 +3248,8 @@ msgstr "幸运、机会、轻松、片刻"
 
 #: tarot_cards.lua:717
 msgid ""
-"Passing luck. Fleeting opportunity. Simple joy. Enjoy the present moment with "
-"lightness."
+"Passing luck. Fleeting opportunity. Simple joy. Enjoy the present moment "
+"with lightness."
 msgstr "短暂的好运。转瞬即逝的机会。简单的快乐。轻松地享受当下。"
 
 #: tarot_cards.lua:721
@@ -3155,7 +3261,8 @@ msgid "Travel, change, adventure, movement"
 msgstr "旅行、变化、冒险、移动"
 
 #: tarot_cards.lua:724
-msgid "Travel. Change of scenery. New horizons. Venture forth, the world awaits you."
+msgid ""
+"Travel. Change of scenery. New horizons. Venture forth, the world awaits you."
 msgstr "旅行。环境变化。新的视野。勇敢启程，世界正等待着你。"
 
 #: tarot_cards.lua:728
@@ -3168,8 +3275,8 @@ msgstr "家庭、家人、安全、根基"
 
 #: tarot_cards.lua:731
 msgid ""
-"Home. Family security. Firm roots. Care for your sacred space with love and de"
-"dication."
+"Home. Family security. Firm roots. Care for your sacred space with love and "
+"dedication."
 msgstr "家庭。家人的安全。稳固的根基。用爱与投入照料你的神圣空间。"
 
 #: tarot_cards.lua:735
@@ -3182,8 +3289,8 @@ msgstr "健康、成长、自然、活力"
 
 #: tarot_cards.lua:738
 msgid ""
-"Health. Personal growth. Connection with nature. Your roots are deep, your fru"
-"its will come."
+"Health. Personal growth. Connection with nature. Your roots are deep, your "
+"fruits will come."
 msgstr "健康。个人成长。与自然连接。你的根扎得很深，终会结出果实。"
 
 #: tarot_cards.lua:742
@@ -3196,8 +3303,8 @@ msgstr "困惑、不确定、怀疑、迷雾"
 
 #: tarot_cards.lua:745
 msgid ""
-"Confusion. Temporary uncertainty. Lingering doubts. Clarity will come after th"
-"e storm passes."
+"Confusion. Temporary uncertainty. Lingering doubts. Clarity will come after "
+"the storm passes."
 msgstr "困惑。暂时的不确定。挥之不去的疑虑。风暴过去后，清晰自会到来。"
 
 #: tarot_cards.lua:749
@@ -3210,8 +3317,8 @@ msgstr "诱惑、背叛、操控、狡猾"
 
 #: tarot_cards.lua:752
 msgid ""
-"Seduction. Betrayal or manipulation. Beware of false promises. Wisdom lies in "
-"seeing beyond appearances."
+"Seduction. Betrayal or manipulation. Beware of false promises. Wisdom lies "
+"in seeing beyond appearances."
 msgstr "诱惑。背叛或操控。警惕虚假承诺。智慧在于看穿表象。"
 
 #: tarot_cards.lua:756
@@ -3224,8 +3331,8 @@ msgstr "结束、转化、失去、重生"
 
 #: tarot_cards.lua:759
 msgid ""
-"End of a cycle. Deep transformation. Let the past rest. The new is born from w"
-"hat has gone."
+"End of a cycle. Deep transformation. Let the past rest. The new is born from "
+"what has gone."
 msgstr "一个周期结束。深刻转化。让过去安息。新生来自已经离去的一切。"
 
 #: tarot_cards.lua:763
@@ -3238,8 +3345,8 @@ msgstr "礼物、赞美、美丽、感激"
 
 #: tarot_cards.lua:766
 msgid ""
-"Gift. Compliment. Recognition. The beauty of life reveals itself in small kind"
-"nesses."
+"Gift. Compliment. Recognition. The beauty of life reveals itself in small "
+"kindnesses."
 msgstr "礼物。赞美。认可。生命之美在微小的善意中显现。"
 
 #: tarot_cards.lua:770
@@ -3252,8 +3359,8 @@ msgstr "切断、决定、决裂、警告"
 
 #: tarot_cards.lua:773
 msgid ""
-"Necessary cut. Drastic decision. Imminent rupture. Sometimes you must cut to h"
-"eal."
+"Necessary cut. Drastic decision. Imminent rupture. Sometimes you must cut to "
+"heal."
 msgstr "必要的切割。果断的决定。决裂迫在眉睫。有时必须割舍，才能疗愈。"
 
 #: tarot_cards.lua:777
@@ -3266,8 +3373,8 @@ msgstr "冲突、辩论、激情、重复"
 
 #: tarot_cards.lua:780
 msgid ""
-"Conflict. Heated discussions. Intense passion. Channel energy into productive "
-"actions."
+"Conflict. Heated discussions. Intense passion. Channel energy into "
+"productive actions."
 msgstr "冲突。激烈争论。强烈激情。把能量引导到富有成效的行动上。"
 
 #: tarot_cards.lua:784
@@ -3280,8 +3387,8 @@ msgstr "交谈、流言、沟通、紧张"
 
 #: tarot_cards.lua:787
 msgid ""
-"Important conversations. Gossip or news. Communication in focus. Choose your w"
-"ords wisely."
+"Important conversations. Gossip or news. Communication in focus. Choose your "
+"words wisely."
 msgstr "重要对话。流言或消息。焦点在沟通。谨慎选择言辞。"
 
 #: tarot_cards.lua:791
@@ -3294,8 +3401,8 @@ msgstr "纯真、新开始、纯洁、童心"
 
 #: tarot_cards.lua:794
 msgid ""
-"Innocence. New beginning. Purity of intention. Embrace your inner child with t"
-"enderness."
+"Innocence. New beginning. Purity of intention. Embrace your inner child with "
+"tenderness."
 msgstr "纯真。新的开始。纯洁的意图。温柔地拥抱你内在的孩子。"
 
 #: tarot_cards.lua:798
@@ -3308,8 +3415,8 @@ msgstr "机敏、聪慧、欺骗、适应"
 
 #: tarot_cards.lua:801
 msgid ""
-"Cunning. Cleverness. Beware of deception. Use your intelligence for good, not "
-"manipulation."
+"Cunning. Cleverness. Beware of deception. Use your intelligence for good, "
+"not manipulation."
 msgstr "机敏。聪慧。警惕欺骗。把智慧用于善意，而不是操控。"
 
 #: tarot_cards.lua:805
@@ -3322,8 +3429,8 @@ msgstr "力量、保护、权力、权威"
 
 #: tarot_cards.lua:808
 msgid ""
-"Protective strength. Financial power. Natural authority. Leadership with gener"
-"osity brings prosperity."
+"Protective strength. Financial power. Natural authority. Leadership with "
+"generosity brings prosperity."
 msgstr "保护的力量。财务实力。天然权威。慷慨地领导会带来繁荣。"
 
 #: tarot_cards.lua:814
@@ -3332,8 +3439,8 @@ msgstr "希望、清晰、目标、光明"
 
 #: tarot_cards.lua:815
 msgid ""
-"Hope. Clarity of purpose. Follow your inner light. The universe conspires in y"
-"our favor."
+"Hope. Clarity of purpose. Follow your inner light. The universe conspires in "
+"your favor."
 msgstr "希望。目标清晰。跟随内在之光。宇宙正合力支持你。"
 
 #: tarot_cards.lua:819
@@ -3346,8 +3453,8 @@ msgstr "积极变化、更新、过渡、祝福"
 
 #: tarot_cards.lua:822
 msgid ""
-"Positive change. Renewal. Blessed transition. New energies arrive to transform"
-" your life."
+"Positive change. Renewal. Blessed transition. New energies arrive to "
+"transform your life."
 msgstr "积极变化。更新。受祝福的过渡。新的能量到来，转化你的生活。"
 
 #: tarot_cards.lua:826
@@ -3360,8 +3467,8 @@ msgstr "友谊、忠诚、陪伴、信任"
 
 #: tarot_cards.lua:829
 msgid ""
-"Loyal friendship. Fidelity. Sincere companionship. Value those who walk beside"
-" you."
+"Loyal friendship. Fidelity. Sincere companionship. Value those who walk "
+"beside you."
 msgstr "忠诚的友谊。忠贞。真诚陪伴。珍惜与你同行的人。"
 
 #: tarot_cards.lua:835
@@ -3370,8 +3477,8 @@ msgstr "权威、结构、孤立、机构"
 
 #: tarot_cards.lua:836
 msgid ""
-"Institutional authority. Protection. Solid structure. Build firm foundations f"
-"or the future."
+"Institutional authority. Protection. Solid structure. Build firm foundations "
+"for the future."
 msgstr "机构权威。保护。稳固结构。为未来建立坚实基础。"
 
 #: tarot_cards.lua:840
@@ -3384,8 +3491,8 @@ msgstr "社交生活、社群、聚会、公众"
 
 #: tarot_cards.lua:843
 msgid ""
-"Social life. Community. Public encounters. Open yourself to new connections an"
-"d environments."
+"Social life. Community. Public encounters. Open yourself to new connections "
+"and environments."
 msgstr "社交生活。社群。公开场合的相遇。向新的关系与环境敞开。"
 
 #: tarot_cards.lua:847
@@ -3398,8 +3505,8 @@ msgstr "障碍、挑战、阻塞、坚持"
 
 #: tarot_cards.lua:850
 msgid ""
-"Obstacle. Challenge to overcome. Temporary blockage. The view from the top jus"
-"tifies the climb."
+"Obstacle. Challenge to overcome. Temporary blockage. The view from the top "
+"justifies the climb."
 msgstr "障碍。需要克服的挑战。暂时受阻。登顶后的风景值得这段攀登。"
 
 #: tarot_cards.lua:854
@@ -3412,8 +3519,8 @@ msgstr "选择、决定、方向、替代方案"
 
 #: tarot_cards.lua:857
 msgid ""
-"Important choice. Crucial decision. Multiple paths. Follow your intuition at t"
-"he crossroads."
+"Important choice. Crucial decision. Multiple paths. Follow your intuition at "
+"the crossroads."
 msgstr "重要选择。关键决定。多条道路。在十字路口跟随直觉。"
 
 #: tarot_cards.lua:861
@@ -3426,8 +3533,8 @@ msgstr "损失、耗损、忧虑、侵蚀"
 
 #: tarot_cards.lua:864
 msgid ""
-"Gradual loss. Wear and tear. Corroding worries. Attention to details that go u"
-"nnoticed."
+"Gradual loss. Wear and tear. Corroding worries. Attention to details that go "
+"unnoticed."
 msgstr "逐渐损失。磨损。不断侵蚀的忧虑。留意那些容易被忽视的细节。"
 
 #: tarot_cards.lua:868
@@ -3439,7 +3546,9 @@ msgid "Love, passion, affection, romance"
 msgstr "爱、激情、情感、浪漫"
 
 #: tarot_cards.lua:871
-msgid "True love. Passion. Deep affection. Open your heart without fear of being happy."
+msgid ""
+"True love. Passion. Deep affection. Open your heart without fear of being "
+"happy."
 msgstr "真爱。激情。深厚情感。敞开心扉，不要害怕获得幸福。"
 
 #: tarot_cards.lua:875
@@ -3452,8 +3561,8 @@ msgstr "承诺、盟约、周期、结合"
 
 #: tarot_cards.lua:878
 msgid ""
-"Commitment. Alliance. Completed cycle. Honor your pacts and promises with inte"
-"grity."
+"Commitment. Alliance. Completed cycle. Honor your pacts and promises with "
+"integrity."
 msgstr "承诺。盟约。完整周期。以诚信信守约定与诺言。"
 
 #: tarot_cards.lua:882
@@ -3466,8 +3575,8 @@ msgstr "秘密、知识、学习、神秘"
 
 #: tarot_cards.lua:885
 msgid ""
-"Secret. Hidden knowledge. Mystery to be revealed. The answer lies between the "
-"lines."
+"Secret. Hidden knowledge. Mystery to be revealed. The answer lies between "
+"the lines."
 msgstr "秘密。隐藏的知识。尚待揭晓的谜团。答案就在字里行间。"
 
 #: tarot_cards.lua:889
@@ -3480,8 +3589,8 @@ msgstr "讯息、文件、沟通、消息"
 
 #: tarot_cards.lua:892
 msgid ""
-"Written message. Important document. Formal communication. News arriving on pa"
-"per."
+"Written message. Important document. Formal communication. News arriving on "
+"paper."
 msgstr "书面讯息。重要文件。正式沟通。消息以书面形式到来。"
 
 #: tarot_cards.lua:896
@@ -3493,7 +3602,9 @@ msgid "Man, partner, action, yang"
 msgstr "男性、伴侣、行动、阳"
 
 #: tarot_cards.lua:899
-msgid "Influential male figure. Partner or seeker. Yang force. Action and initiative."
+msgid ""
+"Influential male figure. Partner or seeker. Yang force. Action and "
+"initiative."
 msgstr "有影响力的男性人物。伴侣或问卜者。阳性能量。行动与主动性。"
 
 #: tarot_cards.lua:903
@@ -3506,8 +3617,8 @@ msgstr "女性、伴侣、直觉、阴"
 
 #: tarot_cards.lua:906
 msgid ""
-"Influential female figure. Partner or seeker. Yin force. Intuition and nurturi"
-"ng."
+"Influential female figure. Partner or seeker. Yin force. Intuition and "
+"nurturing."
 msgstr "有影响力的女性人物。伴侣或问卜者。阴性能量。直觉与滋养。"
 
 #: tarot_cards.lua:910
@@ -3519,7 +3630,8 @@ msgid "Peace, harmony, wisdom, virtue"
 msgstr "和平、和谐、智慧、美德"
 
 #: tarot_cards.lua:913
-msgid "Peace. Harmony. Mature wisdom. The virtue of patience blooms in your garden."
+msgid ""
+"Peace. Harmony. Mature wisdom. The virtue of patience blooms in your garden."
 msgstr "和平。和谐。成熟的智慧。耐心的美德在你的花园中绽放。"
 
 #: tarot_cards.lua:919
@@ -3528,8 +3640,8 @@ msgstr "成功、胜利、能量、幸福"
 
 #: tarot_cards.lua:920
 msgid ""
-"Success. Victory. Full vital energy. Everything is illuminated, enjoy this mom"
-"ent."
+"Success. Victory. Full vital energy. Everything is illuminated, enjoy this "
+"moment."
 msgstr "成功。胜利。充沛的生命能量。一切都被照亮，请享受这一刻。"
 
 #: tarot_cards.lua:926
@@ -3538,8 +3650,8 @@ msgstr "认可、名望、创造力、直觉"
 
 #: tarot_cards.lua:927
 msgid ""
-"Intuition. Recognition. Fame and creativity. Your talents are recognized under"
-" moonlight."
+"Intuition. Recognition. Fame and creativity. Your talents are recognized "
+"under moonlight."
 msgstr "直觉。认可。名望与创造力。你的才华在月光下获得承认。"
 
 #: tarot_cards.lua:931
@@ -3552,8 +3664,8 @@ msgstr "解决方案、开启、机会、答案"
 
 #: tarot_cards.lua:934
 msgid ""
-"Solution. Opening doors. Decisive opportunity. The answer you seek is within r"
-"each."
+"Solution. Opening doors. Decisive opportunity. The answer you seek is within "
+"reach."
 msgstr "解决方案。开启大门。决定性的机会。你寻找的答案触手可及。"
 
 #: tarot_cards.lua:938
@@ -3566,8 +3678,8 @@ msgstr "丰盛、财务、流动、繁荣"
 
 #: tarot_cards.lua:941
 msgid ""
-"Financial abundance. Prosperity. Flow of resources. Wealth flows like clean wa"
-"ter."
+"Financial abundance. Prosperity. Flow of resources. Wealth flows like clean "
+"water."
 msgstr "财务丰盛。繁荣。资源流动。财富如清水般流淌。"
 
 #: tarot_cards.lua:945
@@ -3579,7 +3691,9 @@ msgid "Stability, security, work, steadfastness"
 msgstr "稳定、安全、工作、坚定"
 
 #: tarot_cards.lua:948
-msgid "Stability. Lasting security. Steady work. Build solid foundations for tomorrow."
+msgid ""
+"Stability. Lasting security. Steady work. Build solid foundations for "
+"tomorrow."
 msgstr "稳定。持久的安全。稳定的工作。为明天建立坚实基础。"
 
 #: tarot_cards.lua:952
@@ -3592,6 +3706,6 @@ msgstr "命运、考验、重担、超越"
 
 #: tarot_cards.lua:955
 msgid ""
-"Destiny. Necessary trial. Sacred burden. Suffering brings wisdom and transcend"
-"ence."
+"Destiny. Necessary trial. Sacred burden. Suffering brings wisdom and "
+"transcendence."
 msgstr "命运。必要的考验。神圣的重担。苦难带来智慧与超越。"

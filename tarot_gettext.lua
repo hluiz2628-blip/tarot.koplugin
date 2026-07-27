@@ -10,6 +10,7 @@ absoluto e nunca altera o gettext global do KOReader.
 Estrutura esperada:
     l10n/pt_BR/koreader.po
     l10n/pt/koreader.po
+    l10n/es/koreader.po
     l10n/zh_CN/koreader.po
 
 O carregador usa .po como fonte principal porque ele fica legível e editável no
@@ -92,6 +93,10 @@ local function getLanguageCandidates(language)
         -- O plugin tem pt_BR e pt. Variantes como pt-PT tentam pt e pt_BR.
         addUnique(candidates, seen, "pt_BR")
         addUnique(candidates, seen, "pt")
+    elseif base == "es" then
+        -- O plugin fornece espanhol neutro. Variantes como es_ES, es_MX,
+        -- es_AR e es_419 caem em es para não voltar ao inglês no Kindle.
+        addUnique(candidates, seen, "es")
     elseif base == "zh" then
         -- O pacote atual fornece chinês simplificado. Qualquer variante zh
         -- cai em zh_CN para não voltar ao inglês no Kindle.

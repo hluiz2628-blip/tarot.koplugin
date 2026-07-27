@@ -5,17 +5,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Tarot KOReader 5.5.1\n"
+"Project-Id-Version: Tarot KOReader 5.9.18\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-25 00:00-0300\n"
-"PO-Revision-Date: 2026-07-25 00:00-0300\n"
+"POT-Creation-Date: 2026-07-27 00:00-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: custom Lua string extractor\n"
+"Generated-By: tools/update_l10n.py\n"
 ""
 
 #: tarot_strings.lua:5 _meta.lua:20
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Tarot Home"
 msgstr ""
 
-#: tarot_strings.lua:7 tarot_strings.lua:121
+#: tarot_strings.lua:7 tarot_strings.lua:134
 msgid "Spreads"
 msgstr ""
 
@@ -72,7 +72,7 @@ msgid "Press and hold a card in the list to reverse it."
 msgstr ""
 
 #: tarot_strings.lua:18
-msgid "Click the card beside it to access it."
+msgid "Swipe left or right to move between cards, or tap a side card."
 msgstr ""
 
 #: tarot_strings.lua:19
@@ -208,7 +208,7 @@ msgstr ""
 msgid "Draw only from the 22 Major Arcana"
 msgstr ""
 
-#: tarot_strings.lua:52
+#: tarot_strings.lua:52 tarot_strings.lua:77
 msgid "Reading display"
 msgstr ""
 
@@ -262,772 +262,822 @@ msgid "Show only Personal Meaning if available"
 msgstr ""
 
 #: tarot_strings.lua:65
-msgid "Meaning text size"
+msgid "Show \"view in book\""
 msgstr ""
 
 #: tarot_strings.lua:66
-msgid "Compact"
+msgid "Meaning text size"
 msgstr ""
 
 #: tarot_strings.lua:67
-msgid "Standard"
+msgid "Compact"
 msgstr ""
 
 #: tarot_strings.lua:68
-msgid "Large"
+msgid "Standard"
 msgstr ""
 
 #: tarot_strings.lua:69
-msgid "Meanings in readings"
+msgid "Large"
 msgstr ""
 
 #: tarot_strings.lua:70
-msgid "Full"
+msgid "Meanings in readings"
 msgstr ""
 
 #: tarot_strings.lua:71
-msgid "Summarized"
+msgid "Full"
 msgstr ""
 
 #: tarot_strings.lua:72
-msgid "Hidden"
+msgid "Summarized"
 msgstr ""
 
 #: tarot_strings.lua:73
+msgid "Hidden"
+msgstr ""
+
+#: tarot_strings.lua:74
 #, lua-format
 msgid "Page %d of %d"
 msgstr ""
 
-#: tarot_strings.lua:74
-msgid "Journal and system"
-msgstr ""
-
 #: tarot_strings.lua:75
-msgid "Screen refresh"
+msgid "Deck and draw"
 msgstr ""
 
 #: tarot_strings.lua:76
-msgid "Update mode"
-msgstr ""
-
-#: tarot_strings.lua:77
-msgid "Balanced"
+msgid "Reading meanings"
 msgstr ""
 
 #: tarot_strings.lua:78
-msgid "Fewer flashes"
+msgid "Journal and saving"
 msgstr ""
 
 #: tarot_strings.lua:79
-msgid "Cleaner screen"
+msgid "System"
 msgstr ""
 
 #: tarot_strings.lua:80
+msgid "Journal and system"
+msgstr ""
+
+#: tarot_strings.lua:81
+msgid "Screen refresh"
+msgstr ""
+
+#: tarot_strings.lua:82
+msgid "Update mode"
+msgstr ""
+
+#: tarot_strings.lua:83
+msgid "Balanced"
+msgstr ""
+
+#: tarot_strings.lua:84
+msgid "Fewer flashes"
+msgstr ""
+
+#: tarot_strings.lua:85
+msgid "Cleaner screen"
+msgstr ""
+
+#: tarot_strings.lua:86
 msgid ""
 "Fewer flashes reduces black/white blinking, but may leave more ghosting on e-i"
 "nk screens."
 msgstr ""
 
-#: tarot_strings.lua:81
+#: tarot_strings.lua:87
 msgid "Major Arcana"
 msgstr ""
 
-#: tarot_strings.lua:82
+#: tarot_strings.lua:88
 msgid "Minor Arcana"
 msgstr ""
 
-#: tarot_strings.lua:83
+#: tarot_strings.lua:89
 msgid "Deck Type"
 msgstr ""
 
-#: tarot_strings.lua:84
+#: tarot_strings.lua:90
 msgid "Choose between Tarot and Lenormand"
 msgstr ""
 
-#: tarot_strings.lua:85
+#: tarot_strings.lua:91
 msgid "Tarot"
 msgstr ""
 
-#: tarot_strings.lua:86
+#: tarot_strings.lua:92
 msgid "Lenormand"
 msgstr ""
 
-#: tarot_strings.lua:87
+#: tarot_strings.lua:93
 msgid "Lenormand Reading"
 msgstr ""
 
-#: tarot_strings.lua:88
+#: tarot_strings.lua:94
 msgid "Lenormand Deck"
 msgstr ""
 
-#: tarot_strings.lua:89
+#: tarot_strings.lua:95
 msgid "Save"
 msgstr ""
 
-#: tarot_strings.lua:90
+#: tarot_strings.lua:96
 msgid "Record title"
 msgstr ""
 
-#: tarot_strings.lua:91
+#: tarot_strings.lua:97
 msgid "Ex: Daily reflection"
 msgstr ""
 
-#: tarot_strings.lua:92
+#: tarot_strings.lua:98
 msgid "Reflection about the reading"
 msgstr ""
 
-#: tarot_strings.lua:93
+#: tarot_strings.lua:99
 msgid "Ex: What I felt seeing these cards..."
 msgstr ""
 
-#: tarot_strings.lua:94
+#: tarot_strings.lua:100
 msgid "Spread saved successfully!"
 msgstr ""
 
-#: tarot_strings.lua:95
+#: tarot_strings.lua:101
 msgid "Error saving the spread."
 msgstr ""
 
-#: tarot_strings.lua:96
+#: tarot_strings.lua:102
 msgid "Journal"
 msgstr ""
 
-#: tarot_strings.lua:97
+#: tarot_strings.lua:103
 msgid "Reflection Journal"
 msgstr ""
 
-#: tarot_strings.lua:98
+#: tarot_strings.lua:104
 msgid "No journal entries found."
 msgstr ""
 
-#: tarot_strings.lua:99
+#: tarot_strings.lua:105
 msgid "Save a spread, record the daily card, or create a free reflection."
 msgstr ""
 
-#: tarot_strings.lua:100
+#: tarot_strings.lua:106
 msgid "Open record"
 msgstr ""
 
-#: tarot_strings.lua:101
+#: tarot_strings.lua:107
 msgid "Move to trash"
 msgstr ""
 
-#: tarot_strings.lua:102
+#: tarot_strings.lua:108
 msgid "Move this record to the trash?"
 msgstr ""
 
-#: tarot_strings.lua:103
+#: tarot_strings.lua:109
 msgid "Record moved to the trash."
 msgstr ""
 
-#: tarot_strings.lua:104
+#: tarot_strings.lua:110
 msgid "Error moving the record."
 msgstr ""
 
-#: tarot_strings.lua:105
+#: tarot_strings.lua:111
 #, lua-format
 msgid "%d records"
 msgstr ""
 
-#: tarot_strings.lua:106
+#: tarot_strings.lua:112
 msgid "New reflection"
 msgstr ""
 
-#: tarot_strings.lua:107
+#: tarot_strings.lua:113
 msgid "Search"
 msgstr ""
 
-#: tarot_strings.lua:108
+#: tarot_strings.lua:114
 msgid "Filter"
 msgstr ""
 
-#: tarot_strings.lua:109
+#: tarot_strings.lua:115
 msgid "More"
 msgstr ""
 
-#: tarot_strings.lua:110
-#, lua-format
-msgid "%d of %d"
-msgstr ""
-
-#: tarot_strings.lua:111
-msgid "No journal entries match the current search or filters."
-msgstr ""
-
-#: tarot_strings.lua:112
-msgid "Clear search and filters"
-msgstr ""
-
-#: tarot_strings.lua:113
-msgid "Clear search"
-msgstr ""
-
-#: tarot_strings.lua:114
-msgid "Search journal"
-msgstr ""
-
-#: tarot_strings.lua:115
-msgid "Title, reflection, card, or outcome"
-msgstr ""
-
 #: tarot_strings.lua:116
-msgid "Journal filters"
+msgid "Marked"
 msgstr ""
 
 #: tarot_strings.lua:117
-msgid "Apply"
+msgid "No marked items yet."
 msgstr ""
 
 #: tarot_strings.lua:118
-msgid "All"
+#, lua-format
+msgid "Card: %s"
 msgstr ""
 
 #: tarot_strings.lua:119
 #, lua-format
-msgid "Deck: %s"
+msgid "Journal: %s"
 msgstr ""
 
 #: tarot_strings.lua:120
-msgid "Entry types"
+msgid "This marked item could not be found."
+msgstr ""
+
+#: tarot_strings.lua:121
+msgid "Mark"
 msgstr ""
 
 #: tarot_strings.lua:122
-msgid "Daily cards"
+msgid "Unmark"
 msgstr ""
 
 #: tarot_strings.lua:123
-msgid "Free reflections"
+#, lua-format
+msgid "%d of %d"
 msgstr ""
 
 #: tarot_strings.lua:124
-msgid "Old records"
+msgid "No journal entries match the current search or filters."
 msgstr ""
 
 #: tarot_strings.lua:125
-msgid "Favorites only"
+msgid "Clear search and filters"
 msgstr ""
 
 #: tarot_strings.lua:126
+msgid "Clear search"
+msgstr ""
+
+#: tarot_strings.lua:127
+msgid "Search journal"
+msgstr ""
+
+#: tarot_strings.lua:128
+msgid "Title, reflection, card, or outcome"
+msgstr ""
+
+#: tarot_strings.lua:129
+msgid "Journal filters"
+msgstr ""
+
+#: tarot_strings.lua:130
+msgid "Apply"
+msgstr ""
+
+#: tarot_strings.lua:131
+msgid "All"
+msgstr ""
+
+#: tarot_strings.lua:132
+#, lua-format
+msgid "Deck: %s"
+msgstr ""
+
+#: tarot_strings.lua:133
+msgid "Entry types"
+msgstr ""
+
+#: tarot_strings.lua:135
+msgid "Daily cards"
+msgstr ""
+
+#: tarot_strings.lua:136
+msgid "Free reflections"
+msgstr ""
+
+#: tarot_strings.lua:137
+msgid "Old records"
+msgstr ""
+
+#: tarot_strings.lua:138
+msgid "Favorites only"
+msgstr ""
+
+#: tarot_strings.lua:139
 #, lua-format
 msgid "Order: %s"
 msgstr ""
 
-#: tarot_strings.lua:127
+#: tarot_strings.lua:140
 msgid "Newest first"
 msgstr ""
 
-#: tarot_strings.lua:128
+#: tarot_strings.lua:141
 msgid "Oldest first"
 msgstr ""
 
-#: tarot_strings.lua:129 tarot_strings.lua:198
+#: tarot_strings.lua:142 tarot_strings.lua:211
 msgid "Title"
 msgstr ""
 
-#: tarot_strings.lua:130
+#: tarot_strings.lua:143
 msgid "Last edited"
 msgstr ""
 
-#: tarot_strings.lua:131
+#: tarot_strings.lua:144
 msgid "Select at least one entry type."
 msgstr ""
 
-#: tarot_strings.lua:132
+#: tarot_strings.lua:145
 msgid "Go to month"
 msgstr ""
 
-#: tarot_strings.lua:133
+#: tarot_strings.lua:146
 msgid "Month"
 msgstr ""
 
-#: tarot_strings.lua:134
+#: tarot_strings.lua:147
 msgid "YYYY-MM, for example 2026-07"
 msgstr ""
 
-#: tarot_strings.lua:135
+#: tarot_strings.lua:148
 msgid "Use the YYYY-MM format."
 msgstr ""
 
-#: tarot_strings.lua:136
+#: tarot_strings.lua:149
 msgid "Clear month filter"
 msgstr ""
 
-#: tarot_strings.lua:137
+#: tarot_strings.lua:150
 msgid "Journal summary"
 msgstr ""
 
-#: tarot_strings.lua:138
+#: tarot_strings.lua:151
 msgid "Trash"
 msgstr ""
 
-#: tarot_strings.lua:139
+#: tarot_strings.lua:152
 msgid "Journal Trash"
 msgstr ""
 
-#: tarot_strings.lua:140
+#: tarot_strings.lua:153
 msgid "The journal trash is empty."
 msgstr ""
 
-#: tarot_strings.lua:141 tarot_strings.lua:201
+#: tarot_strings.lua:154 tarot_strings.lua:214
 msgid "Restore"
 msgstr ""
 
-#: tarot_strings.lua:142
+#: tarot_strings.lua:155
 msgid "Record restored."
 msgstr ""
 
-#: tarot_strings.lua:143
+#: tarot_strings.lua:156
 msgid "Delete permanently"
 msgstr ""
 
-#: tarot_strings.lua:144
+#: tarot_strings.lua:157
 msgid "Permanently delete this record?"
 msgstr ""
 
-#: tarot_strings.lua:145
+#: tarot_strings.lua:158
 msgid "Record permanently deleted."
 msgstr ""
 
-#: tarot_strings.lua:146
+#: tarot_strings.lua:159
 msgid "Export journal"
 msgstr ""
 
-#: tarot_strings.lua:147
+#: tarot_strings.lua:160
 #, lua-format
 msgid ""
 "Journal exported to:\n"
 "%s"
 msgstr ""
 
-#: tarot_strings.lua:148
+#: tarot_strings.lua:161
 msgid "Error exporting the journal."
 msgstr ""
 
-#: tarot_strings.lua:149
+#: tarot_strings.lua:162
 msgid "Create backup"
 msgstr ""
 
-#: tarot_strings.lua:150
+#: tarot_strings.lua:163
 #, lua-format
 msgid ""
 "Backup created at:\n"
 "%s"
 msgstr ""
 
-#: tarot_strings.lua:151
+#: tarot_strings.lua:164
 msgid "Error creating the backup."
 msgstr ""
 
-#: tarot_strings.lua:152
+#: tarot_strings.lua:165
 msgid "Restore backup"
 msgstr ""
 
-#: tarot_strings.lua:153
+#: tarot_strings.lua:166
 msgid "No journal backups found."
 msgstr ""
 
-#: tarot_strings.lua:154
+#: tarot_strings.lua:167
 msgid "Backup restored. Existing records were preserved."
 msgstr ""
 
-#: tarot_strings.lua:155
+#: tarot_strings.lua:168
 msgid "Reflection title"
 msgstr ""
 
-#: tarot_strings.lua:156
+#: tarot_strings.lua:169
 msgid "What is this reflection about?"
 msgstr ""
 
-#: tarot_strings.lua:157
+#: tarot_strings.lua:170
 msgid "Reflection"
 msgstr ""
 
-#: tarot_strings.lua:158
+#: tarot_strings.lua:171
 msgid "Write your reflection..."
 msgstr ""
 
-#: tarot_strings.lua:159
+#: tarot_strings.lua:172
 msgid "Save reflection"
 msgstr ""
 
-#: tarot_strings.lua:160
+#: tarot_strings.lua:173
 msgid "Edit"
 msgstr ""
 
-#: tarot_strings.lua:161
+#: tarot_strings.lua:174
 msgid "Edit title"
 msgstr ""
 
-#: tarot_strings.lua:162
+#: tarot_strings.lua:175
 msgid "Edit reflection"
 msgstr ""
 
-#: tarot_strings.lua:163
+#: tarot_strings.lua:176
 msgid "Add outcome"
 msgstr ""
 
-#: tarot_strings.lua:164
+#: tarot_strings.lua:177
 msgid "Edit outcome"
 msgstr ""
 
-#: tarot_strings.lua:165 tarot_strings.lua:243
+#: tarot_strings.lua:178 tarot_strings.lua:256
 msgid "Outcome"
 msgstr ""
 
-#: tarot_strings.lua:166
+#: tarot_strings.lua:179
 msgid "What happened after this reflection?"
 msgstr ""
 
-#: tarot_strings.lua:167
+#: tarot_strings.lua:180
 msgid "Favorite"
 msgstr ""
 
-#: tarot_strings.lua:168
+#: tarot_strings.lua:181
 msgid "Remove favorite"
 msgstr ""
 
-#: tarot_strings.lua:169
+#: tarot_strings.lua:182
 msgid "View cards and meanings"
 msgstr ""
 
-#: tarot_strings.lua:170
+#: tarot_strings.lua:183
 msgid "Back to journal"
 msgstr ""
 
-#: tarot_strings.lua:171
+#: tarot_strings.lua:184
 msgid "Add to journal"
 msgstr ""
 
-#: tarot_strings.lua:172
+#: tarot_strings.lua:185
 msgid "MY REFLECTION"
 msgstr ""
 
-#: tarot_strings.lua:173
+#: tarot_strings.lua:186
 msgid "OUTCOME"
 msgstr ""
 
-#: tarot_strings.lua:174
+#: tarot_strings.lua:187
 msgid "CARDS"
 msgstr ""
 
-#: tarot_strings.lua:175
+#: tarot_strings.lua:188
 msgid "Created on"
 msgstr ""
 
-#: tarot_strings.lua:176
+#: tarot_strings.lua:189
 msgid "Updated on"
 msgstr ""
 
-#: tarot_strings.lua:177
+#: tarot_strings.lua:190
 msgid "Type"
 msgstr ""
 
-#: tarot_strings.lua:178
+#: tarot_strings.lua:191
 msgid "Spread"
 msgstr ""
 
-#: tarot_strings.lua:179
+#: tarot_strings.lua:192
 msgid "Daily card"
 msgstr ""
 
-#: tarot_strings.lua:180
+#: tarot_strings.lua:193
 msgid "Free reflection"
 msgstr ""
 
-#: tarot_strings.lua:181
+#: tarot_strings.lua:194
 msgid "Old record"
 msgstr ""
 
-#: tarot_strings.lua:182
+#: tarot_strings.lua:195
 msgid "1 card"
 msgstr ""
 
-#: tarot_strings.lua:183
+#: tarot_strings.lua:196
 msgid "3 cards"
 msgstr ""
 
-#: tarot_strings.lua:184 tarot_strings.lua:220
+#: tarot_strings.lua:197 tarot_strings.lua:233
 #, lua-format
 msgid "%d cards"
 msgstr ""
 
-#: tarot_strings.lua:185
+#: tarot_strings.lua:198
 msgid "Untitled reflection"
 msgstr ""
 
-#: tarot_strings.lua:186
+#: tarot_strings.lua:199
 msgid "No reflection text."
 msgstr ""
 
-#: tarot_strings.lua:187
+#: tarot_strings.lua:200
 msgid "Error saving the journal record."
 msgstr ""
 
-#: tarot_strings.lua:188
+#: tarot_strings.lua:201
 msgid "Journal record saved."
 msgstr ""
 
-#: tarot_strings.lua:189
+#: tarot_strings.lua:202
 msgid ""
 "Old records are read-only, but they can be searched, opened, exported, or move"
 "d to the trash."
 msgstr ""
 
-#: tarot_strings.lua:190
+#: tarot_strings.lua:203
 #, lua-format
 msgid "Total records: %d"
 msgstr ""
 
-#: tarot_strings.lua:191
+#: tarot_strings.lua:204
 #, lua-format
 msgid "Tarot: %d"
 msgstr ""
 
-#: tarot_strings.lua:192
+#: tarot_strings.lua:205
 #, lua-format
 msgid "Lenormand: %d"
 msgstr ""
 
-#: tarot_strings.lua:193
+#: tarot_strings.lua:206
 #, lua-format
 msgid "This month: %d"
 msgstr ""
 
-#: tarot_strings.lua:194
+#: tarot_strings.lua:207
 #, lua-format
 msgid "Favorites: %d"
 msgstr ""
 
-#: tarot_strings.lua:195
+#: tarot_strings.lua:208
 #, lua-format
 msgid "Most frequent card: %s (%d)"
 msgstr ""
 
-#: tarot_strings.lua:196
+#: tarot_strings.lua:209
 msgid "Most frequent card: —"
 msgstr ""
 
-#: tarot_strings.lua:197
+#: tarot_strings.lua:210
 msgid "Saved on"
 msgstr ""
 
-#: tarot_strings.lua:199
+#: tarot_strings.lua:212
 msgid "Note"
 msgstr ""
 
-#: tarot_strings.lua:200
+#: tarot_strings.lua:213
 msgid "Position"
 msgstr ""
 
-#: tarot_strings.lua:202
+#: tarot_strings.lua:215
 msgid "Erase all plugin data"
 msgstr ""
 
-#: tarot_strings.lua:203
+#: tarot_strings.lua:216
 msgid "ATTENTION: EVERYTHING will be DELETED. Continue?"
 msgstr ""
 
-#: tarot_strings.lua:204
+#: tarot_strings.lua:217
 msgid "This action cannot be undone. Continue?"
 msgstr ""
 
-#: tarot_strings.lua:205
+#: tarot_strings.lua:218
 msgid "All plugin data was deleted. The app is now reset."
 msgstr ""
 
-#: tarot_strings.lua:206
+#: tarot_strings.lua:219
 msgid "The reset could not be completed. Some data could not be deleted."
 msgstr ""
 
-#: tarot_strings.lua:207
+#: tarot_strings.lua:220
 msgid "Yes"
 msgstr ""
 
-#: tarot_strings.lua:208
+#: tarot_strings.lua:221
 msgid "No"
 msgstr ""
 
-#: tarot_strings.lua:209
+#: tarot_strings.lua:222
 msgid "Confirm"
 msgstr ""
 
-#: tarot_strings.lua:210
+#: tarot_strings.lua:223
 msgid "Cancel"
 msgstr ""
 
-#: tarot_strings.lua:211
+#: tarot_strings.lua:224
 msgid "Reset"
 msgstr ""
 
-#: tarot_strings.lua:212
+#: tarot_strings.lua:225
 msgid "Card Book"
 msgstr ""
 
-#: tarot_strings.lua:213
+#: tarot_strings.lua:226
 msgid "Major Arcana (22)"
 msgstr ""
 
-#: tarot_strings.lua:214
+#: tarot_strings.lua:227
 msgid "Minor Arcana (56)"
 msgstr ""
 
-#: tarot_strings.lua:215
+#: tarot_strings.lua:228
 msgid "Lenormand Deck (36)"
 msgstr ""
 
-#: tarot_strings.lua:216
+#: tarot_strings.lua:229
 msgid "View All Cards"
 msgstr ""
 
-#: tarot_strings.lua:217
+#: tarot_strings.lua:230
 msgid "Search Card"
 msgstr ""
 
-#: tarot_strings.lua:218
+#: tarot_strings.lua:231
 msgid "Search Tarot"
 msgstr ""
 
-#: tarot_strings.lua:219
+#: tarot_strings.lua:232
 msgid "Search Lenormand"
 msgstr ""
 
-#: tarot_strings.lua:221
+#: tarot_strings.lua:234
 msgid "Type a card name or keyword"
 msgstr ""
 
-#: tarot_strings.lua:222
+#: tarot_strings.lua:235
 msgid "Enter a search term."
 msgstr ""
 
-#: tarot_strings.lua:223
+#: tarot_strings.lua:236
 msgid "Meaning"
 msgstr ""
 
-#: tarot_strings.lua:224
+#: tarot_strings.lua:237
 msgid "Reversed Meaning"
 msgstr ""
 
-#: tarot_strings.lua:225
+#: tarot_strings.lua:238
 msgid "Number"
 msgstr ""
 
-#: tarot_strings.lua:226
+#: tarot_strings.lua:239
 msgid "Arcana"
 msgstr ""
 
-#: tarot_strings.lua:227
+#: tarot_strings.lua:240
 msgid "Filter Cards"
 msgstr ""
 
-#: tarot_strings.lua:228
+#: tarot_strings.lua:241
 msgid "No cards found."
 msgstr ""
 
-#: tarot_strings.lua:229
+#: tarot_strings.lua:242
 msgid "Back"
 msgstr ""
 
-#: tarot_strings.lua:230 tarot_cards.lua:211
+#: tarot_strings.lua:243 tarot_cards.lua:211
 msgid "Wands"
 msgstr ""
 
-#: tarot_strings.lua:231 tarot_cards.lua:212
+#: tarot_strings.lua:244 tarot_cards.lua:212
 msgid "Cups"
 msgstr ""
 
-#: tarot_strings.lua:232 tarot_cards.lua:213
+#: tarot_strings.lua:245 tarot_cards.lua:213
 msgid "Swords"
 msgstr ""
 
-#: tarot_strings.lua:233 tarot_cards.lua:214
+#: tarot_strings.lua:246 tarot_cards.lua:214
 msgid "Pentacles"
 msgstr ""
 
-#: tarot_strings.lua:234
+#: tarot_strings.lua:247
 msgid "Hidden Card"
 msgstr ""
 
-#: tarot_strings.lua:235
+#: tarot_strings.lua:248
 msgid "Name position"
 msgstr ""
 
-#: tarot_strings.lua:236
+#: tarot_strings.lua:249
 msgid "Choose position name"
 msgstr ""
 
-#: tarot_strings.lua:237
+#: tarot_strings.lua:250
 msgid "Past"
 msgstr ""
 
-#: tarot_strings.lua:238
+#: tarot_strings.lua:251
 msgid "Present"
 msgstr ""
 
-#: tarot_strings.lua:239
+#: tarot_strings.lua:252
 msgid "Future"
 msgstr ""
 
-#: tarot_strings.lua:240
+#: tarot_strings.lua:253
 msgid "Situation"
 msgstr ""
 
-#: tarot_strings.lua:241
+#: tarot_strings.lua:254
 msgid "Obstacle"
 msgstr ""
 
-#: tarot_strings.lua:242
+#: tarot_strings.lua:255
 msgid "Advice"
 msgstr ""
 
-#: tarot_strings.lua:244
+#: tarot_strings.lua:257
 msgid "Custom name"
 msgstr ""
 
-#: tarot_strings.lua:245
+#: tarot_strings.lua:258
 msgid "Type the position name"
 msgstr ""
 
-#: tarot_strings.lua:246
+#: tarot_strings.lua:259
 msgid "Remove name"
 msgstr ""
 
-#: tarot_strings.lua:247
+#: tarot_strings.lua:260
 msgid "Move"
 msgstr ""
 
-#: tarot_strings.lua:248
+#: tarot_strings.lua:261
 msgid "Delete"
 msgstr ""
 
-#: tarot_strings.lua:249
+#: tarot_strings.lua:262
 msgid "Undo"
 msgstr ""
 
-#: tarot_strings.lua:250
+#: tarot_strings.lua:263
 msgid "Hide"
 msgstr ""
 
-#: tarot_strings.lua:251
+#: tarot_strings.lua:264
 msgid "Tap another location to move"
 msgstr ""
 
-#: tarot_strings.lua:252
+#: tarot_strings.lua:265
 msgid "click on the card"
 msgstr ""
 
-#: tarot_strings.lua:253
+#: tarot_strings.lua:266
 msgid "Exit"
 msgstr ""
 
-#: tarot_strings.lua:254
+#: tarot_strings.lua:267
 msgid "Reveal"
 msgstr ""
 
-#: tarot_strings.lua:255
+#: tarot_strings.lua:268
 msgid "Reveal next card"
 msgstr ""
 
-#: tarot_strings.lua:256
+#: tarot_strings.lua:269
 msgid ""
 "Tap an empty space to add a card. Press and hold an empty space to name its po"
 "sition. Tap a hidden card to reveal it, and tap a revealed card to open its de"
@@ -1035,28 +1085,30 @@ msgid ""
 " it."
 msgstr ""
 
-#: tarot_strings.lua:257
-msgid "Click the next card to reveal it. Press and hold to reveal all remaining cards."
+#: tarot_strings.lua:270
+msgid ""
+"Swipe left or tap the next card to reveal it. Press and hold the next card to "
+"reveal all remaining cards."
 msgstr ""
 
-#: tarot_strings.lua:258
+#: tarot_strings.lua:271
 msgid "Reveal all remaining cards?"
 msgstr ""
 
-#: tarot_strings.lua:259
+#: tarot_strings.lua:272
 #, lua-format
 msgid "Revealed %d of %d"
 msgstr ""
 
-#: tarot_strings.lua:260
+#: tarot_strings.lua:273
 msgid "About"
 msgstr ""
 
-#: tarot_strings.lua:261
+#: tarot_strings.lua:274
 msgid "About Tarot and Lenormand"
 msgstr ""
 
-#: tarot_strings.lua:262
+#: tarot_strings.lua:275
 msgid ""
 "Tarot is a deck of 78 cards, divided into Major Arcana (22) and Minor Arcana ("
 "56), used for reflection and self-knowledge. The Lenormand deck has 36 cards w"
@@ -1067,127 +1119,127 @@ msgid ""
 "• Tarot Cards by Luciella Elisabeth Scarlett (https://luciellaes.itch.io/)"
 msgstr ""
 
-#: tarot_strings.lua:267
+#: tarot_strings.lua:280
 msgid "view in book"
 msgstr ""
 
-#: tarot_strings.lua:268
+#: tarot_strings.lua:281
 msgid "Keywords"
 msgstr ""
 
-#: tarot_strings.lua:269
+#: tarot_strings.lua:282
 msgid "Planet / Sign"
 msgstr ""
 
-#: tarot_strings.lua:270
+#: tarot_strings.lua:283
 msgid "Timing"
 msgstr ""
 
-#: tarot_strings.lua:271
+#: tarot_strings.lua:284
 #, lua-format
 msgid "Card %d — %s (%s)"
 msgstr ""
 
-#: tarot_strings.lua:272
+#: tarot_strings.lua:285
 msgid "Add meaning to card"
 msgstr ""
 
-#: tarot_strings.lua:273
+#: tarot_strings.lua:286
 msgid "Add highlighted text"
 msgstr ""
 
-#: tarot_strings.lua:274
+#: tarot_strings.lua:287
 msgid "Choose the deck"
 msgstr ""
 
-#: tarot_strings.lua:275
+#: tarot_strings.lua:288
 msgid "Choose a Tarot card"
 msgstr ""
 
-#: tarot_strings.lua:276
+#: tarot_strings.lua:289
 msgid "Choose a Lenormand card"
 msgstr ""
 
-#: tarot_strings.lua:277
+#: tarot_strings.lua:290
 msgid "Choose the meaning type"
 msgstr ""
 
-#: tarot_strings.lua:278
+#: tarot_strings.lua:291
 msgid "Upright meaning"
 msgstr ""
 
-#: tarot_strings.lua:279
+#: tarot_strings.lua:292
 msgid "Reversed meaning"
 msgstr ""
 
-#: tarot_strings.lua:280
+#: tarot_strings.lua:293
 msgid "Personal Meaning"
 msgstr ""
 
-#: tarot_strings.lua:282
+#: tarot_strings.lua:295
 msgid "Edit Personal Meanings"
 msgstr ""
 
-#: tarot_strings.lua:283
+#: tarot_strings.lua:296
 msgid ""
 "You can highlight passages in books and add those highlights as Personal Meani"
 "ng for any card. This editor also lets you insert, edit, or remove Personal Me"
 "anings manually."
 msgstr ""
 
-#: tarot_strings.lua:284
+#: tarot_strings.lua:297
 msgid "Add Personal Meaning"
 msgstr ""
 
-#: tarot_strings.lua:285
+#: tarot_strings.lua:298
 msgid "Edit Personal Meaning"
 msgstr ""
 
-#: tarot_strings.lua:286
+#: tarot_strings.lua:299
 msgid "Remove Personal Meaning"
 msgstr ""
 
-#: tarot_strings.lua:287
+#: tarot_strings.lua:300
 msgid "Choose a Personal Meaning"
 msgstr ""
 
-#: tarot_strings.lua:288
+#: tarot_strings.lua:301
 msgid "No Personal Meanings yet."
 msgstr ""
 
-#: tarot_strings.lua:289
+#: tarot_strings.lua:302
 msgid "Write the meaning here"
 msgstr ""
 
-#: tarot_strings.lua:290
+#: tarot_strings.lua:303
 msgid "Personal Meaning updated."
 msgstr ""
 
-#: tarot_strings.lua:291
+#: tarot_strings.lua:304
 msgid "Personal Meaning removed."
 msgstr ""
 
-#: tarot_strings.lua:292
+#: tarot_strings.lua:305
 msgid "Remove this Personal Meaning?"
 msgstr ""
 
-#: tarot_strings.lua:293
+#: tarot_strings.lua:306
 msgid "Source"
 msgstr ""
 
-#: tarot_strings.lua:294
+#: tarot_strings.lua:307
 msgid "Meaning added to the card."
 msgstr ""
 
-#: tarot_strings.lua:295
+#: tarot_strings.lua:308
 msgid "No highlighted text was found."
 msgstr ""
 
-#: tarot_strings.lua:296
+#: tarot_strings.lua:309
 msgid "Unknown book"
 msgstr ""
 
-#: tarot_strings.lua:297 _meta.lua:21
+#: tarot_strings.lua:310 _meta.lua:21
 msgid ""
 "Draw Tarot and Lenormand cards for reflection, save readings, and browse the c"
 "omplete card book."
@@ -1470,7 +1522,9 @@ msgid "In motion, cyclical"
 msgstr ""
 
 #: tarot_cards.lua:103
-msgid "Change. Destiny. Luck is turning in your favor. Everything passes, cycles renew."
+msgid ""
+"Change. Destiny. Luck is turning in your favor. Everything passes, cycles rene"
+"w."
 msgstr ""
 
 #: tarot_cards.lua:104
@@ -1602,7 +1656,9 @@ msgid ""
 msgstr ""
 
 #: tarot_cards.lua:149
-msgid "Liberation. Breaking addictions. Recovery. Light enters where darkness once was."
+msgid ""
+"Liberation. Breaking addictions. Recovery. Light enters where darkness once wa"
+"s."
 msgstr ""
 
 #: tarot_cards.lua:153 tarot_cards.lua:833
@@ -1902,7 +1958,9 @@ msgid ""
 msgstr ""
 
 #: tarot_cards.lua:266
-msgid "Lack of unity. Domestic instability. Postponed celebration. Recover simple joy."
+msgid ""
+"Lack of unity. Domestic instability. Postponed celebration. Recover simple joy"
+"."
 msgstr ""
 
 #: tarot_cards.lua:270
@@ -1918,7 +1976,9 @@ msgid "5 weeks"
 msgstr ""
 
 #: tarot_cards.lua:273
-msgid "Healthy competition. Creative conflict. Different viewpoints enrich the search."
+msgid ""
+"Healthy competition. Creative conflict. Different viewpoints enrich the search"
+"."
 msgstr ""
 
 #: tarot_cards.lua:274
@@ -2054,7 +2114,9 @@ msgid ""
 msgstr ""
 
 #: tarot_cards.lua:322
-msgid "Lack of plans. Impulsiveness. Ideas without execution. Set goals before acting."
+msgid ""
+"Lack of plans. Impulsiveness. Ideas without execution. Set goals before acting"
+"."
 msgstr ""
 
 #: tarot_cards.lua:326
@@ -2236,7 +2298,9 @@ msgid "Recent past"
 msgstr ""
 
 #: tarot_cards.lua:387
-msgid "Grief. Loss. Focus on what is gone. Two cups still stand – look at what remains."
+msgid ""
+"Grief. Loss. Focus on what is gone. Two cups still stand – look at what remain"
+"s."
 msgstr ""
 
 #: tarot_cards.lua:388
@@ -2372,7 +2436,9 @@ msgid "Emotional surprise"
 msgstr ""
 
 #: tarot_cards.lua:435
-msgid "Creative sensitivity. Message of love. Open up to intuition and heart surprises."
+msgid ""
+"Creative sensitivity. Message of love. Open up to intuition and heart surprise"
+"s."
 msgstr ""
 
 #: tarot_cards.lua:436
@@ -2472,7 +2538,9 @@ msgid ""
 msgstr ""
 
 #: tarot_cards.lua:470
-msgid "Confusion. Lies. Verbal abuse. Distorted truth hurts. Seek clean communication."
+msgid ""
+"Confusion. Lies. Verbal abuse. Distorted truth hurts. Seek clean communication"
+"."
 msgstr ""
 
 #: tarot_cards.lua:474
@@ -2536,7 +2604,9 @@ msgid "Necessary pause"
 msgstr ""
 
 #: tarot_cards.lua:493
-msgid "Mental rest. Retreat. Recovery. Step away from the noise and recharge your mind."
+msgid ""
+"Mental rest. Retreat. Recovery. Step away from the noise and recharge your min"
+"d."
 msgstr ""
 
 #: tarot_cards.lua:494
@@ -2564,7 +2634,9 @@ msgid ""
 msgstr ""
 
 #: tarot_cards.lua:502
-msgid "Reconciliation. Remorse. Putting pride aside. Seek peace instead of being right."
+msgid ""
+"Reconciliation. Remorse. Putting pride aside. Seek peace instead of being righ"
+"t."
 msgstr ""
 
 #: tarot_cards.lua:506
@@ -2794,7 +2866,9 @@ msgid "Material beginning"
 msgstr ""
 
 #: tarot_cards.lua:583
-msgid "New material opportunity. Prosperity at hand. Get to work to reap solid fruits."
+msgid ""
+"New material opportunity. Prosperity at hand. Get to work to reap solid fruits"
+"."
 msgstr ""
 
 #: tarot_cards.lua:584
@@ -2947,7 +3021,7 @@ msgid ""
 "d continue."
 msgstr ""
 
-#: tarot_cards.lua:636 main.lua:419
+#: tarot_cards.lua:636
 msgid "Eight of Pentacles"
 msgstr ""
 
@@ -3430,7 +3504,9 @@ msgid "Love, passion, affection, romance"
 msgstr ""
 
 #: tarot_cards.lua:871
-msgid "True love. Passion. Deep affection. Open your heart without fear of being happy."
+msgid ""
+"True love. Passion. Deep affection. Open your heart without fear of being happ"
+"y."
 msgstr ""
 
 #: tarot_cards.lua:875
@@ -3570,7 +3646,9 @@ msgid "Stability, security, work, steadfastness"
 msgstr ""
 
 #: tarot_cards.lua:948
-msgid "Stability. Lasting security. Steady work. Build solid foundations for tomorrow."
+msgid ""
+"Stability. Lasting security. Steady work. Build solid foundations for tomorrow"
+"."
 msgstr ""
 
 #: tarot_cards.lua:952
