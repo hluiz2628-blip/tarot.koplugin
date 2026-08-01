@@ -2,7 +2,7 @@
 
 A simple Tarot and Lenormand plugin for KOReader.
 
-Draw cards, reveal meanings, save reflections, and browse the card book directly on your e-ink device.
+Draw cards, reveal meanings, save reflections, and browse the card book directly on your device.
 
 <p align="center"> <img src="Captura1.png" alt="Tarot for KOReader screenshot 1" width="45%"> <img src="Captura2.png" alt="Tarot for KOReader screenshot 2" width="45%"> </p>
 
