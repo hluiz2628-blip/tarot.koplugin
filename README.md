@@ -10,6 +10,7 @@ Draw cards, reveal meanings, save reflections, and explore the cards directly on
 
 * Tarot and Lenormand support
 * Daily Card
+* Calendar with moon phases
 * Hidden Card spread with a 5x4 grid
 * Readings with up to  20 cards
 * Physical Deck mode
