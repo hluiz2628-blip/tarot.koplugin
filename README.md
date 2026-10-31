@@ -4,7 +4,11 @@ A Tarot and Lenormand plugin for KOReader.
 
 Draw cards, reveal meanings, save reflections, and explore the cards directly on your device.
 
-<p align="center"> <img src="Captura1.png" alt="Tarot for KOReader screenshot 1" width="45%"> <img src="Captura2.png" alt="Tarot for KOReader screenshot 2" width="45%"> </p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/hluiz2628-blip/tarot.koplugin/main/cap1.png" alt="Arcana II - Captura de tela" width="45%">
+  <img src="https://raw.githubusercontent.com/hluiz2628-blip/tarot.koplugin/main/simplescreenrecorder-2026-10-31_00.40.03.gif" alt="Arcana II - Demonstração animada" width="45%">
+</p>
 
 ## Features
 
@@ -33,7 +37,7 @@ Then restart KOReader and open the plugin from the tools menu.
 
 ## Version
 
-**Arcana II - 6.2.8**
+**Arcana II - 6.2.23**
 
 ## Cards credits
 
