@@ -17,8 +17,8 @@ Draw cards, discover their meanings, create readings, save reflections, and orga
 **Tarot & Lenormand**
 - Support for Tarot and Lenormand decks.
 - Daily Card with personal reflections.
-- Customizable readings with up to 20 cards.
-- Hidden Card spread with a 5×4 grid.
+- Customizable readings with up to 36 cards.
+- Hidden Card spread with a 6×6 grid.
 - Physical Deck mode.
 - Card Guide with meanings and interpretations.
 - Use book highlights as personal card meanings.
@@ -73,8 +73,8 @@ Tire cartas, descubra seus significados, realize tiragens, registre reflexões e
 **Tarô e Lenormand**
 - Suporte a baralhos de Tarô e Lenormand.
 - Carta Diária com reflexões pessoais.
-- Tiragens personalizáveis com até 20 cartas.
-- Tiragem de Carta Oculta em uma grade 5×4.
+- Tiragens personalizáveis com até 36 cartas.
+- Tiragem de Carta Oculta em uma grade 6×6.
 - Modo Baralho Físico.
 - Guia de Cartas com significados e interpretações.
 - Utilize destaques de livros como significados pessoais das cartas.
@@ -129,8 +129,8 @@ Saca cartas, descubre sus significados, realiza tiradas, guarda reflexiones y or
 **Tarot y Lenormand**
 - Compatibilidad con barajas de tarot y Lenormand.
 - Carta del Día con reflexiones personales.
-- Tiradas personalizables de hasta 20 cartas.
-- Tirada de Carta Oculta con una cuadrícula de 5×4.
+- Tiradas personalizables de hasta 36 cartas.
+- Tirada de Carta Oculta con una cuadrícula de 6×6.
 - Modo Baraja Física.
 - Guía de Cartas con significados e interpretaciones.
 - Utiliza fragmentos destacados de libros como significados personales de las cartas.
@@ -185,8 +185,8 @@ Arcana II 是一款适用于 KOReader 的塔罗牌与雷诺曼卡插件，旨在
 **塔罗牌与雷诺曼卡**
 - 支持塔罗牌和雷诺曼卡牌组。
 - 每日一牌与个人感悟记录。
-- 可自定义牌阵，最多支持 20 张卡牌。
-- 使用 5×4 网格的隐藏卡牌牌阵。
+- 可自定义牌阵，最多支持 36 张卡牌。
+- 使用 6×6 网格的隐藏卡牌牌阵。
 - 实体牌组模式。
 - 牌卡图鉴，提供牌义与解读。
 - 可以将书籍中的划线摘录用作个人牌义。
